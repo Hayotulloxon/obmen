@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Winter Treasure Game</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Fredoka', sans-serif;
+      overflow: hidden;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    @keyframes snowfall {
+      0% { 
+        transform: translateY(-10px) translateX(0) rotate(0deg); 
+        opacity: 0.9; 
+      }
+      100% { 
+        transform: translateY(100%) translateX(30px) rotate(360deg); 
+        opacity: 0.3; 
+      }
+    }
+    
+    @keyframes sparkle {
+      0%, 100% { 
+        transform: scale(0) rotate(0deg); 
+        opacity: 0; 
+      }
+      50% { 
+        transform: scale(1) rotate(180deg); 
+        opacity: 1; 
+      }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    @keyframes chest-shake {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(-5deg) scale(1.05); }
+      75% { transform: rotate(5deg) scale(1.05); }
+    }
+    
+    @keyframes chest-open {
+      0% { transform: scale(1) rotateY(0deg); }
+      50% { transform: scale(1.2) rotateY(10deg); }
+      100% { transform: scale(1.1) rotateY(0deg); }
+    }
+    
+    @keyframes coin-bounce {
+      0% { 
+        transform: translateY(-50px) scale(0); 
+        opacity: 0; 
+      }
+      60% { 
+        transform: translateY(0) scale(1.2); 
+        opacity: 1; 
+      }
+      80% { 
+        transform: translateY(-5px) scale(0.95); 
+      }
+      100% { 
+        transform: translateY(0) scale(1); 
+        opacity: 1; 
+      }
+    }
+    
+    @keyframes glow-pulse {
+      0%, 100% { 
+        box-shadow: 0 0 20px rgba(138, 43, 226, 0.5),
+                    0 0 40px rgba(138, 43, 226, 0.3),
+                    inset 0 0 20px rgba(255, 255, 255, 0.2);
+      }
+      50% { 
+        box-shadow: 0 0 30px rgba(138, 43, 226, 0.8),
+                    0 0 60px rgba(138, 43, 226, 0.5),
+                    inset 0 0 30px rgba(255, 255, 255, 0.3);
+      }
+    }
+    
+    @keyframes cascade {
+      from { 
+        opacity: 0; 
+        transform: translateY(-20px) scale(0.8); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+      }
+    }
+    
+    .snowflake {
+      position: absolute;
+      color: #E0F7FF;
+      font-size: 1.5em;
+      animation: snowfall linear infinite;
+      pointer-events: none;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+    }
+    
+    .sparkle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: linear-gradient(45deg, #FFD700, #FFF);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      animation: sparkle 3s infinite;
+      pointer-events: none;
+    }
+    
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 25px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+    
+    .chest-box {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    
+    .chest-box:hover:not(.opened):not(.revealed) {
+      transform: translateY(-8px) scale(1.05);
+    }
+    
+    .chest-box.shake {
+      animation: chest-shake 0.6s ease;
+    }
+    
+    .chest-box.opening {
+      animation: chest-open 0.8s ease forwards;
+    }
+    
+    .chest-box.revealed {
+      animation: cascade 0.5s ease forwards;
+      opacity: 0.7;
+    }
+    
+    .chest-box.winner {
+      animation: glow-pulse 2s infinite;
+    }
+    
+    .coin-value {
+      animation: coin-bounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    .balance-icon {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-top: 5px solid #FFD700;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app" class="w-full h-full relative" style="background: linear-gradient(180deg, #1a0a3e 0%, #2d1b69 30%, #4a2c8f 60%, #6b46c1 100%);"><!-- Qor va chaqnashlar -->
+   <div id="effectsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;"></div><!-- Asosiy konteyner -->
+   <div style="position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; z-index: 2; padding: 20px;"><!-- Top bar - User info & Balance -->
+    <div class="glass-panel" style="padding: 15px 20px; margin-bottom: 20px;">
+     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+       <div id="userPhoto" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6, #6366F1); display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; font-weight: 700;">
+        👤
+       </div>
+       <div>
+        <div id="userName" style="font-size: 16px; color: #FFFFFF; font-weight: 600;">
+         Foydalanuvchi
+        </div>
+        <div id="userUsername" style="font-size: 12px; color: #B0C4DE;">
+         @username
+        </div>
+       </div>
+      </div>
+     </div>
+     <div style="display: flex; justify-content: space-between; gap: 10px;">
+      <div style="flex: 1; display: flex; align-items: center; gap: 8px; background: rgba(255, 215, 0, 0.15); padding: 10px; border-radius: 15px;">
+       <div class="balance-icon" style="font-size: 24px; filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));">
+        💎
+       </div>
+       <div style="flex: 1;">
+        <div style="font-size: 11px; color: #E0F7FF; font-weight: 500;">
+         Diamonds
+        </div>
+        <div id="diamondCount" style="font-size: 20px; color: #FFD700; font-weight: 700; text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);">
+         0
+        </div>
+       </div>
+      </div>
+      <div style="flex: 1; display: flex; align-items: center; gap: 8px; background: rgba(255, 165, 0, 0.15); padding: 10px; border-radius: 15px;">
+       <div class="balance-icon" style="font-size: 24px; filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.8)); animation-delay: 0.5s;">
+        🪙
+       </div>
+       <div style="flex: 1;">
+        <div style="font-size: 11px; color: #E0F7FF; font-weight: 500;">
+         Coins
+        </div>
+        <div id="coinCount" style="font-size: 20px; color: #FFA500; font-weight: 700; text-shadow: 0 2px 10px rgba(255, 165, 0, 0.5);">
+         0
+        </div>
+       </div>
+      </div>
+     </div>
+    </div><!-- Game title -->
+    <div style="text-align: center; margin-bottom: 20px;">
+     <h1 id="gameTitle" style="font-size: 32px; font-weight: 700; color: #FFFFFF; text-shadow: 0 0 20px rgba(138, 43, 226, 0.8), 0 0 40px rgba(138, 43, 226, 0.4); margin: 0; animation: pulse 2s infinite;">❄️ Winter Treasure ❄️</h1>
+    </div><!-- Sandiqlar grid -->
+    <div style="flex: 1; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; overflow-y: auto;">
+     <div id="chestsGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 400px; width: 100%; padding: 10px;"><!-- JavaScript orqali yaratiladi -->
+     </div>
+    </div><!-- O'ynash tugmasi -->
+    <div style="text-align: center;"><button id="playButton" class="glass-panel" style="padding: 16px 36px; font-size: 20px; font-weight: 700; border: none; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 50%, #3B82F6 100%); color: #FFFFFF; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);"> <span id="playButtonText">🎮 Play (10 💎)</span> </button>
+     <p id="messageArea" style="margin-top: 12px; font-size: 16px; font-weight: 600; color: #E0F7FF; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); min-height: 22px;"></p>
+    </div>
+   </div><!-- Yuklanish -->
+   <div id="loadingIndicator" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 100; align-items: center; justify-content: center;">
+    <div class="glass-panel" style="padding: 40px; text-align: center;">
+     <div class="loading-spinner" style="margin: 0 auto 20px;"></div>
+     <div style="font-size: 18px; font-weight: 600; color: #FFFFFF;">
+      Loading...
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    // API Configuration
+    const BOT_API_KEY = '4564123:hkjhfadfhieapkdnga';
+    const BOT_API_GET_URL = 'https://68ed1ab05ca4e.myxvest1.ru/get_balance.php';
+    const BOT_API_REMOVE_URL = 'https://68ed1ab05ca4e.myxvest1.ru/remove.php';
+    const BOT_API_COIN_URL = 'https://68ed1ab05ca4e.myxvest1.ru/coinmanage.php';
+    const TELEGRAM_WEB_APP = window.Telegram?.WebApp;
+    
+    const defaultConfig = {
+      background_color: "#1a0a3e",
+      surface_color: "#8B5CF6",
+      text_color: "#FFFFFF",
+      primary_action_color: "#6366F1",
+      secondary_action_color: "#FFD700",
+      game_title: "❄️ Winter Treasure ❄️",
+      play_button_text: "🎮 Play (10 💎)",
+      font_family: "Fredoka",
+      font_size: 16
+    };
+    
+    let gameData = null;
+    let isPlaying = false;
+    let currentRewards = [];
+    let selectedChestIndex = null;
+    let currentUser = null;
+    
+    // Telegram foydalanuvchi ma'lumotlarini olish
+    function getTelegramUser() {
+      if (TELEGRAM_WEB_APP && TELEGRAM_WEB_APP.initDataUnsafe && TELEGRAM_WEB_APP.initDataUnsafe.user) {
+        const tgUser = TELEGRAM_WEB_APP.initDataUnsafe.user;
+        return {
+          user_id: String(tgUser.id),
+          username: tgUser.username || '',
+          first_name: tgUser.first_name || 'User',
+          last_name: tgUser.last_name || '',
+          photo_url: tgUser.photo_url || '',
+          language_code: tgUser.language_code || 'en'
+        };
+      }
+      
+      // Test uchun
+      return {
+        user_id: 'test_' + Date.now(),
+        username: 'testuser',
+        first_name: 'Test',
+        last_name: 'User',
+        photo_url: '',
+        language_code: 'uz'
+      };
+    }
+    
+    // API orqali bot balansini olish
+    async function fetchBotBalance() {
+      if (!currentUser) return null;
+      
+      try {
+        const url = new URL(BOT_API_GET_URL);
+        url.searchParams.set('key', BOT_API_KEY);
+        url.searchParams.set('user_id', currentUser.user_id);
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        
+        const resp = await fetch(url.toString(), {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          },
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!resp.ok) {
+          console.warn('fetchBotBalance non-OK', resp.status);
+          return null;
+        }
+        
+        const json = await resp.json();
+        if (json && json.success) {
+          return {
+            diamonds: parseInt(json.balance || 0) || 0,
+            coins: parseInt(json.coins || 0) || 0
+          };
+        } else {
+          console.warn('fetchBotBalance returned error', json);
+          return null;
+        }
+      } catch (err) {
+        console.warn('fetchBotBalance error', err);
+        return null;
+      }
+    }
+    
+    // API orqali olmos ayirish (remove)
+    async function removeDiamonds(amount) {
+      if (!currentUser) {
+        throw new Error('No user');
+      }
+      
+      try {
+        const body = new URLSearchParams({
+          key: BOT_API_KEY,
+          user_id: currentUser.user_id,
+          amount: amount
+        });
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        const resp = await fetch(BOT_API_REMOVE_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: body.toString(),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!resp.ok) {
+          const txt = await resp.text().catch(() => null);
+          console.warn('removeDiamonds non-OK', resp.status, txt);
+          return { success: false, message: 'HTTP ' + resp.status };
+        }
+        
+        return await resp.json();
+      } catch (err) {
+        console.error('removeDiamonds error', err);
+        return { success: false, message: err.message };
+      }
+    }
+    
+    // API orqali coin qo'shish
+    async function addCoins(amount) {
+      if (!currentUser) {
+        throw new Error('No user');
+      }
+      
+      try {
+        const body = new URLSearchParams({
+          key: BOT_API_KEY,
+          user_id: currentUser.user_id,
+          amount: amount
+        });
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        const resp = await fetch(BOT_API_COIN_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: body.toString(),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!resp.ok) {
+          const txt = await resp.text().catch(() => null);
+          console.warn('addCoins non-OK', resp.status, txt);
+          return { success: false, message: 'HTTP ' + resp.status };
+        }
+        
+        return await resp.json();
+      } catch (err) {
+        console.error('addCoins error', err);
+        return { success: false, message: err.message };
+      }
+    }
+    
+    // Foydalanuvchini yuklash yoki yaratish
+    async function loadOrCreateUser() {
+      currentUser = getTelegramUser();
+      
+      // Ekranda ko'rsatish
+      updateUserDisplay();
+      
+      return currentUser;
+    }
+    
+    // Foydalanuvchi ma'lumotlarini ekranda ko'rsatish
+    function updateUserDisplay() {
+      if (!currentUser) return;
+      
+      document.getElementById('userName').textContent = currentUser.first_name + (currentUser.last_name ? ' ' + currentUser.last_name : '');
+      document.getElementById('userUsername').textContent = currentUser.username ? '@' + currentUser.username : 'ID: ' + currentUser.user_id;
+      
+      if (currentUser.photo_url) {
+        const photoDiv = document.getElementById('userPhoto');
+        photoDiv.style.backgroundImage = `url(${currentUser.photo_url})`;
+        photoDiv.style.backgroundSize = 'cover';
+        photoDiv.textContent = '';
+      } else {
+        const photoDiv = document.getElementById('userPhoto');
+        const initials = currentUser.first_name.charAt(0).toUpperCase();
+        photoDiv.textContent = initials;
+      }
+    }
+    
+    // Effektlar yaratish
+    function createEffects() {
+      const container = document.getElementById('effectsContainer');
+      
+      // Qor parchalari
+      for (let i = 0; i < 25; i++) {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+        snowflake.textContent = ['❄', '❅', '❆'][Math.floor(Math.random() * 3)];
+        snowflake.style.left = Math.random() * 100 + '%';
+        snowflake.style.animationDuration = (Math.random() * 4 + 3) + 's';
+        snowflake.style.animationDelay = Math.random() * 5 + 's';
+        snowflake.style.fontSize = (Math.random() * 1 + 1) + 'em';
+        container.appendChild(snowflake);
+      }
+      
+      // Chaqnashlar
+      for (let i = 0; i < 15; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.left = Math.random() * 100 + '%';
+        sparkle.style.top = Math.random() * 100 + '%';
+        sparkle.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        sparkle.style.animationDelay = Math.random() * 3 + 's';
+        container.appendChild(sparkle);
+      }
+    }
+    
+    // Sandiqlarni yaratish
+    function createChests() {
+      const grid = document.getElementById('chestsGrid');
+      grid.innerHTML = '';
+      
+      const chestStyles = [
+        'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%)',
+        'linear-gradient(135deg, #C0C0C0 0%, #A9A9A9 50%, #808080 100%)',
+        'linear-gradient(135deg, #E0F7FF 0%, #B0E0E6 50%, #87CEEB 100%)'
+      ];
+      
+      for (let i = 0; i < 9; i++) {
+        const chest = document.createElement('div');
+        chest.className = 'chest-box glass-panel';
+        chest.style.padding = '18px 10px';
+        chest.style.textAlign = 'center';
+        chest.style.background = chestStyles[i % 3];
+        chest.dataset.index = i;
+        
+        chest.innerHTML = `
+          <div style="font-size: 40px; margin-bottom: 5px; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));">🎁</div>
+          <div class="chest-value" style="font-size: 16px; font-weight: 700; color: #FFFFFF; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); opacity: 0; height: 0;"></div>
+        `;
+        
+        chest.addEventListener('click', () => openChest(i, chest));
+        grid.appendChild(chest);
+      }
+    }
+    
+    // Mukofotlarni yaratish
+    function generateRewards(isFirstPlay) {
+      const allPossibleRewards = [1, 2, 3, 4, 5, 6, 10, 50, 100];
+      
+      // Aralashtiramiz
+      const shuffled = [...allPossibleRewards].sort(() => Math.random() - 0.5);
+      
+      if (isFirstPlay) {
+        // Birinchi o'yin - faqat 4 yoki 6
+        const winningChest = Math.floor(Math.random() * 9);
+        const winningValue = Math.random() < 0.5 ? 4 : 6;
+        
+        return {
+          rewards: shuffled,
+          winningChest: winningChest,
+          winningValue: winningValue
+        };
+      } else {
+        // Keyingi o'yinlar - maksimum 3
+        const rand = Math.random() * 100;
+        let winningValue;
+        
+        if (rand < 5) {
+          winningValue = 5; // 5% - 5 tanga
+        } else if (rand < 25) {
+          winningValue = 4; // 20% - 4 tanga
+        } else if (rand < 60) {
+          winningValue = 3; // 35% - 3 tanga
+        } else if (rand < 90) {
+          winningValue = 2; // 30% - 2 tanga
+        } else {
+          winningValue = 1; // 10% - 1 tanga
+        }
+        
+        const winningChest = Math.floor(Math.random() * 9);
+        
+        return {
+          rewards: shuffled,
+          winningChest: winningChest,
+          winningValue: winningValue
+        };
+      }
+    }
+    
+    // Sandiqni ochish
+    async function openChest(index, element) {
+      if (!isPlaying || selectedChestIndex !== null) return;
+      
+      selectedChestIndex = index;
+      element.style.pointerEvents = 'none';
+      
+      // Qaltiratish animatsiyasi
+      element.classList.add('shake');
+      
+      setTimeout(async () => {
+        element.classList.remove('shake');
+        element.classList.add('opening', 'winner');
+        
+        const coins = currentRewards.winningValue;
+        
+        setTimeout(() => {
+          const emoji = element.querySelector('div:first-child');
+          emoji.textContent = '✨';
+          emoji.style.fontSize = '48px';
+          
+          const valueDiv = element.querySelector('.chest-value');
+          valueDiv.textContent = `+${coins} 🪙`;
+          valueDiv.style.opacity = '1';
+          valueDiv.style.height = 'auto';
+          valueDiv.style.fontSize = '20px';
+          valueDiv.style.color = '#FFD700';
+          valueDiv.classList.add('coin-value');
+          
+          // Balansni yangilash
+          gameData.total_coins += coins;
+          if (gameData.is_first_play) {
+            gameData.is_first_play = false;
+          }
+          updateDisplay();
+          
+          setTimeout(() => revealAllChests(), 800);
+        }, 400);
+      }, 600);
+    }
+    
+    // Barcha sandiqlarni ochish
+    function revealAllChests() {
+      const chests = document.querySelectorAll('.chest-box');
+      
+      chests.forEach((chest, i) => {
+        if (i !== selectedChestIndex) {
+          setTimeout(() => {
+            chest.classList.add('revealed');
+            chest.style.pointerEvents = 'none';
+            
+            const emoji = chest.querySelector('div:first-child');
+            emoji.textContent = '🎁';
+            
+            const valueDiv = chest.querySelector('.chest-value');
+            valueDiv.textContent = `${currentRewards.rewards[i]} 🪙`;
+            valueDiv.style.opacity = '0.8';
+            valueDiv.style.height = 'auto';
+            valueDiv.style.fontSize = '16px';
+            valueDiv.style.color = '#B0C4DE';
+          }, i * 100);
+        }
+      });
+      
+      setTimeout(async () => {
+        isPlaying = false;
+        document.getElementById('playButton').disabled = false;
+        document.getElementById('playButton').style.opacity = '1';
+        
+        // API orqali coin qo'shish
+        showLoading(true);
+        const coinAmount = currentRewards.winningValue;
+        const coinResult = await addCoins(coinAmount);
+        
+        if (!coinResult.success) {
+          showMessage('⚠️ Coins not added to server!');
+        }
+        
+        // Ma'lumotni saqlash
+        const result = await window.dataSdk.update(gameData);
+        showLoading(false);
+        
+        if (!result.isOk) {
+          showMessage('❌ Error saving data!');
+        } else {
+          showMessage('🎮 Play again!');
+        }
+      }, 1000);
+    }
+    
+    // O'yinni boshlash
+    async function startGame() {
+      if (gameData.diamonds < 10) {
+        showMessage('❌ Not enough diamonds!');
+        return;
+      }
+      
+      showLoading(true);
+      
+      // API orqali 10 olmos ayirish
+      const removeResult = await removeDiamonds(10);
+      
+      if (!removeResult.success) {
+        showLoading(false);
+        showMessage('❌ API Error: ' + (removeResult.message || 'Unknown error'));
+        return;
+      }
+      
+      gameData.diamonds -= 10;
+      gameData.total_plays += 1;
+      gameData.last_played = new Date().toISOString();
+      
+      const result = await window.dataSdk.update(gameData);
+      
+      showLoading(false);
+      
+      if (!result.isOk) {
+        showMessage('❌ Error occurred!');
+        gameData.diamonds += 10;
+        gameData.total_plays -= 1;
+        return;
+      }
+      
+      isPlaying = true;
+      selectedChestIndex = null;
+      currentRewards = generateRewards(gameData.is_first_play);
+      
+      document.getElementById('playButton').disabled = true;
+      document.getElementById('playButton').style.opacity = '0.5';
+      
+      createChests();
+      showMessage('✨ Choose a chest!');
+      updateDisplay();
+    }
+    
+    // Ekranni yangilash
+    function updateDisplay() {
+      document.getElementById('diamondCount').textContent = gameData.diamonds;
+      document.getElementById('coinCount').textContent = gameData.total_coins;
+    }
+    
+    // Xabar ko'rsatish
+    function showMessage(text) {
+      const messageArea = document.getElementById('messageArea');
+      messageArea.textContent = text;
+      messageArea.style.animation = 'none';
+      setTimeout(() => {
+        messageArea.style.animation = 'float 2s ease-in-out infinite';
+      }, 10);
+    }
+    
+    // Yuklanish
+    function showLoading(show) {
+      const indicator = document.getElementById('loadingIndicator');
+      indicator.style.display = show ? 'flex' : 'none';
+    }
+    
+    // Data handler
+    const dataHandler = {
+      async onDataChanged(data) {
+        if (data.length > 0) {
+          // Mavjud foydalanuvchini topish
+          const existingUser = data.find(u => u.user_id === currentUser.user_id);
+          if (existingUser) {
+            gameData = existingUser;
+          } else {
+            // Yangi foydalanuvchi uchun ma'lumot yaratish
+            gameData = {
+              user_id: currentUser.user_id,
+              username: currentUser.username,
+              first_name: currentUser.first_name,
+              last_name: currentUser.last_name,
+              photo_url: currentUser.photo_url,
+              language_code: currentUser.language_code,
+              total_plays: 0,
+              diamonds: 0,
+              total_coins: 0,
+              last_played: new Date().toISOString(),
+              is_first_play: true,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            };
+          }
+        } else {
+          // Database bo'sh
+          gameData = {
+            user_id: currentUser.user_id,
+            username: currentUser.username,
+            first_name: currentUser.first_name,
+            last_name: currentUser.last_name,
+            photo_url: currentUser.photo_url,
+            language_code: currentUser.language_code,
+            total_plays: 0,
+            diamonds: 0,
+            total_coins: 0,
+            last_played: new Date().toISOString(),
+            is_first_play: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          };
+        }
+        
+        // API dan balansni olish
+        const balance = await fetchBotBalance();
+        if (balance) {
+          gameData.diamonds = balance.diamonds;
+          gameData.total_coins = balance.coins;
+        }
+        
+        updateDisplay();
+      }
+    };
+    
+    // Config o'zgarishi
+    async function onConfigChange(config) {
+      const baseFont = config.font_family || defaultConfig.font_family;
+      const baseFontSize = config.font_size || defaultConfig.font_size;
+      
+      document.body.style.fontFamily = `${baseFont}, sans-serif`;
+      
+      const app = document.getElementById('app');
+      app.style.background = `linear-gradient(180deg, ${config.background_color || defaultConfig.background_color} 0%, ${config.surface_color || defaultConfig.surface_color} 100%)`;
+      
+      const title = document.getElementById('gameTitle');
+      title.textContent = config.game_title || defaultConfig.game_title;
+      title.style.color = config.text_color || defaultConfig.text_color;
+      title.style.fontSize = `${baseFontSize * 2}px`;
+      
+      const playButtonText = document.getElementById('playButtonText');
+      playButtonText.textContent = config.play_button_text || defaultConfig.play_button_text;
+      
+      const playButton = document.getElementById('playButton');
+      playButton.style.background = `linear-gradient(135deg, ${config.surface_color || defaultConfig.surface_color} 0%, ${config.primary_action_color || defaultConfig.primary_action_color} 100%)`;
+      playButton.style.color = config.text_color || defaultConfig.text_color;
+    }
+    
+    // Capabilities
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              config.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.primary_action_color || defaultConfig.primary_action_color,
+            set: (value) => {
+              config.primary_action_color = value;
+              window.elementSdk.setConfig({ primary_action_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+            set: (value) => {
+              config.secondary_action_color = value;
+              window.elementSdk.setConfig({ secondary_action_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => {
+            config.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      };
+    }
+    
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['game_title', config.game_title || defaultConfig.game_title],
+        ['play_button_text', config.play_button_text || defaultConfig.play_button_text]
+      ]);
+    }
+    
+    // Initialization
+    async function init() {
+      showLoading(true);
+      
+      // Telegram Web App sozlamalari
+      if (TELEGRAM_WEB_APP) {
+        TELEGRAM_WEB_APP.ready();
+        TELEGRAM_WEB_APP.expand();
+      }
+      
+      // Foydalanuvchini yuklash
+      await loadOrCreateUser();
+      
+      const dataResult = await window.dataSdk.init(dataHandler);
+      if (!dataResult.isOk) {
+        showMessage('❌ Database error!');
+        showLoading(false);
+        return;
+      }
+      
+      // Agar bu foydalanuvchi database da yo'q bo'lsa, yaratamiz
+      if (!gameData || gameData.user_id !== currentUser.user_id) {
+        // API dan balansni olish
+        const balance = await fetchBotBalance();
+        
+        const createResult = await window.dataSdk.create({
+          user_id: currentUser.user_id,
+          username: currentUser.username,
+          first_name: currentUser.first_name,
+          last_name: currentUser.last_name,
+          photo_url: currentUser.photo_url,
+          language_code: currentUser.language_code,
+          total_plays: 0,
+          diamonds: balance ? balance.diamonds : 0,
+          total_coins: balance ? balance.coins : 0,
+          last_played: new Date().toISOString(),
+          is_first_play: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        });
+        
+        if (!createResult.isOk) {
+          showMessage('❌ Failed to create user!');
+        }
+      }
+      
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities,
+          mapToEditPanelValues
+        });
+      }
+      
+      createEffects();
+      createChests();
+      
+      document.getElementById('playButton').addEventListener('click', startGame);
+      
+      showLoading(false);
+      showMessage('✨ Welcome! Choose your treasure!');
+    }
+    
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b06c9f8f784d9ce',t:'MTc2NjE0NjE0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
