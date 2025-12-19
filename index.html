@@ -191,8 +191,8 @@
  <body class="h-full">
   <div id="app" class="w-full h-full relative" style="background: linear-gradient(180deg, #1a0a3e 0%, #2d1b69 30%, #4a2c8f 60%, #6b46c1 100%);"><!-- Qor va chaqnashlar -->
    <div id="effectsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;"></div><!-- Asosiy konteyner -->
-   <div style="position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; z-index: 2; padding: 20px;"><!-- Top bar - User info & Balance -->
-    <div class="glass-panel" style="padding: 15px 20px; margin-bottom: 20px;">
+   <div style="position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; z-index: 2; padding: 15px;"><!-- Top bar - User info & Balance -->
+    <div class="glass-panel" style="padding: 12px 15px; margin-bottom: 15px;">
      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
       <div style="display: flex; align-items: center; gap: 10px;">
        <div id="userPhoto" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6, #6366F1); display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; font-weight: 700;">
@@ -237,15 +237,15 @@
       </div>
      </div>
     </div><!-- Game title -->
-    <div style="text-align: center; margin-bottom: 20px;">
-     <h1 id="gameTitle" style="font-size: 32px; font-weight: 700; color: #FFFFFF; text-shadow: 0 0 20px rgba(138, 43, 226, 0.8), 0 0 40px rgba(138, 43, 226, 0.4); margin: 0; animation: pulse 2s infinite;">❄️ Winter Treasure ❄️</h1>
+    <div style="text-align: center; margin-bottom: 15px;">
+     <h1 id="gameTitle" style="font-size: 26px; font-weight: 700; color: #FFFFFF; text-shadow: 0 0 20px rgba(138, 43, 226, 0.8), 0 0 40px rgba(138, 43, 226, 0.4); margin: 0; animation: pulse 2s infinite;">❄️ Winter Treasure ❄️</h1>
     </div><!-- Sandiqlar grid -->
-    <div style="flex: 1; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; overflow-y: auto;">
-     <div id="chestsGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 400px; width: 100%; padding: 10px;"><!-- JavaScript orqali yaratiladi -->
+    <div style="flex: 1; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; overflow-y: auto;">
+     <div id="chestsGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 350px; width: 100%; padding: 5px;"><!-- JavaScript orqali yaratiladi -->
      </div>
     </div><!-- O'ynash tugmasi -->
-    <div style="text-align: center;"><button id="playButton" class="glass-panel" style="padding: 16px 36px; font-size: 20px; font-weight: 700; border: none; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 50%, #3B82F6 100%); color: #FFFFFF; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);"> <span id="playButtonText">🎮 Play (10 💎)</span> </button>
-     <p id="messageArea" style="margin-top: 12px; font-size: 16px; font-weight: 600; color: #E0F7FF; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); min-height: 22px;"></p>
+    <div style="text-align: center;"><button id="playButton" class="glass-panel" style="padding: 14px 32px; font-size: 18px; font-weight: 700; border: none; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 50%, #3B82F6 100%); color: #FFFFFF; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);"> <span id="playButtonText">🎮 Play (10 💎)</span> </button>
+     <p id="messageArea" style="margin-top: 10px; font-size: 15px; font-weight: 600; color: #E0F7FF; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); min-height: 20px;"></p>
     </div>
    </div><!-- Yuklanish -->
    <div id="loadingIndicator" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 100; align-items: center; justify-content: center;">
@@ -313,18 +313,19 @@
       if (!currentUser) return null;
       
       try {
-        const url = new URL(BOT_API_GET_URL);
-        url.searchParams.set('key', BOT_API_KEY);
-        url.searchParams.set('user_id', currentUser.user_id);
+        const formData = new URLSearchParams();
+        formData.append('key', BOT_API_KEY);
+        formData.append('user_id', currentUser.user_id);
         
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
         
-        const resp = await fetch(url.toString(), {
-          method: 'GET',
+        const resp = await fetch(BOT_API_GET_URL, {
+          method: 'POST',
           headers: {
-            'Accept': 'application/json'
+            'Content-Type': 'application/x-www-form-urlencoded'
           },
+          body: formData.toString(),
           signal: controller.signal
         });
         
@@ -502,14 +503,14 @@
       for (let i = 0; i < 9; i++) {
         const chest = document.createElement('div');
         chest.className = 'chest-box glass-panel';
-        chest.style.padding = '18px 10px';
+        chest.style.padding = '12px 6px';
         chest.style.textAlign = 'center';
         chest.style.background = chestStyles[i % 3];
         chest.dataset.index = i;
         
         chest.innerHTML = `
-          <div style="font-size: 40px; margin-bottom: 5px; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));">🎁</div>
-          <div class="chest-value" style="font-size: 16px; font-weight: 700; color: #FFFFFF; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); opacity: 0; height: 0;"></div>
+          <div style="font-size: 32px; margin-bottom: 3px; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));">🎁</div>
+          <div class="chest-value" style="font-size: 14px; font-weight: 700; color: #FFFFFF; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); opacity: 0; height: 0;"></div>
         `;
         
         chest.addEventListener('click', () => openChest(i, chest));
@@ -580,13 +581,13 @@
         setTimeout(() => {
           const emoji = element.querySelector('div:first-child');
           emoji.textContent = '✨';
-          emoji.style.fontSize = '48px';
+          emoji.style.fontSize = '38px';
           
           const valueDiv = element.querySelector('.chest-value');
           valueDiv.textContent = `+${coins} 🪙`;
           valueDiv.style.opacity = '1';
           valueDiv.style.height = 'auto';
-          valueDiv.style.fontSize = '20px';
+          valueDiv.style.fontSize = '16px';
           valueDiv.style.color = '#FFD700';
           valueDiv.classList.add('coin-value');
           
@@ -619,7 +620,7 @@
             valueDiv.textContent = `${currentRewards.rewards[i]} 🪙`;
             valueDiv.style.opacity = '0.8';
             valueDiv.style.height = 'auto';
-            valueDiv.style.fontSize = '16px';
+            valueDiv.style.fontSize = '13px';
             valueDiv.style.color = '#B0C4DE';
           }, i * 100);
         }
@@ -788,5 +789,5 @@
     
     init();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b06da14272fd2eb',t:'MTc2NjE0NjgwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b06de98b293d2eb',t:'MTc2NjE0Njk4OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
