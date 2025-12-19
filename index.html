@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Asosiy reset */
         * {
             margin: 0;
             padding: 0;
@@ -35,7 +34,6 @@
             bottom: 0;
         }
         
-        /* Container - telefon uchun optimallashtirilgan */
         .app-container {
             width: 100%;
             height: 100%;
@@ -47,7 +45,6 @@
             padding: 0;
         }
         
-        /* Header - kompakt */
         .header {
             flex-shrink: 0;
             padding: 12px 16px;
@@ -56,7 +53,6 @@
             backdrop-filter: blur(10px);
         }
         
-        /* Balans kartalari - kompakt */
         .balance-container {
             display: flex;
             gap: 10px;
@@ -74,7 +70,6 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
         
-        /* Asosiy o'yin maydoni - telefonda maksimal foydalanish */
         .game-area {
             flex: 1;
             display: flex;
@@ -84,7 +79,6 @@
             position: relative;
         }
         
-        /* Sandiqlar grid - TELEFON EKRANIDA TO'LIQ KO'RINISHI UCHUN */
         .chests-container {
             flex: 1;
             display: flex;
@@ -105,7 +99,6 @@
             margin: 0 auto;
         }
         
-        /* Sandiq kartasi - telefon uchun optimal */
         .chest-card {
             width: 100%;
             height: 100%;
@@ -128,14 +121,12 @@
             transform: scale(0.98);
         }
         
-        /* Sandiq ikonkasi - katta va aniq */
         .chest-icon {
             font-size: 40px;
             margin-bottom: 5px;
             filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
         }
         
-        /* Sandiq qiymati - o'qish oson */
         .chest-value {
             font-size: 20px;
             font-weight: 800;
@@ -145,7 +136,6 @@
             transition: opacity 0.3s ease;
         }
         
-        /* Footer - o'ynash tugmasi */
         .footer {
             flex-shrink: 0;
             padding: 15px;
@@ -154,7 +144,6 @@
             text-align: center;
         }
         
-        /* Play button - katta va oson bosiladigan */
         .play-button {
             width: 100%;
             max-width: 300px;
@@ -180,7 +169,6 @@
             cursor: not-allowed;
         }
         
-        /* Xabar maydoni */
         .message-area {
             margin-top: 10px;
             font-size: 14px;
@@ -190,7 +178,18 @@
             text-align: center;
         }
         
-        /* Yuklanish indikatori */
+        .error-message {
+            background: rgba(255, 100, 100, 0.2);
+            border: 2px solid rgba(255, 100, 100, 0.4);
+            color: #FF6B6B;
+            padding: 10px;
+            border-radius: 15px;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+        
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -205,7 +204,6 @@
             backdrop-filter: blur(5px);
         }
         
-        /* Sandiq turlari ranglari */
         .chest-type-gold {
             --chest-color-1: #FFD700;
             --chest-color-2: #FFAA00;
@@ -242,7 +240,6 @@
             --chest-border: #A0A0A0;
         }
         
-        /* Animatsiyalar */
         .chest-selected {
             animation: chest-selected 1.5s infinite alternate;
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
@@ -262,7 +259,6 @@
             transform: scale(0.95);
         }
         
-        /* Responsive sozlamalar */
         @media (max-width: 380px) {
             .chests-grid {
                 gap: 8px;
@@ -320,54 +316,17 @@
             }
         }
         
-        /* iPhone notch uchun */
         @supports (padding-top: env(safe-area-inset-top)) {
             .app-container {
                 padding-top: env(safe-area-inset-top);
                 padding-bottom: env(safe-area-inset-bottom);
             }
         }
-        
-        /* Horizontal orientation (landscape) uchun */
-        @media (orientation: landscape) and (max-height: 500px) {
-            .app-container {
-                flex-direction: row;
-                padding: 0;
-            }
-            
-            .header {
-                width: 150px;
-                height: 100%;
-                padding: 20px 10px;
-                border-right: 2px solid rgba(100, 200, 255, 0.2);
-                border-bottom: none;
-            }
-            
-            .game-area {
-                flex: 1;
-                padding: 10px;
-            }
-            
-            .footer {
-                width: 150px;
-                height: 100%;
-                padding: 20px 10px;
-                border-left: 2px solid rgba(100, 200, 255, 0.2);
-                border-top: none;
-            }
-            
-            .chests-grid {
-                max-width: 350px;
-                aspect-ratio: 1/1;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Asosiy kontainer -->
     <div class="app-container">
         
-        <!-- Header: User info & Balance -->
         <div class="header">
             <div style="text-align: center; margin-bottom: 5px;">
                 <h1 style="font-size: 20px; font-weight: 700; color: #FFFFFF; text-shadow: 0 0 15px rgba(79, 172, 254, 0.8);">
@@ -379,7 +338,6 @@
             </div>
             
             <div class="balance-container">
-                <!-- Diamonds balansi -->
                 <div class="balance-card">
                     <div style="font-size: 24px; color: #00FFFF; filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.6));">
                         💎
@@ -392,7 +350,6 @@
                     </div>
                 </div>
                 
-                <!-- Coins balansi -->
                 <div class="balance-card">
                     <div style="font-size: 24px; color: #FFD700; filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));">
                         🪙
@@ -405,11 +362,14 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Foydalanuvchi ID ni ko'rsatish -->
+            <div id="userIdDisplay" style="font-size: 10px; color: rgba(255, 255, 255, 0.5); text-align: center; margin-top: 5px;">
+                ID: yuklanmoqda...
+            </div>
         </div>
         
-        <!-- Asosiy o'yin maydoni -->
         <div class="game-area">
-            <!-- Sandiqlar grid -->
             <div class="chests-container">
                 <div id="chestsGrid" class="chests-grid">
                     <!-- Sandiqlar JavaScript bilan yaratiladi -->
@@ -417,7 +377,6 @@
             </div>
         </div>
         
-        <!-- Footer: Play button va xabarlar -->
         <div class="footer">
             <button id="playButton" class="play-button">
                 <span id="playButtonText">🎮 Play (10 💎)</span>
@@ -425,6 +384,15 @@
             
             <div id="messageArea" class="message-area">
                 🎮 O'yinni boshlash uchun Play tugmasini bosing
+            </div>
+            
+            <!-- Xatolik xabari -->
+            <div id="errorMessage" class="error-message"></div>
+            
+            <!-- Debug ma'lumotlari (agar kerak bo'lsa) -->
+            <div id="debugInfo" style="font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 8px; display: none;">
+                <div>Bot Status: <span id="debugBotStatus">Checking...</span></div>
+                <div>API Calls: <span id="debugApiCalls">0</span></div>
             </div>
         </div>
         
@@ -434,9 +402,10 @@
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
         <div style="text-align: center; padding: 30px; background: rgba(20, 40, 80, 0.9); border-radius: 20px; border: 2px solid rgba(100, 200, 255, 0.3);">
             <div style="width: 50px; height: 50px; border: 5px solid rgba(255, 255, 255, 0.3); border-top: 5px solid #FFD700; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-            <div style="font-size: 18px; font-weight: 600; color: #FFFFFF;">
+            <div id="loadingText" style="font-size: 18px; font-weight: 600; color: #FFFFFF;">
                 Yuklanmoqda...
             </div>
+            <div id="loadingDetails" style="font-size: 14px; color: #B0C4DE; margin-top: 10px;"></div>
         </div>
     </div>
 
@@ -448,9 +417,14 @@
             ENDPOINTS: {
                 GET_BALANCE: '/get_balance.php',
                 REMOVE_DIAMONDS: '/remove.php',
-                ADD_COINS: '/coinmanage.php'
+                ADD_COINS: '/coinmanage.php',
+                // Yangi endpoint: foydalanuvchi mavjudligini tekshirish
+                CHECK_USER: '/check_user.php'
             }
         };
+        
+        // Debug mode
+        const DEBUG_MODE = true;
         
         // Telegram Web App
         const TELEGRAM_WEB_APP = window.Telegram?.WebApp;
@@ -465,21 +439,14 @@
             isPlaying: false,
             selectedChest: null,
             currentRewards: null,
-            gameHistory: []
+            gameHistory: [],
+            botBalance: 0,
+            botCoins: 0,
+            userExistsInBot: false
         };
         
-        // Sandiq turlari
-        const CHEST_TYPES = [
-            'chest-type-gold',
-            'chest-type-silver', 
-            'chest-type-crystal',
-            'chest-type-frost',
-            'chest-type-ice',
-            'chest-type-platinum',
-            'chest-type-gold',
-            'chest-type-silver',
-            'chest-type-crystal'
-        ];
+        // API chaqiruvlar soni
+        let apiCallCount = 0;
         
         // ==================== TELEGRAM FUNKTSIYALARI ====================
         function getTelegramUser() {
@@ -512,37 +479,31 @@
                 TELEGRAM_WEB_APP.expand();
                 TELEGRAM_WEB_APP.setHeaderColor('#0c1e3a');
                 TELEGRAM_WEB_APP.setBackgroundColor('#0c1e3a');
-                
-                // Telegram navigatsiya tugmalarini moslashtirish
                 TELEGRAM_WEB_APP.BackButton.hide();
             }
         }
         
-        // ==================== API FUNKTSIYALARI ====================
+        // ==================== API FUNKTSIYALARI (YANGILANGAN) ====================
         async function callApi(endpoint, method = 'GET', body = null) {
+            apiCallCount++;
+            updateDebugInfo();
+            
             const url = API_CONFIG.BASE_URL + endpoint;
             
             const options = {
                 method: method,
                 headers: {
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 }
             };
             
             if (body) {
-                if (method === 'GET') {
-                    const urlObj = new URL(url);
-                    Object.keys(body).forEach(key => {
-                        urlObj.searchParams.append(key, body[key]);
-                    });
-                    options.url = urlObj.toString();
-                } else {
-                    const formData = new FormData();
-                    Object.keys(body).forEach(key => {
-                        formData.append(key, body[key]);
-                    });
-                    options.body = formData;
-                }
+                const formData = new URLSearchParams();
+                Object.keys(body).forEach(key => {
+                    formData.append(key, body[key]);
+                });
+                options.body = formData.toString();
             }
             
             try {
@@ -562,6 +523,7 @@
                     error: !response.ok ? `HTTP ${response.status}` : null
                 };
             } catch (error) {
+                console.error('API Error:', error);
                 return {
                     success: false,
                     status: 0,
@@ -571,28 +533,104 @@
             }
         }
         
-        async function getBalance() {
-            const result = await callApi(
-                API_CONFIG.ENDPOINTS.GET_BALANCE,
-                'GET',
-                {
-                    key: API_CONFIG.KEY,
-                    user_id: gameState.user.id
-                }
-            );
+        // Botdagi balansni olish (GET so'rovi)
+        async function getBotBalance() {
+            updateLoadingDetails('Bot balansi tekshirilmoqda...');
             
-            if (result.success && result.data) {
-                return {
-                    diamonds: parseInt(result.data.balance || result.data.diamonds || 0),
-                    coins: parseInt(result.data.coins || 0)
-                };
-            } else {
-                console.warn('Balance olishda xatolik:', result);
-                return null;
+            const url = new URL(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_BALANCE);
+            url.searchParams.append('key', API_CONFIG.KEY);
+            url.searchParams.append('user_id', gameState.user.id);
+            
+            try {
+                const response = await fetch(url.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    gameState.botBalance = parseInt(data.balance || data.diamonds || 0);
+                    gameState.botCoins = parseInt(data.coins || 0);
+                    gameState.userExistsInBot = true;
+                    
+                    // Local state ni yangilash
+                    gameState.diamonds = gameState.botBalance;
+                    gameState.coins = gameState.botCoins;
+                    
+                    updateBalanceDisplay();
+                    updateDebugInfo();
+                    
+                    return {
+                        success: true,
+                        diamonds: gameState.botBalance,
+                        coins: gameState.botCoins
+                    };
+                } else {
+                    // Agar foydalanuvchi botda mavjud bo'lmasa
+                    if (data.message && data.message.includes('not exist') || data.message && data.message.includes('topilmadi')) {
+                        gameState.userExistsInBot = false;
+                        showError('Foydalanuvchi botda mavjud emas. Avval botga /start bosing.');
+                    }
+                    return { success: false, message: data.message };
+                }
+            } catch (error) {
+                console.error('Bot balance error:', error);
+                showError('Bot serveriga ulana olmayapman');
+                return { success: false, message: error.message };
             }
         }
         
-        async function removeDiamonds(amount) {
+        // Foydalanuvchi botda mavjudligini tekshirish
+        async function checkUserInBot() {
+            updateLoadingDetails('Foydalanuvchi tekshirilmoqda...');
+            
+            // Balansni olish orqali tekshiramiz
+            const result = await getBotBalance();
+            
+            if (result.success) {
+                gameState.userExistsInBot = true;
+                return true;
+            } else {
+                // Agar foydalanuvchi mavjud bo'lmasa, yangi yaratish uchun ADD API ni chaqiramiz
+                const addResult = await callApi(API_CONFIG.ENDPOINTS.ADD_COINS, 'POST', {
+                    key: API_CONFIG.KEY,
+                    user_id: gameState.user.id,
+                    amount: 0, // 0 qo'shamiz, faqat foydalanuvchini yaratish uchun
+                    type: 'coins',
+                    reason: 'user_registration'
+                });
+                
+                if (addResult.success) {
+                    gameState.userExistsInBot = true;
+                    return true;
+                } else {
+                    gameState.userExistsInBot = false;
+                    return false;
+                }
+            }
+        }
+        
+        // Diamonds ayirish (optimallashtirilgan)
+        async function removeDiamondsFromBot(amount) {
+            if (!gameState.userExistsInBot) {
+                const userExists = await checkUserInBot();
+                if (!userExists) {
+                    return {
+                        success: false,
+                        message: 'Foydalanuvchi botda mavjud emas. Botga /start buyrug\'ini yuboring.'
+                    };
+                }
+            }
+            
+            updateLoadingDetails(`${amount} diamonds ayirilmoqda...`);
+            
             const result = await callApi(
                 API_CONFIG.ENDPOINTS.REMOVE_DIAMONDS,
                 'POST',
@@ -606,7 +644,20 @@
             return result;
         }
         
-        async function addCoins(amount) {
+        // Coins qo'shish (optimallashtirilgan)
+        async function addCoinsToBot(amount) {
+            if (!gameState.userExistsInBot) {
+                const userExists = await checkUserInBot();
+                if (!userExists) {
+                    return {
+                        success: false,
+                        message: 'Foydalanuvchi botda mavjud emas'
+                    };
+                }
+            }
+            
+            updateLoadingDetails(`${amount} coins qo'shilmoqda...`);
+            
             const result = await callApi(
                 API_CONFIG.ENDPOINTS.ADD_COINS,
                 'POST',
@@ -626,6 +677,11 @@
         function updateBalanceDisplay() {
             document.getElementById('diamondCount').textContent = gameState.diamonds;
             document.getElementById('coinCount').textContent = gameState.coins;
+            
+            // Foydalanuvchi ID ni ko'rsatish
+            if (gameState.user) {
+                document.getElementById('userIdDisplay').textContent = `ID: ${gameState.user.id}`;
+            }
         }
         
         function showMessage(text, type = 'info') {
@@ -640,19 +696,71 @@
                 messageArea.style.color = 'rgba(255, 255, 255, 0.9)';
             }
             
-            // Animatsiya
             messageArea.style.opacity = '0';
             setTimeout(() => {
                 messageArea.style.transition = 'opacity 0.3s';
                 messageArea.style.opacity = '1';
             }, 10);
+            
+            // Xatolik xabarini tozalash
+            hideError();
         }
         
-        function showLoading(show) {
-            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        function showError(errorText) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = errorText;
+            errorElement.style.display = 'block';
+            
+            // 5 soniyadan keyin yashirish
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        
+        function showLoading(show, text = 'Yuklanmoqda...', details = '') {
+            const overlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            const loadingDetails = document.getElementById('loadingDetails');
+            
+            overlay.style.display = show ? 'flex' : 'none';
+            if (show) {
+                loadingText.textContent = text;
+                loadingDetails.textContent = details;
+            }
+        }
+        
+        function updateLoadingDetails(text) {
+            if (DEBUG_MODE) {
+                document.getElementById('loadingDetails').textContent = text;
+            }
+        }
+        
+        function updateDebugInfo() {
+            if (DEBUG_MODE) {
+                document.getElementById('debugInfo').style.display = 'block';
+                document.getElementById('debugBotStatus').textContent = 
+                    gameState.userExistsInBot ? 'Mavjud' : 'Mavjud emas';
+                document.getElementById('debugApiCalls').textContent = apiCallCount;
+            }
         }
         
         // ==================== SANDIQLARNI YARATISH ====================
+        const CHEST_TYPES = [
+            'chest-type-gold',
+            'chest-type-silver', 
+            'chest-type-crystal',
+            'chest-type-frost',
+            'chest-type-ice',
+            'chest-type-platinum',
+            'chest-type-gold',
+            'chest-type-silver',
+            'chest-type-crystal'
+        ];
+        
         function createChests() {
             const grid = document.getElementById('chestsGrid');
             grid.innerHTML = '';
@@ -712,7 +820,6 @@
             gameState.selectedChest = index;
             element.style.pointerEvents = 'none';
             
-            // Shake animatsiyasi
             element.style.animation = 'chest-shake 0.5s ease';
             
             setTimeout(async () => {
@@ -729,11 +836,10 @@
                     valueDiv.style.opacity = '1';
                     valueDiv.style.animation = 'coin-bounce 0.5s ease';
                     
-                    // Coins qo'shish (local)
+                    // Local coins qo'shish
                     gameState.coins += coinsWon;
                     updateBalanceDisplay();
                     
-                    // Boshqa sandiqlarni ochish
                     setTimeout(() => revealOtherChests(coinsWon), 800);
                 }, 400);
             }, 500);
@@ -760,24 +866,24 @@
                 gameState.isPlaying = false;
                 gameState.totalPlays++;
                 
-                // Coins qo'shish (server)
-                showLoading(true);
-                const result = await addCoins(coinsWon);
+                // Coins qo'shish (bot serveriga)
+                showLoading(true, 'Coins qo\'shilmoqda...', `${coinsWon} coins botga yozilmoqda`);
+                
+                const result = await addCoinsToBot(coinsWon);
                 
                 showLoading(false);
                 
                 if (result.success) {
-                    showMessage(`🎉 ${coinsWon} coins qo'shildi! Yangi balans: ${gameState.coins} 🪙`, 'success');
+                    showMessage(`🎉 ${coinsWon} coins botga qo'shildi!`, 'success');
                     
                     // Yangi balansni olish
-                    const newBalance = await getBalance();
-                    if (newBalance) {
-                        gameState.coins = newBalance.coins;
-                        gameState.diamonds = newBalance.diamonds;
+                    const balanceResult = await getBotBalance();
+                    if (balanceResult.success) {
                         updateBalanceDisplay();
                     }
                 } else {
-                    showMessage('⚠️ Coins faqat local saqlandi', 'info');
+                    showError(`⚠️ Bot xatosi: ${result.data?.message || result.error}`);
+                    showMessage('⚠️ Coins faqat lokal saqlandi', 'info');
                 }
                 
                 // Tugmani yoqish
@@ -800,21 +906,41 @@
         }
         
         async function startGame() {
+            // Avval foydalanuvchi botda mavjudligini tekshirish
+            if (!gameState.userExistsInBot) {
+                showLoading(true, 'Foydalanuvchi tekshirilmoqda...');
+                const userExists = await checkUserInBot();
+                showLoading(false);
+                
+                if (!userExists) {
+                    showError('❌ Botda foydalanuvchi topilmadi! Avval @RekchiAi botga /start bosing.');
+                    return;
+                }
+            }
+            
             // Diamonds tekshirish
             if (gameState.diamonds < 10) {
                 showMessage('❌ Yetarli diamonds mavjud emas! Kamida 10 💎 talab qilinadi.', 'error');
                 return;
             }
             
-            showLoading(true);
+            showLoading(true, 'O\'yin boshlanmoqda...', 'Diamonds ayirilmoqda');
             
-            // Serverdan diamonds ayirish
-            const removeResult = await removeDiamonds(10);
+            // Botdan diamonds ayirish
+            const removeResult = await removeDiamondsFromBot(10);
             
             if (!removeResult.success) {
                 showLoading(false);
+                
+                // "balance not exists" xatosini aniqlash
                 const errorMsg = removeResult.data?.message || removeResult.error || 'Noma\'lum xato';
-                showMessage(`❌ Xato: ${errorMsg}`, 'error');
+                
+                if (errorMsg.includes('not exist') || errorMsg.includes('topilmadi')) {
+                    gameState.userExistsInBot = false;
+                    showError('❌ Botda balans topilmadi! Avval @RekchiAi botga /start bosing.');
+                } else {
+                    showError(`❌ Diamonds ayirishda xatolik: ${errorMsg}`);
+                }
                 return;
             }
             
@@ -839,10 +965,25 @@
             showMessage('✨ Bir sandiqni tanlang!', 'info');
         }
         
+        // ==================== BOT BALANSNI DOIMIY TEKSHIRISH ====================
+        async function startBotBalanceChecker() {
+            if (!gameState.user) return;
+            
+            // Dastlab tekshirish
+            await getBotBalance();
+            
+            // Har 30 soniyada tekshirish
+            setInterval(async () => {
+                if (!gameState.isPlaying) {
+                    await getBotBalance();
+                }
+            }, 30000);
+        }
+        
         // ==================== DASTLABKI YUKLASH ====================
         async function init() {
             // Yuklanishni ko'rsatish
-            showLoading(true);
+            showLoading(true, 'Telegram yuklanmoqda...');
             
             // Telegram Web App ni ishga tushirish
             initTelegram();
@@ -850,18 +991,18 @@
             // Foydalanuvchini olish
             gameState.user = getTelegramUser();
             
-            // Serverdan balansni olish
-            const balance = await getBalance();
+            // Bot balansini olish
+            showLoading(true, 'Bot bilan bog\'lanish...', 'Foydalanuvchi tekshirilmoqda');
+            const balanceResult = await getBotBalance();
             
-            if (balance) {
-                gameState.diamonds = balance.diamonds;
-                gameState.coins = balance.coins;
-                showMessage('✅ Serverga ulandi', 'success');
+            if (balanceResult.success) {
+                showMessage('✅ Bot bilan bog\'landi', 'success');
             } else {
-                // Agar server ishlamasa, offline rejim
-                showMessage('⚠️ Offline rejim. Local balans ishlatilmoqda.', 'info');
-                gameState.diamonds = 100;
+                showError('⚠️ Bot bilan bog\'lanishda muammo. Offline rejim.');
+                // Offline rejim uchun boshlang'ich balans
+                gameState.diamonds = 50;
                 gameState.coins = 100;
+                updateBalanceDisplay();
             }
             
             // UI ni yangilash
@@ -871,46 +1012,23 @@
             // O'ynash tugmasini ulash
             document.getElementById('playButton').addEventListener('click', startGame);
             
+            // Bot balans tekshiruvchini ishga tushirish
+            startBotBalanceChecker();
+            
             // Yuklanishni yopish
             showLoading(false);
             showMessage('🎮 O\'yinni boshlash uchun "Play" tugmasini bosing!', 'info');
             
-            // Ekran o'lchamini moslash
-            handleResize();
-            
-            // Resize hodisasi
-            window.addEventListener('resize', handleResize);
-        }
-        
-        function handleResize() {
-            // Telefon ekranida sandiqlar to'liq ko'rinsin
-            const chestsContainer = document.querySelector('.chests-container');
-            const chestsGrid = document.querySelector('.chests-grid');
-            
-            if (chestsContainer && chestsGrid) {
-                const containerHeight = chestsContainer.clientHeight;
-                const containerWidth = chestsContainer.clientWidth;
+            // Foydalanuvchini botda tekshirish
+            if (!gameState.userExistsInBot) {
+                showLoading(true, 'Bot tekshiruvi...', 'Foydalanuvchi ro\'yxatdan o\'tkazilmoqda');
+                const userExists = await checkUserInBot();
+                showLoading(false);
                 
-                // Kichik ekranlar uchun
-                if (window.innerHeight < 600) {
-                    chestsGrid.style.gap = '6px';
-                    chestsGrid.style.aspectRatio = '1/1.1';
-                    
-                    const chests = document.querySelectorAll('.chest-card');
-                    chests.forEach(chest => {
-                        chest.style.minHeight = '70px';
-                    });
-                }
-                
-                // Katta ekranlar uchun
-                if (window.innerHeight > 700) {
-                    chestsGrid.style.gap = '12px';
-                    chestsGrid.style.aspectRatio = '1/0.85';
-                    
-                    const chests = document.querySelectorAll('.chest-card');
-                    chests.forEach(chest => {
-                        chest.style.minHeight = '90px';
-                    });
+                if (userExists) {
+                    showMessage('✅ Botda foydalanuvchi mavjud', 'success');
+                } else {
+                    showError('⚠️ Botda foydalanuvchi mavjud emas. @RekchiAi botga /start bosing.');
                 }
             }
         }
@@ -918,13 +1036,8 @@
         // Dasturni ishga tushirish
         document.addEventListener('DOMContentLoaded', init);
         
-        // Touch uchun qo'shimcha optimallashtirish
+        // Touch uchun optimallashtirish
         document.addEventListener('touchstart', function() {}, {passive: true});
-        document.addEventListener('touchmove', function(e) {
-            if (e.scale !== 1) {
-                e.preventDefault();
-            }
-        }, { passive: false });
     </script>
 </body>
 </html>
