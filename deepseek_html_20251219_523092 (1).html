@@ -1,0 +1,926 @@
+<!doctype html>
+<html lang="uz" class="h-full">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Winter Treasure - Olmos O'yini</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(180deg, #0c1e3a 0%, #1a3b5d 30%, #2d4b7a 60%, #3d5a8c 100%);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        
+        /* Asosiy container */
+        .app-container {
+            width: 100%;
+            height: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+        
+        /* Header */
+        .header {
+            flex-shrink: 0;
+            padding: 12px 16px;
+            background: rgba(20, 40, 80, 0.9);
+            border-bottom: 2px solid rgba(100, 200, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Balans kartalari */
+        .balance-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .balance-card {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        /* O'yin maydoni */
+        .game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Sandiqlar container */
+        .chests-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            margin: 0;
+        }
+        
+        /* Sandiqlar grid */
+        .chests-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1/0.9;
+            padding: 5px;
+            margin: 0 auto;
+        }
+        
+        /* Sandiq kartasi */
+        .chest-card {
+            width: 100%;
+            height: 100%;
+            min-height: 85px;
+            background: linear-gradient(135deg, var(--chest-color-1), var(--chest-color-2));
+            border: 2px solid var(--chest-border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .chest-card:active {
+            transform: scale(0.98);
+        }
+        
+        .chest-icon {
+            font-size: 40px;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+        }
+        
+        .chest-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #FFD700;
+            text-shadow: 0 2px 8px rgba(255, 215, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Footer */
+        .footer {
+            flex-shrink: 0;
+            padding: 15px;
+            background: rgba(20, 40, 80, 0.9);
+            border-top: 2px solid rgba(100, 200, 255, 0.2);
+            text-align: center;
+        }
+        
+        /* Play tugmasi */
+        .play-button {
+            width: 100%;
+            max-width: 300px;
+            padding: 16px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .play-button:active {
+            transform: scale(0.98);
+        }
+        
+        .play-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* Xabar maydoni */
+        .message-area {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            min-height: 20px;
+            text-align: center;
+        }
+        
+        /* Xatolik xabari */
+        .error-message {
+            background: rgba(255, 100, 100, 0.2);
+            border: 2px solid rgba(255, 100, 100, 0.4);
+            color: #FF6B6B;
+            padding: 10px;
+            border-radius: 15px;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+        
+        /* Yuklanish overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        /* Sandiq turlari ranglari */
+        .chest-type-gold {
+            --chest-color-1: #FFD700;
+            --chest-color-2: #FFAA00;
+            --chest-border: #FF9900;
+        }
+        
+        .chest-type-silver {
+            --chest-color-1: #C0C0C0;
+            --chest-color-2: #A0A0A0;
+            --chest-border: #909090;
+        }
+        
+        .chest-type-crystal {
+            --chest-color-1: #4FACFE;
+            --chest-color-2: #00F2FE;
+            --chest-border: #0099FF;
+        }
+        
+        .chest-type-frost {
+            --chest-color-1: #9A4DFF;
+            --chest-color-2: #654EA3;
+            --chest-border: #7B3FE4;
+        }
+        
+        .chest-type-ice {
+            --chest-color-1: #00FFFF;
+            --chest-color-2: #4FACFE;
+            --chest-border: #00CCFF;
+        }
+        
+        .chest-type-platinum {
+            --chest-color-1: #E5E4E2;
+            --chest-color-2: #B8B8B8;
+            --chest-border: #A0A0A0;
+        }
+        
+        /* Animatsiyalar */
+        .chest-selected {
+            animation: chest-selected 1.5s infinite alternate;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
+        }
+        
+        @keyframes chest-selected {
+            0% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.5); }
+            100% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.9); }
+        }
+        
+        @keyframes coin-bounce {
+            0% { transform: translateY(-40px) scale(0); opacity: 0; }
+            60% { transform: translateY(0) scale(1.1); opacity: 1; }
+            80% { transform: translateY(-3px) scale(0.95); }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .chest-opened {
+            background: linear-gradient(135deg, #654ea3, #da98b4) !important;
+        }
+        
+        .chest-revealed {
+            opacity: 0.6;
+            transform: scale(0.95);
+        }
+        
+        /* Responsive sozlamalar */
+        @media (max-width: 380px) {
+            .chests-grid {
+                gap: 8px;
+                aspect-ratio: 1/0.95;
+            }
+            
+            .chest-icon {
+                font-size: 35px;
+            }
+            
+            .chest-value {
+                font-size: 18px;
+            }
+            
+            .play-button {
+                padding: 14px;
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-height: 700px) {
+            .header {
+                padding: 10px 16px;
+            }
+            
+            .chests-grid {
+                aspect-ratio: 1/1;
+            }
+            
+            .chest-icon {
+                font-size: 35px;
+            }
+            
+            .footer {
+                padding: 12px 15px;
+            }
+        }
+        
+        @media (max-height: 600px) {
+            .chests-grid {
+                aspect-ratio: 1/1.1;
+                gap: 6px;
+            }
+            
+            .chest-card {
+                min-height: 70px;
+            }
+            
+            .chest-icon {
+                font-size: 30px;
+            }
+            
+            .chest-value {
+                font-size: 16px;
+            }
+        }
+        
+        /* iPhone notch uchun */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .app-container {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Header: O'yin nomi va balanslar -->
+        <div class="header">
+            <div style="text-align: center; margin-bottom: 5px;">
+                <h1 style="font-size: 20px; font-weight: 700; color: #FFFFFF; text-shadow: 0 0 15px rgba(79, 172, 254, 0.8);">
+                    ❄️ Winter Treasure ❄️
+                </h1>
+                <p style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">
+                    Olmos ishlat, tanga yut!
+                </p>
+            </div>
+            
+            <div class="balance-container">
+                <!-- Diamonds balansi -->
+                <div class="balance-card">
+                    <div style="font-size: 24px; color: #00FFFF; filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.6));">
+                        💎
+                    </div>
+                    <div>
+                        <div style="font-size: 10px; color: rgba(255, 255, 255, 0.7);">Diamonds</div>
+                        <div id="diamondCount" style="font-size: 18px; font-weight: 700; color: #00FFFF;">
+                            0
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Coins balansi -->
+                <div class="balance-card">
+                    <div style="font-size: 24px; color: #FFD700; filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));">
+                        🪙
+                    </div>
+                    <div>
+                        <div style="font-size: 10px; color: rgba(255, 255, 255, 0.7);">Coins</div>
+                        <div id="coinCount" style="font-size: 18px; font-weight: 700; color: #FFD700;">
+                            0
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Foydalanuvchi ID -->
+            <div id="userIdDisplay" style="font-size: 10px; color: rgba(255, 255, 255, 0.5); text-align: center; margin-top: 5px;">
+                ID: yuklanmoqda...
+            </div>
+        </div>
+        
+        <!-- Asosiy o'yin maydoni -->
+        <div class="game-area">
+            <div class="chests-container">
+                <div id="chestsGrid" class="chests-grid">
+                    <!-- Sandiqlar JavaScript bilan yaratiladi -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer: Tugma va xabarlar -->
+        <div class="footer">
+            <button id="playButton" class="play-button">
+                <span id="playButtonText">🎮 Play (10 💎)</span>
+            </button>
+            
+            <div id="messageArea" class="message-area">
+                🎮 O'yinni boshlash uchun Play tugmasini bosing
+            </div>
+            
+            <div id="errorMessage" class="error-message"></div>
+        </div>
+        
+    </div>
+    
+    <!-- Yuklanish overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div style="text-align: center; padding: 30px; background: rgba(20, 40, 80, 0.9); border-radius: 20px; border: 2px solid rgba(100, 200, 255, 0.3);">
+            <div style="width: 50px; height: 50px; border: 5px solid rgba(255, 255, 255, 0.3); border-top: 5px solid #FFD700; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            <div id="loadingText" style="font-size: 18px; font-weight: 600; color: #FFFFFF;">
+                Yuklanmoqda...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== KONFIGURATSIYA ====================
+        const API_CONFIG = {
+            KEY: '4564123:hkjhfadfhieapkdnga',
+            BASE_URL: 'https://68ed1ab05ca4e.myxvest1.ru',
+            ENDPOINTS: {
+                GET_BALANCE: '/get_balance.php',
+                REMOVE_DIAMONDS: '/remove.php',
+                ADD_COINS: '/coinmanage.php'
+            }
+        };
+        
+        // Telegram Web App
+        const TELEGRAM_WEB_APP = window.Telegram?.WebApp;
+        
+        // O'yin holati
+        let gameState = {
+            user: null,
+            diamonds: 0,
+            coins: 0,
+            totalPlays: 0,
+            isFirstPlay: true,
+            isPlaying: false,
+            selectedChest: null,
+            currentRewards: null,
+            gameHistory: []
+        };
+        
+        // Sandiq turlari
+        const CHEST_TYPES = [
+            'chest-type-gold',
+            'chest-type-silver', 
+            'chest-type-crystal',
+            'chest-type-frost',
+            'chest-type-ice',
+            'chest-type-platinum',
+            'chest-type-gold',
+            'chest-type-silver',
+            'chest-type-crystal'
+        ];
+        
+        // ==================== TELEGRAM FUNKTSIYALARI ====================
+        function getTelegramUser() {
+            if (TELEGRAM_WEB_APP?.initDataUnsafe?.user) {
+                const tgUser = TELEGRAM_WEB_APP.initDataUnsafe.user;
+                return {
+                    id: String(tgUser.id),
+                    username: tgUser.username || `user_${tgUser.id}`,
+                    firstName: tgUser.first_name || 'Foydalanuvchi',
+                    lastName: tgUser.last_name || '',
+                    photoUrl: tgUser.photo_url || '',
+                    languageCode: tgUser.language_code || 'uz'
+                };
+            }
+            
+            // Test rejimi uchun
+            return {
+                id: '123456789',
+                username: 'test_user',
+                firstName: 'Test',
+                lastName: 'User',
+                photoUrl: '',
+                languageCode: 'uz'
+            };
+        }
+        
+        function initTelegram() {
+            if (TELEGRAM_WEB_APP) {
+                TELEGRAM_WEB_APP.ready();
+                TELEGRAM_WEB_APP.expand();
+                TELEGRAM_WEB_APP.setHeaderColor('#0c1e3a');
+                TELEGRAM_WEB_APP.setBackgroundColor('#0c1e3a');
+                TELEGRAM_WEB_APP.BackButton.hide();
+            }
+        }
+        
+        // ==================== API FUNKTSIYALARI ====================
+        
+        // Botdan balansni olish - YANGILANGAN VERSIYA
+        async function getBotBalance() {
+            try {
+                const url = new URL(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_BALANCE);
+                url.searchParams.append('key', API_CONFIG.KEY);
+                url.searchParams.append('user_id', gameState.user.id);
+                
+                console.log('Balans so\'rovi:', url.toString());
+                
+                const response = await fetch(url.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    timeout: 10000
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP xatosi: ${response.status} ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Balans javobi:', data);
+                
+                if (data.success) {
+                    // DIQQAT: To'g'ri ma'lumotlarni olish
+                    const diamonds = parseInt(data.diamonds) || parseInt(data.balance) || 0;
+                    const coins = parseInt(data.coins) || 0;
+                    
+                    gameState.diamonds = diamonds;
+                    gameState.coins = coins;
+                    
+                    updateBalanceDisplay();
+                    
+                    return { 
+                        success: true, 
+                        diamonds: diamonds, 
+                        coins: coins,
+                        data: data 
+                    };
+                } else {
+                    console.warn('Bot balans olishda xatolik:', data.message);
+                    return { 
+                        success: false, 
+                        message: data.message || 'Noma\'lum xato' 
+                    };
+                }
+            } catch (error) {
+                console.error('Bot balans xatosi:', error);
+                return { 
+                    success: false, 
+                    message: error.message || 'Serverga ulanishda xatolik' 
+                };
+            }
+        }
+        
+        // Botdan diamonds ayirish
+        async function removeDiamondsFromBot(amount) {
+            try {
+                const formData = new URLSearchParams();
+                formData.append('key', API_CONFIG.KEY);
+                formData.append('user_id', gameState.user.id);
+                formData.append('amount', amount);
+                
+                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.REMOVE_DIAMONDS, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formData.toString(),
+                    timeout: 10000
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP xatosi: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Diamonds ayirish javobi:', data);
+                return data;
+                
+            } catch (error) {
+                console.error('Diamonds ayirishda xatolik:', error);
+                return { 
+                    success: false, 
+                    message: error.message || 'Serverga ulanishda xatolik' 
+                };
+            }
+        }
+        
+        // Botga coins qo'shish
+        async function addCoinsToBot(amount) {
+            try {
+                const formData = new URLSearchParams();
+                formData.append('key', API_CONFIG.KEY);
+                formData.append('user_id', gameState.user.id);
+                formData.append('amount', amount);
+                formData.append('type', 'coins');
+                formData.append('reason', 'game_reward');
+                
+                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.ADD_COINS, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formData.toString(),
+                    timeout: 10000
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP xatosi: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Coins qo\'shish javobi:', data);
+                return data;
+                
+            } catch (error) {
+                console.error('Coins qo\'shishda xatolik:', error);
+                return { 
+                    success: false, 
+                    message: error.message || 'Serverga ulanishda xatolik' 
+                };
+            }
+        }
+        
+        // ==================== UI FUNKTSIYALARI ====================
+        function updateBalanceDisplay() {
+            document.getElementById('diamondCount').textContent = gameState.diamonds.toLocaleString();
+            document.getElementById('coinCount').textContent = gameState.coins.toLocaleString();
+            
+            if (gameState.user) {
+                document.getElementById('userIdDisplay').textContent = `ID: ${gameState.user.id}`;
+            }
+        }
+        
+        function showMessage(text, type = 'info') {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.textContent = text;
+            
+            if (type === 'error') {
+                messageArea.style.color = '#FF6B6B';
+            } else if (type === 'success') {
+                messageArea.style.color = '#4ade80';
+            } else {
+                messageArea.style.color = 'rgba(255, 255, 255, 0.9)';
+            }
+            
+            messageArea.style.opacity = '0';
+            setTimeout(() => {
+                messageArea.style.transition = 'opacity 0.3s';
+                messageArea.style.opacity = '1';
+            }, 10);
+            
+            hideError();
+        }
+        
+        function showError(errorText) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = errorText;
+            errorElement.style.display = 'block';
+            
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        
+        function showLoading(show, text = 'Yuklanmoqda...') {
+            const overlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            
+            overlay.style.display = show ? 'flex' : 'none';
+            if (show) {
+                loadingText.textContent = text;
+            }
+        }
+        
+        // ==================== SANDIQLARNI YARATISH ====================
+        function createChests() {
+            const grid = document.getElementById('chestsGrid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 9; i++) {
+                const chest = document.createElement('div');
+                chest.className = `chest-card ${CHEST_TYPES[i]}`;
+                chest.dataset.index = i;
+                
+                chest.innerHTML = `
+                    <div class="chest-icon">🎁</div>
+                    <div class="chest-value"></div>
+                `;
+                
+                chest.addEventListener('click', () => selectChest(i, chest));
+                grid.appendChild(chest);
+            }
+        }
+        
+        // ==================== O'YIN LOGIKASI ====================
+        function generateRewards() {
+            const allRewards = [1, 2, 3, 4, 5, 6, 10, 50, 100];
+            const shuffledRewards = [...allRewards].sort(() => Math.random() - 0.5);
+            
+            let winningValue;
+            
+            if (gameState.isFirstPlay) {
+                // Birinchi o'yin: faqat 4 yoki 6
+                winningValue = Math.random() < 0.5 ? 4 : 6;
+            } else {
+                // Keyingi o'yinlar: ehtimollik tizimi
+                const rand = Math.random() * 100;
+                
+                if (rand < 5) {
+                    winningValue = 5;
+                } else if (rand < 25) {
+                    winningValue = 4;
+                } else if (rand < 60) {
+                    winningValue = 3;
+                } else if (rand < 90) {
+                    winningValue = 2;
+                } else {
+                    winningValue = 1;
+                }
+            }
+            
+            const winningChest = Math.floor(Math.random() * 9);
+            
+            return {
+                rewards: shuffledRewards,
+                winningChest: winningChest,
+                winningValue: winningValue
+            };
+        }
+        
+        async function selectChest(index, element) {
+            if (!gameState.isPlaying || gameState.selectedChest !== null) return;
+            
+            gameState.selectedChest = index;
+            element.style.pointerEvents = 'none';
+            
+            // Sandiqni qimirlatish
+            element.style.animation = 'chest-selected 0.5s ease';
+            
+            setTimeout(async () => {
+                element.classList.add('chest-selected');
+                
+                const coinsWon = gameState.currentRewards.winningValue;
+                
+                setTimeout(() => {
+                    element.classList.remove('chest-selected');
+                    element.classList.add('chest-opened');
+                    
+                    const valueDiv = element.querySelector('.chest-value');
+                    valueDiv.textContent = `+${coinsWon}`;
+                    valueDiv.style.opacity = '1';
+                    valueDiv.style.animation = 'coin-bounce 0.5s ease';
+                    
+                    // Local coins qo'shish
+                    gameState.coins += coinsWon;
+                    updateBalanceDisplay();
+                    
+                    setTimeout(() => revealOtherChests(coinsWon), 800);
+                }, 400);
+            }, 500);
+        }
+        
+        function revealOtherChests(coinsWon) {
+            const chests = document.querySelectorAll('.chest-card');
+            
+            chests.forEach((chest, i) => {
+                if (i !== gameState.selectedChest) {
+                    setTimeout(() => {
+                        chest.classList.add('chest-revealed');
+                        chest.style.pointerEvents = 'none';
+                        
+                        const valueDiv = chest.querySelector('.chest-value');
+                        valueDiv.textContent = `${gameState.currentRewards.rewards[i]}`;
+                        valueDiv.style.opacity = '0.8';
+                        valueDiv.style.color = '#B0C4DE';
+                    }, i * 80);
+                }
+            });
+            
+            setTimeout(async () => {
+                gameState.isPlaying = false;
+                gameState.totalPlays++;
+                
+                // Botga coins qo'shish
+                showLoading(true, 'Coins qo\'shilmoqda...');
+                
+                const result = await addCoinsToBot(coinsWon);
+                
+                showLoading(false);
+                
+                if (result.success) {
+                    showMessage(`🎉 ${coinsWon} coins botga qo'shildi!`, 'success');
+                    
+                    // Yangi balansni olish
+                    await getBotBalance();
+                } else {
+                    // Agar coins qo'shishda xatolik bo'lsa
+                    showError(`⚠️ Server xatosi: ${result.message || 'Noma\'lum xato'}`);
+                    showMessage('⚠️ Coins faqat lokal saqlandi', 'info');
+                }
+                
+                // Tugmani yoqish
+                const playButton = document.getElementById('playButton');
+                playButton.disabled = false;
+                playButton.textContent = '🎮 Play (10 💎)';
+                
+                // Birinchi o'yin tugashi
+                if (gameState.isFirstPlay) {
+                    gameState.isFirstPlay = false;
+                }
+                
+                // Tarixga yozish
+                gameState.gameHistory.push({
+                    timestamp: new Date().toISOString(),
+                    coinsWon: coinsWon,
+                    diamondsSpent: 10
+                });
+                
+            }, 1000);
+        }
+        
+        async function startGame() {
+            // Diamonds tekshirish
+            if (gameState.diamonds < 10) {
+                showMessage('❌ Yetarli diamonds mavjud emas! Kamida 10 💎 talab qilinadi.', 'error');
+                return;
+            }
+            
+            showLoading(true, 'O\'yin boshlanmoqda...');
+            
+            // Botdan diamonds ayirish
+            const removeResult = await removeDiamondsFromBot(10);
+            
+            if (!removeResult.success) {
+                showLoading(false);
+                
+                const errorMsg = removeResult.message || 'Noma\'lum xato';
+                showError(`❌ Diamonds ayirishda xatolik: ${errorMsg}`);
+                showMessage('❌ O\'yinni boshlab bo\'lmadi', 'error');
+                return;
+            }
+            
+            // Local diamonds yangilash
+            gameState.diamonds -= 10;
+            updateBalanceDisplay();
+            
+            // O'yin holatini sozlash
+            gameState.isPlaying = true;
+            gameState.selectedChest = null;
+            gameState.currentRewards = generateRewards();
+            
+            // Sandiqlarni yaratish
+            createChests();
+            
+            // Tugmani o'chirish
+            const playButton = document.getElementById('playButton');
+            playButton.disabled = true;
+            playButton.textContent = '⏳ O\'yin davom etmoqda...';
+            
+            showLoading(false);
+            showMessage('✨ Bir sandiqni tanlang!', 'info');
+        }
+        
+        // ==================== DASTLABKI YUKLASH ====================
+        async function init() {
+            // Yuklanishni ko'rsatish
+            showLoading(true, 'Telegram yuklanmoqda...');
+            
+            // Telegram Web App ni ishga tushirish
+            initTelegram();
+            
+            // Foydalanuvchini olish
+            gameState.user = getTelegramUser();
+            
+            // Bot balansini olish
+            showLoading(true, 'Bot bilan bog\'lanish...');
+            const balanceResult = await getBotBalance();
+            
+            if (balanceResult.success) {
+                showMessage(`✅ Balans: ${gameState.diamonds} 💎 va ${gameState.coins} 🪙`, 'success');
+            } else {
+                showMessage('⚠️ Bot bilan bog\'lanishda muammo', 'info');
+                // Offline rejim uchun boshlang'ich balans
+                gameState.diamonds = 50;
+                gameState.coins = 100;
+                updateBalanceDisplay();
+            }
+            
+            // UI ni yangilash
+            updateBalanceDisplay();
+            createChests();
+            
+            // O'ynash tugmasini ulash
+            document.getElementById('playButton').addEventListener('click', startGame);
+            
+            // Yuklanishni yopish
+            showLoading(false);
+            showMessage('🎮 O\'yinni boshlash uchun "Play" tugmasini bosing!', 'info');
+        }
+        
+        // Dasturni ishga tushirish
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
