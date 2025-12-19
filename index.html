@@ -1,975 +1,930 @@
 <!doctype html>
-<html lang="en" class="h-full">
+<html lang="uz" class="h-full">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Winter Treasure Hunt</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      user-select: none;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Winter Treasure - Olmos O'yini</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    body {
-      font-family: 'Fredoka', sans-serif;
-      overflow: hidden;
-      width: 100%;
-      height: 100vh;
-      background: linear-gradient(180deg, #0c1e3a 0%, #1a3b5d 30%, #2d4b7a 60%, #3d5a8c 100%);
-    }
-    
-    /* Animatsiyalar */
-    @keyframes snowfall {
-      0% { transform: translateY(-10px) translateX(0) rotate(0deg); opacity: 0.9; }
-      100% { transform: translateY(100vh) translateX(30px) rotate(360deg); opacity: 0.3; }
-    }
-    
-    @keyframes sparkle {
-      0%, 100% { transform: scale(0) rotate(0deg); opacity: 0; }
-      50% { transform: scale(1) rotate(180deg); opacity: 1; }
-    }
-    
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
-    }
-    
-    @keyframes chest-shake {
-      0%, 100% { transform: rotate(0deg) scale(1); }
-      25% { transform: rotate(-5deg) scale(1.05); }
-      75% { transform: rotate(5deg) scale(1.05); }
-    }
-    
-    @keyframes chest-open {
-      0% { transform: scale(1) rotateY(0deg); }
-      50% { transform: scale(1.2) rotateY(10deg); }
-      100% { transform: scale(1.1) rotateY(0deg); }
-    }
-    
-    @keyframes coin-bounce {
-      0% { transform: translateY(-50px) scale(0); opacity: 0; }
-      60% { transform: translateY(0) scale(1.2); opacity: 1; }
-      80% { transform: translateY(-5px) scale(0.95); }
-      100% { transform: translateY(0) scale(1); opacity: 1; }
-    }
-    
-    @keyframes glow-pulse {
-      0%, 100% { 
-        box-shadow: 0 0 20px rgba(79, 172, 254, 0.5),
-                    0 0 40px rgba(79, 172, 254, 0.3),
-                    inset 0 0 20px rgba(255, 255, 255, 0.2);
-      }
-      50% { 
-        box-shadow: 0 0 30px rgba(79, 172, 254, 0.8),
-                    0 0 60px rgba(79, 172, 254, 0.5),
-                    inset 0 0 30px rgba(255, 255, 255, 0.3);
-      }
-    }
-    
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    /* Efektlar */
-    .snowflake {
-      position: absolute;
-      color: #E0F7FF;
-      font-size: 1.5em;
-      animation: snowfall linear infinite;
-      pointer-events: none;
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
-    }
-    
-    .sparkle {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background: linear-gradient(45deg, #FFD700, #FFF);
-      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-      animation: sparkle 3s infinite;
-      pointer-events: none;
-    }
-    
-    /* Asosiy kontainer */
-    .app-container {
-      width: 100%;
-      height: 100vh;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      padding: 15px;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    
-    /* Glass efekti */
-    .glass {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(20px);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 25px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    }
-    
-    /* Yuklanish indikatori */
-    .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid rgba(255, 255, 255, 0.3);
-      border-top: 5px solid #FFD700;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
-    }
-    
-    /* Sandiq stillari */
-    .chest {
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      transform-style: preserve-3d;
-      position: relative;
-    }
-    
-    .chest:hover:not(.opened):not(.revealed) {
-      transform: translateY(-8px) scale(1.05);
-    }
-    
-    .chest.shake {
-      animation: chest-shake 0.6s ease;
-    }
-    
-    .chest.opening {
-      animation: chest-open 0.8s ease forwards;
-    }
-    
-    .chest.revealed {
-      opacity: 0.7;
-      transform: scale(0.95);
-    }
-    
-    .chest.winner {
-      animation: glow-pulse 2s infinite;
-    }
-    
-    /* Balans ikonkalari */
-    .balance-icon {
-      animation: float 3s ease-in-out infinite;
-    }
-    
-    /* Tugma stillari */
-    .btn-primary {
-      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #3b82f6 100%);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      color: white;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .btn-primary:active {
-      transform: scale(0.98);
-    }
-    
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    
-    /* Test tugmasi */
-    .test-btn {
-      background: linear-gradient(135deg, #FF7E5F 0%, #FEB47B 100%);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      color: white;
-      font-weight: 600;
-      padding: 8px 16px;
-      border-radius: 15px;
-      cursor: pointer;
-      margin-top: 10px;
-      width: 100%;
-      max-width: 200px;
-    }
-    
-    /* Xatolik xabari */
-    .error-message {
-      background: rgba(255, 100, 100, 0.2);
-      border: 2px solid rgba(255, 100, 100, 0.4);
-      color: #FF6B6B;
-      padding: 10px;
-      border-radius: 15px;
-      margin-top: 10px;
-      font-size: 14px;
-      text-align: center;
-    }
-    
-    /* Responsive */
-    @media (max-width: 480px) {
-      .app-container {
-        padding: 10px;
-      }
-    }
-  </style>
-</head>
-<body class="h-full">
-  <!-- Efektlar kontaineri -->
-  <div id="effectsContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;"></div>
-  
-  <!-- Asosiy kontainer -->
-  <div class="app-container" style="z-index: 2;">
-    
-    <!-- Top bar - User info -->
-    <div class="glass" style="padding: 12px 15px; margin-bottom: 15px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <div id="userPhoto" class="glass" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6, #6366F1); display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; font-weight: 700;">
-            👤
-          </div>
-          <div>
-            <div id="userName" style="font-size: 16px; color: #FFFFFF; font-weight: 600;">
-              Foydalanuvchi
-            </div>
-            <div id="userUsername" style="font-size: 12px; color: #B0C4DE;">
-              @username
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Balanslar -->
-      <div style="display: flex; justify-content: space-between; gap: 10px;">
-        <!-- Diamonds -->
-        <div style="flex: 1; display: flex; align-items: center; gap: 8px; background: rgba(0, 255, 255, 0.15); padding: 10px; border-radius: 15px;">
-          <div class="balance-icon" style="font-size: 24px; filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.8));">
-            💎
-          </div>
-          <div style="flex: 1;">
-            <div style="font-size: 11px; color: #E0F7FF; font-weight: 500;">
-              Diamonds
-            </div>
-            <div id="diamondCount" style="font-size: 20px; color: #00FFFF; font-weight: 700; text-shadow: 0 2px 10px rgba(0, 255, 255, 0.5);">
-              0
-            </div>
-          </div>
-        </div>
-        
-        <!-- Coins -->
-        <div style="flex: 1; display: flex; align-items: center; gap: 8px; background: rgba(255, 215, 0, 0.15); padding: 10px; border-radius: 15px;">
-          <div class="balance-icon" style="font-size: 24px; filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8)); animation-delay: 0.5s;">
-            🪙
-          </div>
-          <div style="flex: 1;">
-            <div style="font-size: 11px; color: #E0F7FF; font-weight: 500;">
-              Coins
-            </div>
-            <div id="coinCount" style="font-size: 20px; color: #FFD700; font-weight: 700; text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);">
-              0
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Test tugmalari (faqat debug rejimida) -->
-      <div id="testControls" style="display: none; margin-top: 10px; text-align: center;">
-        <button id="testAddCoins" class="test-btn">Test: Add 100 Coins</button>
-        <button id="testAddDiamonds" class="test-btn" style="margin-top: 5px;">Test: Add 50 Diamonds</button>
-      </div>
-    </div>
-    
-    <!-- O'yin nomi -->
-    <div style="text-align: center; margin-bottom: 15px;">
-      <h1 id="gameTitle" style="font-size: 26px; font-weight: 700; color: #FFFFFF; text-shadow: 0 0 20px rgba(79, 172, 254, 0.8), 0 0 40px rgba(79, 172, 254, 0.4); margin: 0; animation: pulse 2s infinite;">
-        ❄️ Winter Treasure Hunt ❄️
-      </h1>
-    </div>
-    
-    <!-- Sandiqlar grid -->
-    <div style="flex: 1; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; overflow-y: auto;">
-      <div id="chestsGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 350px; width: 100%; padding: 5px;">
-        <!-- Sandiqlar JavaScript bilan yaratiladi -->
-      </div>
-    </div>
-    
-    <!-- O'ynash tugmasi va xabar maydoni -->
-    <div style="text-align: center;">
-      <button id="playButton" class="glass btn-primary" style="padding: 14px 32px; font-size: 18px; border-radius: 25px; width: 100%; max-width: 300px;">
-        <span id="playButtonText">🎮 Play (10 💎)</span>
-      </button>
-      
-      <div id="messageArea" style="margin-top: 10px; font-size: 15px; font-weight: 600; color: #E0F7FF; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); min-height: 20px;"></div>
-      
-      <!-- Xatolik xabari -->
-      <div id="errorArea" class="error-message" style="display: none;"></div>
-      
-      <!-- Debug ma'lumotlari -->
-      <div id="debugInfo" style="font-size: 12px; color: rgba(255, 255, 255, 0.5); margin-top: 10px; text-align: center; display: none;">
-        <div>User ID: <span id="debugUserId"></span></div>
-        <div>API Status: <span id="debugApiStatus">Checking...</span></div>
-        <div>Game State: <span id="debugGameState">Loading...</span></div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Yuklanish indikatori -->
-  <div id="loadingIndicator" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 100; align-items: center; justify-content: center;">
-    <div class="glass" style="padding: 40px; text-align: center; max-width: 300px; margin: 0 20px;">
-      <div class="loading-spinner"></div>
-      <div style="font-size: 18px; font-weight: 600; color: #FFFFFF; margin-top: 15px;">
-        Yuklanmoqda...
-      </div>
-      <div id="loadingDetails" style="font-size: 14px; color: #B0C4DE; margin-top: 10px;"></div>
-    </div>
-  </div>
-
-  <script>
-    // ==================== KONFIGURATSIYA ====================
-    const API_CONFIG = {
-      KEY: '4564123:hkjhfadfhieapkdnga',
-      BASE_URL: 'https://68ed1ab05ca4e.myxvest1.ru',
-      ENDPOINTS: {
-        GET_BALANCE: '/get_balance.php',
-        REMOVE_DIAMONDS: '/remove.php',
-        ADD_COINS: '/coinmanage.php'
-      }
-    };
-    
-    // Debug mode
-    const DEBUG_MODE = true;
-    
-    // Telegram Web App
-    const TELEGRAM_WEB_APP = window.Telegram?.WebApp;
-    
-    // O'yin holati
-    let gameState = {
-      user: null,
-      diamonds: 0,
-      coins: 0,
-      totalPlays: 0,
-      isFirstPlay: true,
-      isPlaying: false,
-      selectedChest: null,
-      currentRewards: null,
-      gameHistory: [],
-      apiStatus: 'unknown',
-      lastError: null
-    };
-    
-    // ==================== DEBUG FUNKTSIYALARI ====================
-    function showDebugInfo() {
-      if (!DEBUG_MODE) return;
-      
-      document.getElementById('debugInfo').style.display = 'block';
-      document.getElementById('debugUserId').textContent = gameState.user?.id || 'No user';
-      document.getElementById('debugApiStatus').textContent = gameState.apiStatus;
-      document.getElementById('debugGameState').textContent = 
-        gameState.isPlaying ? 'Playing' : 'Idle';
-    }
-    
-    function logDebug(message, data = null) {
-      if (DEBUG_MODE) {
-        console.log(`[DEBUG] ${message}`, data || '');
-      }
-    }
-    
-    function updateLoadingDetails(text) {
-      if (DEBUG_MODE) {
-        document.getElementById('loadingDetails').textContent = text;
-      }
-    }
-    
-    // ==================== TELEGRAM FUNKTSIYALARI ====================
-    function getTelegramUser() {
-      if (TELEGRAM_WEB_APP?.initDataUnsafe?.user) {
-        const tgUser = TELEGRAM_WEB_APP.initDataUnsafe.user;
-        return {
-          id: String(tgUser.id),
-          username: tgUser.username || `user_${tgUser.id}`,
-          firstName: tgUser.first_name || 'Foydalanuvchi',
-          lastName: tgUser.last_name || '',
-          photoUrl: tgUser.photo_url || '',
-          languageCode: tgUser.language_code || 'uz'
-        };
-      }
-      
-      // Test rejimi uchun
-      return {
-        id: '123456789',
-        username: 'test_user',
-        firstName: 'Test',
-        lastName: 'User',
-        photoUrl: '',
-        languageCode: 'uz'
-      };
-    }
-    
-    function initTelegram() {
-      if (TELEGRAM_WEB_APP) {
-        TELEGRAM_WEB_APP.ready();
-        TELEGRAM_WEB_APP.expand();
-        TELEGRAM_WEB_APP.setHeaderColor('#0c1e3a');
-        TELEGRAM_WEB_APP.setBackgroundColor('#0c1e3a');
-        logDebug('Telegram Web App initialized');
-      } else {
-        logDebug('Telegram Web App not available, using test mode');
-      }
-    }
-    
-    // ==================== API FUNKTSIYALARI ====================
-    async function callApi(endpoint, method = 'GET', body = null) {
-      const url = API_CONFIG.BASE_URL + endpoint;
-      
-      logDebug(`API Call: ${method} ${endpoint}`, body);
-      
-      const options = {
-        method: method,
-        headers: {
-          'Accept': 'application/json'
-        }
-      };
-      
-      if (body) {
-        if (method === 'GET') {
-          const urlObj = new URL(url);
-          Object.keys(body).forEach(key => {
-            urlObj.searchParams.append(key, body[key]);
-          });
-          options.url = urlObj.toString();
-        } else {
-          const formData = new FormData();
-          Object.keys(body).forEach(key => {
-            formData.append(key, body[key]);
-          });
-          options.body = formData;
-        }
-      }
-      
-      try {
-        const response = await fetch(url, options);
-        logDebug(`API Response Status: ${response.status}`);
-        
-        let data;
-        try {
-          data = await response.json();
-        } catch (e) {
-          data = { success: false, message: 'Invalid JSON response' };
+    <style>
+        /* Asosiy reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
         
-        return {
-          success: response.ok && data.success !== false,
-          status: response.status,
-          data: data,
-          error: !response.ok ? `HTTP ${response.status}` : null
-        };
-      } catch (error) {
-        logDebug(`API Error: ${error.message}`);
-        return {
-          success: false,
-          status: 0,
-          data: null,
-          error: error.message
-        };
-      }
-    }
-    
-    async function getBalance() {
-      updateLoadingDetails('Balans olinmoqda...');
-      
-      const result = await callApi(
-        API_CONFIG.ENDPOINTS.GET_BALANCE,
-        'GET',
-        {
-          key: API_CONFIG.KEY,
-          user_id: gameState.user.id
-        }
-      );
-      
-      if (result.success && result.data) {
-        gameState.apiStatus = 'connected';
-        return {
-          diamonds: parseInt(result.data.balance || result.data.diamonds || 0),
-          coins: parseInt(result.data.coins || 0)
-        };
-      } else {
-        gameState.apiStatus = 'error';
-        logDebug('Balance olishda xatolik:', result);
-        return null;
-      }
-    }
-    
-    async function removeDiamonds(amount) {
-      updateLoadingDetails(`${amount} diamonds ayirilmoqda...`);
-      
-      const result = await callApi(
-        API_CONFIG.ENDPOINTS.REMOVE_DIAMONDS,
-        'POST',
-        {
-          key: API_CONFIG.KEY,
-          user_id: gameState.user.id,
-          amount: amount
-        }
-      );
-      
-      logDebug('Remove diamonds result:', result);
-      return result;
-    }
-    
-    async function addCoins(amount) {
-      updateLoadingDetails(`${amount} coins qo'shilmoqda...`);
-      
-      const result = await callApi(
-        API_CONFIG.ENDPOINTS.ADD_COINS,
-        'POST',
-        {
-          key: API_CONFIG.KEY,
-          user_id: gameState.user.id,
-          amount: amount,
-          type: 'coins',
-          reason: 'game_reward'
-        }
-      );
-      
-      logDebug('Add coins result:', result);
-      return result;
-    }
-    
-    // ==================== UI FUNKTSIYALARI ====================
-    function updateUserDisplay() {
-      if (!gameState.user) return;
-      
-      document.getElementById('userName').textContent = gameState.user.firstName;
-      document.getElementById('userUsername').textContent = '@' + gameState.user.username;
-      
-      const userPhoto = document.getElementById('userPhoto');
-      if (gameState.user.photoUrl) {
-        userPhoto.style.backgroundImage = `url(${gameState.user.photoUrl})`;
-        userPhoto.style.backgroundSize = 'cover';
-        userPhoto.textContent = '';
-      } else {
-        userPhoto.style.backgroundImage = 'none';
-        userPhoto.textContent = gameState.user.firstName.charAt(0).toUpperCase();
-      }
-    }
-    
-    function updateBalanceDisplay() {
-      document.getElementById('diamondCount').textContent = gameState.diamonds;
-      document.getElementById('coinCount').textContent = gameState.coins;
-    }
-    
-    function showMessage(text, type = 'info') {
-      const messageArea = document.getElementById('messageArea');
-      messageArea.textContent = text;
-      
-      // Xabar turiga qarab rang
-      if (type === 'error') {
-        messageArea.style.color = '#FF6B6B';
-      } else if (type === 'success') {
-        messageArea.style.color = '#4ade80';
-      } else {
-        messageArea.style.color = '#E0F7FF';
-      }
-      
-      // Animatsiya
-      messageArea.style.opacity = '0';
-      setTimeout(() => {
-        messageArea.style.transition = 'opacity 0.3s';
-        messageArea.style.opacity = '1';
-      }, 10);
-    }
-    
-    function showError(errorText) {
-      const errorArea = document.getElementById('errorArea');
-      errorArea.textContent = errorText;
-      errorArea.style.display = 'block';
-      
-      // 5 soniyadan keyin yashirish
-      setTimeout(() => {
-        errorArea.style.display = 'none';
-      }, 5000);
-    }
-    
-    function showLoading(show, details = '') {
-      const indicator = document.getElementById('loadingIndicator');
-      indicator.style.display = show ? 'flex' : 'none';
-      
-      if (details && DEBUG_MODE) {
-        document.getElementById('loadingDetails').textContent = details;
-      }
-    }
-    
-    function createEffects() {
-      const container = document.getElementById('effectsContainer');
-      container.innerHTML = '';
-      
-      // Qor parchalari
-      for (let i = 0; i < 20; i++) {
-        const snowflake = document.createElement('div');
-        snowflake.className = 'snowflake';
-        snowflake.textContent = '❄';
-        snowflake.style.left = Math.random() * 100 + '%';
-        snowflake.style.animationDuration = (Math.random() * 3 + 2) + 's';
-        snowflake.style.animationDelay = Math.random() * 5 + 's';
-        container.appendChild(snowflake);
-      }
-      
-      // Chaqnashlar
-      for (let i = 0; i < 10; i++) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'sparkle';
-        sparkle.style.left = Math.random() * 100 + '%';
-        sparkle.style.top = Math.random() * 100 + '%';
-        sparkle.style.animationDuration = (Math.random() * 2 + 1) + 's';
-        sparkle.style.animationDelay = Math.random() * 2 + 's';
-        container.appendChild(sparkle);
-      }
-    }
-    
-    function createChests() {
-      const grid = document.getElementById('chestsGrid');
-      grid.innerHTML = '';
-      
-      // Sandiq stillari
-      const chestColors = [
-        'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-        'linear-gradient(135deg, #C0C0C0 0%, #808080 100%)',
-        'linear-gradient(135deg, #00FFFF 0%, #008B8B 100%)',
-        'linear-gradient(135deg, #FF69B4 0%, #C71585 100%)',
-        'linear-gradient(135deg, #98FB98 0%, #228B22 100%)',
-        'linear-gradient(135deg, #DDA0DD 0%, #800080 100%)',
-        'linear-gradient(135deg, #FFB6C1 0%, #DC143C 100%)',
-        'linear-gradient(135deg, #87CEEB 0%, #1E90FF 100%)',
-        'linear-gradient(135deg, #F0E68C 0%, #B8860B 100%)'
-      ];
-      
-      for (let i = 0; i < 9; i++) {
-        const chest = document.createElement('div');
-        chest.className = 'chest glass';
-        chest.dataset.index = i;
-        
-        chest.style.cssText = `
-          padding: 15px 8px;
-          text-align: center;
-          background: ${chestColors[i]};
-          cursor: pointer;
-          transition: all 0.3s;
-        `;
-        
-        chest.innerHTML = `
-          <div style="font-size: 32px; margin-bottom: 5px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
-            🎁
-          </div>
-          <div class="chest-value" style="
-            font-size: 16px;
-            font-weight: 700;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            opacity: 0;
-            height: 0;
+        html, body {
+            width: 100%;
+            height: 100%;
             overflow: hidden;
-            transition: all 0.3s;
-          ">
-          </div>
-        `;
-        
-        chest.addEventListener('click', () => selectChest(i, chest));
-        grid.appendChild(chest);
-      }
-    }
-    
-    // ==================== O'YIN LOGIKASI ====================
-    function generateRewards() {
-      const allRewards = [1, 2, 3, 4, 5, 6, 10, 50, 100];
-      
-      // Aralashtirish
-      const shuffledRewards = [...allRewards].sort(() => Math.random() - 0.5);
-      
-      // G'olibni aniqlash
-      let winningValue;
-      
-      if (gameState.isFirstPlay) {
-        // Birinchi o'yin: faqat 4 yoki 6
-        winningValue = Math.random() < 0.5 ? 4 : 6;
-      } else {
-        // Keyingi o'yinlar: ehtimollik
-        const rand = Math.random() * 100;
-        
-        if (rand < 5) {
-          winningValue = 5;
-        } else if (rand < 25) {
-          winningValue = 4;
-        } else if (rand < 60) {
-          winningValue = 3;
-        } else if (rand < 90) {
-          winningValue = 2;
-        } else {
-          winningValue = 1;
+            touch-action: manipulation;
         }
-      }
-      
-      const winningChest = Math.floor(Math.random() * 9);
-      
-      return {
-        rewards: shuffledRewards,
-        winningChest: winningChest,
-        winningValue: winningValue
-      };
-    }
-    
-    async function selectChest(index, element) {
-      if (!gameState.isPlaying || gameState.selectedChest !== null) return;
-      
-      gameState.selectedChest = index;
-      element.style.pointerEvents = 'none';
-      
-      // Shake animatsiyasi
-      element.classList.add('shake');
-      
-      setTimeout(async () => {
-        element.classList.remove('shake');
-        element.classList.add('opening', 'winner');
         
-        const coinsWon = gameState.currentRewards.winningValue;
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(180deg, #0c1e3a 0%, #1a3b5d 30%, #2d4b7a 60%, #3d5a8c 100%);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
         
-        setTimeout(() => {
-          // Sandiq ochilishi
-          const emoji = element.querySelector('div:first-child');
-          emoji.textContent = '✨';
-          
-          const valueDiv = element.querySelector('.chest-value');
-          valueDiv.textContent = `+${coinsWon} 🪙`;
-          valueDiv.style.opacity = '1';
-          valueDiv.style.height = 'auto';
-          valueDiv.style.color = '#FFD700';
-          
-          // Coins qo'shish (local)
-          gameState.coins += coinsWon;
-          updateBalanceDisplay();
-          
-          // Boshqa sandiqlarni ochish
-          setTimeout(() => revealOtherChests(coinsWon), 800);
-        }, 400);
-      }, 600);
-    }
-    
-    function revealOtherChests(coinsWon) {
-      const chests = document.querySelectorAll('.chest');
-      
-      chests.forEach((chest, i) => {
-        if (i !== gameState.selectedChest) {
-          setTimeout(() => {
-            chest.classList.add('revealed');
-            chest.style.pointerEvents = 'none';
+        /* Container - telefon uchun optimallashtirilgan */
+        .app-container {
+            width: 100%;
+            height: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+        
+        /* Header - kompakt */
+        .header {
+            flex-shrink: 0;
+            padding: 12px 16px;
+            background: rgba(20, 40, 80, 0.9);
+            border-bottom: 2px solid rgba(100, 200, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Balans kartalari - kompakt */
+        .balance-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .balance-card {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Asosiy o'yin maydoni - telefonda maksimal foydalanish */
+        .game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Sandiqlar grid - TELEFON EKRANIDA TO'LIQ KO'RINISHI UCHUN */
+        .chests-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            margin: 0;
+        }
+        
+        .chests-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1/0.9;
+            padding: 5px;
+            margin: 0 auto;
+        }
+        
+        /* Sandiq kartasi - telefon uchun optimal */
+        .chest-card {
+            width: 100%;
+            height: 100%;
+            min-height: 85px;
+            background: linear-gradient(135deg, var(--chest-color-1), var(--chest-color-2));
+            border: 2px solid var(--chest-border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .chest-card:active {
+            transform: scale(0.98);
+        }
+        
+        /* Sandiq ikonkasi - katta va aniq */
+        .chest-icon {
+            font-size: 40px;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+        }
+        
+        /* Sandiq qiymati - o'qish oson */
+        .chest-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #FFD700;
+            text-shadow: 0 2px 8px rgba(255, 215, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Footer - o'ynash tugmasi */
+        .footer {
+            flex-shrink: 0;
+            padding: 15px;
+            background: rgba(20, 40, 80, 0.9);
+            border-top: 2px solid rgba(100, 200, 255, 0.2);
+            text-align: center;
+        }
+        
+        /* Play button - katta va oson bosiladigan */
+        .play-button {
+            width: 100%;
+            max-width: 300px;
+            padding: 16px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .play-button:active {
+            transform: scale(0.98);
+        }
+        
+        .play-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* Xabar maydoni */
+        .message-area {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            min-height: 20px;
+            text-align: center;
+        }
+        
+        /* Yuklanish indikatori */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        /* Sandiq turlari ranglari */
+        .chest-type-gold {
+            --chest-color-1: #FFD700;
+            --chest-color-2: #FFAA00;
+            --chest-border: #FF9900;
+        }
+        
+        .chest-type-silver {
+            --chest-color-1: #C0C0C0;
+            --chest-color-2: #A0A0A0;
+            --chest-border: #909090;
+        }
+        
+        .chest-type-crystal {
+            --chest-color-1: #4FACFE;
+            --chest-color-2: #00F2FE;
+            --chest-border: #0099FF;
+        }
+        
+        .chest-type-frost {
+            --chest-color-1: #9A4DFF;
+            --chest-color-2: #654EA3;
+            --chest-border: #7B3FE4;
+        }
+        
+        .chest-type-ice {
+            --chest-color-1: #00FFFF;
+            --chest-color-2: #4FACFE;
+            --chest-border: #00CCFF;
+        }
+        
+        .chest-type-platinum {
+            --chest-color-1: #E5E4E2;
+            --chest-color-2: #B8B8B8;
+            --chest-border: #A0A0A0;
+        }
+        
+        /* Animatsiyalar */
+        .chest-selected {
+            animation: chest-selected 1.5s infinite alternate;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
+        }
+        
+        @keyframes chest-selected {
+            0% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.5); }
+            100% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.9); }
+        }
+        
+        .chest-opened {
+            background: linear-gradient(135deg, #654ea3, #da98b4) !important;
+        }
+        
+        .chest-revealed {
+            opacity: 0.6;
+            transform: scale(0.95);
+        }
+        
+        /* Responsive sozlamalar */
+        @media (max-width: 380px) {
+            .chests-grid {
+                gap: 8px;
+                aspect-ratio: 1/0.95;
+            }
             
-            const valueDiv = chest.querySelector('.chest-value');
-            valueDiv.textContent = `${gameState.currentRewards.rewards[i]} 🪙`;
-            valueDiv.style.opacity = '0.7';
-            valueDiv.style.height = 'auto';
-            valueDiv.style.color = '#B0C4DE';
-          }, i * 100);
+            .chest-icon {
+                font-size: 35px;
+            }
+            
+            .chest-value {
+                font-size: 18px;
+            }
+            
+            .play-button {
+                padding: 14px;
+                font-size: 16px;
+            }
         }
-      });
-      
-      setTimeout(async () => {
-        // O'yinni tugatish
-        gameState.isPlaying = false;
-        gameState.totalPlays++;
         
-        // Coins qo'shish (server)
-        showLoading(true, `${coinsWon} coins serverga yozilmoqda...`);
+        @media (max-height: 700px) {
+            .header {
+                padding: 10px 16px;
+            }
+            
+            .chests-grid {
+                aspect-ratio: 1/1;
+            }
+            
+            .chest-icon {
+                font-size: 35px;
+            }
+            
+            .footer {
+                padding: 12px 15px;
+            }
+        }
         
-        const result = await addCoins(coinsWon);
+        @media (max-height: 600px) {
+            .chests-grid {
+                aspect-ratio: 1/1.1;
+                gap: 6px;
+            }
+            
+            .chest-card {
+                min-height: 70px;
+            }
+            
+            .chest-icon {
+                font-size: 30px;
+            }
+            
+            .chest-value {
+                font-size: 16px;
+            }
+        }
         
-        showLoading(false);
+        /* iPhone notch uchun */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .app-container {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
         
-        if (result.success) {
-          showMessage(`🎉 ${coinsWon} coins qo'shildi! Yangi balans: ${gameState.coins} 🪙`, 'success');
-          
-          // Yangi balansni olish
-          const newBalance = await getBalance();
-          if (newBalance) {
-            gameState.coins = newBalance.coins;
-            gameState.diamonds = newBalance.diamonds;
+        /* Horizontal orientation (landscape) uchun */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .app-container {
+                flex-direction: row;
+                padding: 0;
+            }
+            
+            .header {
+                width: 150px;
+                height: 100%;
+                padding: 20px 10px;
+                border-right: 2px solid rgba(100, 200, 255, 0.2);
+                border-bottom: none;
+            }
+            
+            .game-area {
+                flex: 1;
+                padding: 10px;
+            }
+            
+            .footer {
+                width: 150px;
+                height: 100%;
+                padding: 20px 10px;
+                border-left: 2px solid rgba(100, 200, 255, 0.2);
+                border-top: none;
+            }
+            
+            .chests-grid {
+                max-width: 350px;
+                aspect-ratio: 1/1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Asosiy kontainer -->
+    <div class="app-container">
+        
+        <!-- Header: User info & Balance -->
+        <div class="header">
+            <div style="text-align: center; margin-bottom: 5px;">
+                <h1 style="font-size: 20px; font-weight: 700; color: #FFFFFF; text-shadow: 0 0 15px rgba(79, 172, 254, 0.8);">
+                    ❄️ Winter Treasure ❄️
+                </h1>
+                <p style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">
+                    Olmos ishlat, tanga yut!
+                </p>
+            </div>
+            
+            <div class="balance-container">
+                <!-- Diamonds balansi -->
+                <div class="balance-card">
+                    <div style="font-size: 24px; color: #00FFFF; filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.6));">
+                        💎
+                    </div>
+                    <div>
+                        <div style="font-size: 10px; color: rgba(255, 255, 255, 0.7);">Diamonds</div>
+                        <div id="diamondCount" style="font-size: 18px; font-weight: 700; color: #00FFFF;">
+                            0
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Coins balansi -->
+                <div class="balance-card">
+                    <div style="font-size: 24px; color: #FFD700; filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));">
+                        🪙
+                    </div>
+                    <div>
+                        <div style="font-size: 10px; color: rgba(255, 255, 255, 0.7);">Coins</div>
+                        <div id="coinCount" style="font-size: 18px; font-weight: 700; color: #FFD700;">
+                            0
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Asosiy o'yin maydoni -->
+        <div class="game-area">
+            <!-- Sandiqlar grid -->
+            <div class="chests-container">
+                <div id="chestsGrid" class="chests-grid">
+                    <!-- Sandiqlar JavaScript bilan yaratiladi -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer: Play button va xabarlar -->
+        <div class="footer">
+            <button id="playButton" class="play-button">
+                <span id="playButtonText">🎮 Play (10 💎)</span>
+            </button>
+            
+            <div id="messageArea" class="message-area">
+                🎮 O'yinni boshlash uchun Play tugmasini bosing
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- Yuklanish overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div style="text-align: center; padding: 30px; background: rgba(20, 40, 80, 0.9); border-radius: 20px; border: 2px solid rgba(100, 200, 255, 0.3);">
+            <div style="width: 50px; height: 50px; border: 5px solid rgba(255, 255, 255, 0.3); border-top: 5px solid #FFD700; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            <div style="font-size: 18px; font-weight: 600; color: #FFFFFF;">
+                Yuklanmoqda...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== KONFIGURATSIYA ====================
+        const API_CONFIG = {
+            KEY: '4564123:hkjhfadfhieapkdnga',
+            BASE_URL: 'https://68ed1ab05ca4e.myxvest1.ru',
+            ENDPOINTS: {
+                GET_BALANCE: '/get_balance.php',
+                REMOVE_DIAMONDS: '/remove.php',
+                ADD_COINS: '/coinmanage.php'
+            }
+        };
+        
+        // Telegram Web App
+        const TELEGRAM_WEB_APP = window.Telegram?.WebApp;
+        
+        // O'yin holati
+        let gameState = {
+            user: null,
+            diamonds: 0,
+            coins: 0,
+            totalPlays: 0,
+            isFirstPlay: true,
+            isPlaying: false,
+            selectedChest: null,
+            currentRewards: null,
+            gameHistory: []
+        };
+        
+        // Sandiq turlari
+        const CHEST_TYPES = [
+            'chest-type-gold',
+            'chest-type-silver', 
+            'chest-type-crystal',
+            'chest-type-frost',
+            'chest-type-ice',
+            'chest-type-platinum',
+            'chest-type-gold',
+            'chest-type-silver',
+            'chest-type-crystal'
+        ];
+        
+        // ==================== TELEGRAM FUNKTSIYALARI ====================
+        function getTelegramUser() {
+            if (TELEGRAM_WEB_APP?.initDataUnsafe?.user) {
+                const tgUser = TELEGRAM_WEB_APP.initDataUnsafe.user;
+                return {
+                    id: String(tgUser.id),
+                    username: tgUser.username || `user_${tgUser.id}`,
+                    firstName: tgUser.first_name || 'Foydalanuvchi',
+                    lastName: tgUser.last_name || '',
+                    photoUrl: tgUser.photo_url || '',
+                    languageCode: tgUser.language_code || 'uz'
+                };
+            }
+            
+            // Test rejimi uchun
+            return {
+                id: '123456789',
+                username: 'test_user',
+                firstName: 'Test',
+                lastName: 'User',
+                photoUrl: '',
+                languageCode: 'uz'
+            };
+        }
+        
+        function initTelegram() {
+            if (TELEGRAM_WEB_APP) {
+                TELEGRAM_WEB_APP.ready();
+                TELEGRAM_WEB_APP.expand();
+                TELEGRAM_WEB_APP.setHeaderColor('#0c1e3a');
+                TELEGRAM_WEB_APP.setBackgroundColor('#0c1e3a');
+                
+                // Telegram navigatsiya tugmalarini moslashtirish
+                TELEGRAM_WEB_APP.BackButton.hide();
+            }
+        }
+        
+        // ==================== API FUNKTSIYALARI ====================
+        async function callApi(endpoint, method = 'GET', body = null) {
+            const url = API_CONFIG.BASE_URL + endpoint;
+            
+            const options = {
+                method: method,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            };
+            
+            if (body) {
+                if (method === 'GET') {
+                    const urlObj = new URL(url);
+                    Object.keys(body).forEach(key => {
+                        urlObj.searchParams.append(key, body[key]);
+                    });
+                    options.url = urlObj.toString();
+                } else {
+                    const formData = new FormData();
+                    Object.keys(body).forEach(key => {
+                        formData.append(key, body[key]);
+                    });
+                    options.body = formData;
+                }
+            }
+            
+            try {
+                const response = await fetch(url, options);
+                
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    data = { success: false, message: 'Invalid JSON response' };
+                }
+                
+                return {
+                    success: response.ok && data.success !== false,
+                    status: response.status,
+                    data: data,
+                    error: !response.ok ? `HTTP ${response.status}` : null
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    status: 0,
+                    data: null,
+                    error: error.message
+                };
+            }
+        }
+        
+        async function getBalance() {
+            const result = await callApi(
+                API_CONFIG.ENDPOINTS.GET_BALANCE,
+                'GET',
+                {
+                    key: API_CONFIG.KEY,
+                    user_id: gameState.user.id
+                }
+            );
+            
+            if (result.success && result.data) {
+                return {
+                    diamonds: parseInt(result.data.balance || result.data.diamonds || 0),
+                    coins: parseInt(result.data.coins || 0)
+                };
+            } else {
+                console.warn('Balance olishda xatolik:', result);
+                return null;
+            }
+        }
+        
+        async function removeDiamonds(amount) {
+            const result = await callApi(
+                API_CONFIG.ENDPOINTS.REMOVE_DIAMONDS,
+                'POST',
+                {
+                    key: API_CONFIG.KEY,
+                    user_id: gameState.user.id,
+                    amount: amount
+                }
+            );
+            
+            return result;
+        }
+        
+        async function addCoins(amount) {
+            const result = await callApi(
+                API_CONFIG.ENDPOINTS.ADD_COINS,
+                'POST',
+                {
+                    key: API_CONFIG.KEY,
+                    user_id: gameState.user.id,
+                    amount: amount,
+                    type: 'coins',
+                    reason: 'game_reward'
+                }
+            );
+            
+            return result;
+        }
+        
+        // ==================== UI FUNKTSIYALARI ====================
+        function updateBalanceDisplay() {
+            document.getElementById('diamondCount').textContent = gameState.diamonds;
+            document.getElementById('coinCount').textContent = gameState.coins;
+        }
+        
+        function showMessage(text, type = 'info') {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.textContent = text;
+            
+            if (type === 'error') {
+                messageArea.style.color = '#FF6B6B';
+            } else if (type === 'success') {
+                messageArea.style.color = '#4ade80';
+            } else {
+                messageArea.style.color = 'rgba(255, 255, 255, 0.9)';
+            }
+            
+            // Animatsiya
+            messageArea.style.opacity = '0';
+            setTimeout(() => {
+                messageArea.style.transition = 'opacity 0.3s';
+                messageArea.style.opacity = '1';
+            }, 10);
+        }
+        
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
+        
+        // ==================== SANDIQLARNI YARATISH ====================
+        function createChests() {
+            const grid = document.getElementById('chestsGrid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 9; i++) {
+                const chest = document.createElement('div');
+                chest.className = `chest-card ${CHEST_TYPES[i]}`;
+                chest.dataset.index = i;
+                
+                chest.innerHTML = `
+                    <div class="chest-icon">🎁</div>
+                    <div class="chest-value"></div>
+                `;
+                
+                chest.addEventListener('click', () => selectChest(i, chest));
+                grid.appendChild(chest);
+            }
+        }
+        
+        // ==================== O'YIN LOGIKASI ====================
+        function generateRewards() {
+            const allRewards = [1, 2, 3, 4, 5, 6, 10, 50, 100];
+            const shuffledRewards = [...allRewards].sort(() => Math.random() - 0.5);
+            
+            let winningValue;
+            
+            if (gameState.isFirstPlay) {
+                winningValue = Math.random() < 0.5 ? 4 : 6;
+            } else {
+                const rand = Math.random() * 100;
+                
+                if (rand < 5) {
+                    winningValue = 5;
+                } else if (rand < 25) {
+                    winningValue = 4;
+                } else if (rand < 60) {
+                    winningValue = 3;
+                } else if (rand < 90) {
+                    winningValue = 2;
+                } else {
+                    winningValue = 1;
+                }
+            }
+            
+            const winningChest = Math.floor(Math.random() * 9);
+            
+            return {
+                rewards: shuffledRewards,
+                winningChest: winningChest,
+                winningValue: winningValue
+            };
+        }
+        
+        async function selectChest(index, element) {
+            if (!gameState.isPlaying || gameState.selectedChest !== null) return;
+            
+            gameState.selectedChest = index;
+            element.style.pointerEvents = 'none';
+            
+            // Shake animatsiyasi
+            element.style.animation = 'chest-shake 0.5s ease';
+            
+            setTimeout(async () => {
+                element.classList.add('chest-selected');
+                
+                const coinsWon = gameState.currentRewards.winningValue;
+                
+                setTimeout(() => {
+                    element.classList.remove('chest-selected');
+                    element.classList.add('chest-opened');
+                    
+                    const valueDiv = element.querySelector('.chest-value');
+                    valueDiv.textContent = `+${coinsWon}`;
+                    valueDiv.style.opacity = '1';
+                    valueDiv.style.animation = 'coin-bounce 0.5s ease';
+                    
+                    // Coins qo'shish (local)
+                    gameState.coins += coinsWon;
+                    updateBalanceDisplay();
+                    
+                    // Boshqa sandiqlarni ochish
+                    setTimeout(() => revealOtherChests(coinsWon), 800);
+                }, 400);
+            }, 500);
+        }
+        
+        function revealOtherChests(coinsWon) {
+            const chests = document.querySelectorAll('.chest-card');
+            
+            chests.forEach((chest, i) => {
+                if (i !== gameState.selectedChest) {
+                    setTimeout(() => {
+                        chest.classList.add('chest-revealed');
+                        chest.style.pointerEvents = 'none';
+                        
+                        const valueDiv = chest.querySelector('.chest-value');
+                        valueDiv.textContent = `${gameState.currentRewards.rewards[i]}`;
+                        valueDiv.style.opacity = '0.8';
+                        valueDiv.style.color = '#B0C4DE';
+                    }, i * 80);
+                }
+            });
+            
+            setTimeout(async () => {
+                gameState.isPlaying = false;
+                gameState.totalPlays++;
+                
+                // Coins qo'shish (server)
+                showLoading(true);
+                const result = await addCoins(coinsWon);
+                
+                showLoading(false);
+                
+                if (result.success) {
+                    showMessage(`🎉 ${coinsWon} coins qo'shildi! Yangi balans: ${gameState.coins} 🪙`, 'success');
+                    
+                    // Yangi balansni olish
+                    const newBalance = await getBalance();
+                    if (newBalance) {
+                        gameState.coins = newBalance.coins;
+                        gameState.diamonds = newBalance.diamonds;
+                        updateBalanceDisplay();
+                    }
+                } else {
+                    showMessage('⚠️ Coins faqat local saqlandi', 'info');
+                }
+                
+                // Tugmani yoqish
+                const playButton = document.getElementById('playButton');
+                playButton.disabled = false;
+                playButton.textContent = '🎮 Play (10 💎)';
+                
+                // Birinchi o'yin tugashi
+                if (gameState.isFirstPlay) {
+                    gameState.isFirstPlay = false;
+                }
+                
+                gameState.gameHistory.push({
+                    timestamp: new Date().toISOString(),
+                    coinsWon: coinsWon,
+                    diamondsSpent: 10
+                });
+                
+            }, 1000);
+        }
+        
+        async function startGame() {
+            // Diamonds tekshirish
+            if (gameState.diamonds < 10) {
+                showMessage('❌ Yetarli diamonds mavjud emas! Kamida 10 💎 talab qilinadi.', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            
+            // Serverdan diamonds ayirish
+            const removeResult = await removeDiamonds(10);
+            
+            if (!removeResult.success) {
+                showLoading(false);
+                const errorMsg = removeResult.data?.message || removeResult.error || 'Noma\'lum xato';
+                showMessage(`❌ Xato: ${errorMsg}`, 'error');
+                return;
+            }
+            
+            // Local diamonds yangilash
+            gameState.diamonds -= 10;
             updateBalanceDisplay();
-          }
-        } else {
-          const errorMsg = result.data?.message || result.error || 'Noma\'lum xato';
-          showError(`⚠️ Serverda xatolik: ${errorMsg}`);
-          showMessage('⚠️ Coins faqat local saqlandi', 'error');
+            
+            // O'yin holatini sozlash
+            gameState.isPlaying = true;
+            gameState.selectedChest = null;
+            gameState.currentRewards = generateRewards();
+            
+            // Sandiqlarni yaratish
+            createChests();
+            
+            // Tugmani o'chirish
+            const playButton = document.getElementById('playButton');
+            playButton.disabled = true;
+            playButton.textContent = '⏳ O\'yin davom etmoqda...';
+            
+            showLoading(false);
+            showMessage('✨ Bir sandiqni tanlang!', 'info');
         }
         
-        // Tugmani yoqish
-        const playButton = document.getElementById('playButton');
-        playButton.disabled = false;
-        playButton.innerHTML = `<span>🎮 Play (10 💎)</span>`;
-        
-        // Birinchi o'yin tugashi
-        if (gameState.isFirstPlay) {
-          gameState.isFirstPlay = false;
-        }
-        
-        // Tarixga yozish
-        gameState.gameHistory.push({
-          timestamp: new Date().toISOString(),
-          coinsWon: coinsWon,
-          diamondsSpent: 10
-        });
-        
-        showDebugInfo();
-        
-      }, 1000);
-    }
-    
-    async function startGame() {
-      // Diamonds tekshirish
-      if (gameState.diamonds < 10) {
-        showMessage('❌ Yetarli diamonds mavjud emas! Kamida 10 💎 talab qilinadi.', 'error');
-        return;
-      }
-      
-      showLoading(true, 'Diamonds ayirilmoqda...');
-      
-      // Serverdan diamonds ayirish
-      const removeResult = await removeDiamonds(10);
-      
-      if (!removeResult.success) {
-        showLoading(false);
-        const errorMsg = removeResult.data?.message || removeResult.error || 'Noma\'lum xato';
-        showError(`❌ Diamonds ayirishda xatolik: ${errorMsg}`);
-        showMessage('❌ Diamonds ayirib bo\'lmadi', 'error');
-        return;
-      }
-      
-      // Local diamonds yangilash
-      gameState.diamonds -= 10;
-      updateBalanceDisplay();
-      
-      // O'yin holatini sozlash
-      gameState.isPlaying = true;
-      gameState.selectedChest = null;
-      gameState.currentRewards = generateRewards();
-      
-      // Sandiqlarni yaratish
-      createChests();
-      
-      // Tugmani o'chirish
-      const playButton = document.getElementById('playButton');
-      playButton.disabled = true;
-      playButton.innerHTML = `<span>⏳ O'yin davom etmoqda...</span>`;
-      
-      showLoading(false);
-      showMessage('✨ Bir sandiqni tanlang!', 'info');
-      showDebugInfo();
-    }
-    
-    // ==================== TEST FUNKTSIYALARI ====================
-    function initTestControls() {
-      if (!DEBUG_MODE) return;
-      
-      document.getElementById('testControls').style.display = 'block';
-      
-      // Test: Coins qo'shish
-      document.getElementById('testAddCoins').addEventListener('click', async () => {
-        showLoading(true, 'Test: Coins qo\'shilmoqda...');
-        const result = await addCoins(100);
-        showLoading(false);
-        
-        if (result.success) {
-          showMessage('✅ Test: 100 coins qo\'shildi', 'success');
-          const balance = await getBalance();
-          if (balance) {
-            gameState.coins = balance.coins;
+        // ==================== DASTLABKI YUKLASH ====================
+        async function init() {
+            // Yuklanishni ko'rsatish
+            showLoading(true);
+            
+            // Telegram Web App ni ishga tushirish
+            initTelegram();
+            
+            // Foydalanuvchini olish
+            gameState.user = getTelegramUser();
+            
+            // Serverdan balansni olish
+            const balance = await getBalance();
+            
+            if (balance) {
+                gameState.diamonds = balance.diamonds;
+                gameState.coins = balance.coins;
+                showMessage('✅ Serverga ulandi', 'success');
+            } else {
+                // Agar server ishlamasa, offline rejim
+                showMessage('⚠️ Offline rejim. Local balans ishlatilmoqda.', 'info');
+                gameState.diamonds = 100;
+                gameState.coins = 100;
+            }
+            
+            // UI ni yangilash
             updateBalanceDisplay();
-          }
-        } else {
-          showError(`❌ Test xato: ${result.error || 'Noma\'lum xato'}`);
+            createChests();
+            
+            // O'ynash tugmasini ulash
+            document.getElementById('playButton').addEventListener('click', startGame);
+            
+            // Yuklanishni yopish
+            showLoading(false);
+            showMessage('🎮 O\'yinni boshlash uchun "Play" tugmasini bosing!', 'info');
+            
+            // Ekran o'lchamini moslash
+            handleResize();
+            
+            // Resize hodisasi
+            window.addEventListener('resize', handleResize);
         }
-      });
-      
-      // Test: Diamonds qo'shish (remove API orqali)
-      document.getElementById('testAddDiamonds').addEventListener('click', async () => {
-        // Manfiy miqdor yuborib, qo'shamiz (agar API qo'llab-quvvatlasa)
-        showLoading(true, 'Test: Diamonds qo\'shilmoqda...');
-        const result = await removeDiamonds(-50); // Manfiy miqdor qo'shish uchun
-        showLoading(false);
         
-        if (result.success) {
-          showMessage('✅ Test: 50 diamonds qo\'shildi', 'success');
-          const balance = await getBalance();
-          if (balance) {
-            gameState.diamonds = balance.diamonds;
-            updateBalanceDisplay();
-          }
-        } else {
-          showMessage('⚠️ Test API ishlamaydi, local diamonds qo\'shildi', 'info');
-          gameState.diamonds += 50;
-          updateBalanceDisplay();
+        function handleResize() {
+            // Telefon ekranida sandiqlar to'liq ko'rinsin
+            const chestsContainer = document.querySelector('.chests-container');
+            const chestsGrid = document.querySelector('.chests-grid');
+            
+            if (chestsContainer && chestsGrid) {
+                const containerHeight = chestsContainer.clientHeight;
+                const containerWidth = chestsContainer.clientWidth;
+                
+                // Kichik ekranlar uchun
+                if (window.innerHeight < 600) {
+                    chestsGrid.style.gap = '6px';
+                    chestsGrid.style.aspectRatio = '1/1.1';
+                    
+                    const chests = document.querySelectorAll('.chest-card');
+                    chests.forEach(chest => {
+                        chest.style.minHeight = '70px';
+                    });
+                }
+                
+                // Katta ekranlar uchun
+                if (window.innerHeight > 700) {
+                    chestsGrid.style.gap = '12px';
+                    chestsGrid.style.aspectRatio = '1/0.85';
+                    
+                    const chests = document.querySelectorAll('.chest-card');
+                    chests.forEach(chest => {
+                        chest.style.minHeight = '90px';
+                    });
+                }
+            }
         }
-      });
-    }
-    
-    // ==================== Dastlabki yuklash ====================
-    async function init() {
-      // Yuklanishni ko'rsatish
-      showLoading(true, 'Telegram yuklanmoqda...');
-      
-      // Telegram Web App ni ishga tushirish
-      initTelegram();
-      
-      // Foydalanuvchini olish
-      gameState.user = getTelegramUser();
-      updateUserDisplay();
-      
-      // Debug ma'lumotlari
-      logDebug('User loaded:', gameState.user);
-      
-      // Serverdan balansni olish
-      updateLoadingDetails('Serverdan balans olinmoqda...');
-      const balance = await getBalance();
-      
-      if (balance) {
-        gameState.diamonds = balance.diamonds;
-        gameState.coins = balance.coins;
-        showMessage('✅ Serverga ulandi', 'success');
-      } else {
-        // Agar server ishlamasa, offline rejim
-        showMessage('⚠️ Offline rejim. Local balans ishlatilmoqda.', 'info');
-        gameState.diamonds = 100; // Offline uchun boshlang'ich balans
-        gameState.coins = 100;
-        gameState.apiStatus = 'offline';
-      }
-      
-      // UI ni yangilash
-      updateBalanceDisplay();
-      createEffects();
-      createChests();
-      
-      // O'ynash tugmasini ulash
-      document.getElementById('playButton').addEventListener('click', startGame);
-      
-      // Test kontrollarini ishga tushirish
-      initTestControls();
-      
-      // Debug ma'lumotlarini ko'rsatish
-      showDebugInfo();
-      
-      // Yuklanishni yopish
-      showLoading(false);
-      showMessage('🎮 O\'yinni boshlash uchun "Play" tugmasini bosing!', 'info');
-    }
-    
-    // Dasturni ishga tushirish
-    document.addEventListener('DOMContentLoaded', init);
-  </script>
+        
+        // Dasturni ishga tushirish
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // Touch uchun qo'shimcha optimallashtirish
+        document.addEventListener('touchstart', function() {}, {passive: true});
+        document.addEventListener('touchmove', function(e) {
+            if (e.scale !== 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
 </body>
 </html>
