@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Winter Treasure Game</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="/_sdk/data_sdk.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <style>
     body {
@@ -186,6 +184,8 @@
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
   <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
  </head>
  <body class="h-full">
@@ -196,7 +196,7 @@
      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
       <div style="display: flex; align-items: center; gap: 10px;">
        <div id="userPhoto" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6, #6366F1); display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; font-weight: 700;">
-        👤
+        ����
        </div>
        <div>
         <div id="userName" style="font-size: 16px; color: #FFFFFF; font-weight: 600;">
@@ -639,15 +639,10 @@
           showMessage('⚠️ Coins not added to server!');
         }
         
-        // Ma'lumotni saqlash
-        const result = await window.dataSdk.update(gameData);
+        // Local storage ga saqlash
+        saveGameData();
         showLoading(false);
-        
-        if (!result.isOk) {
-          showMessage('❌ Error saving data!');
-        } else {
-          showMessage('🎮 Play again!');
-        }
+        showMessage('🎮 Play again!');
       }, 1000);
     }
     
@@ -673,16 +668,10 @@
       gameData.total_plays += 1;
       gameData.last_played = new Date().toISOString();
       
-      const result = await window.dataSdk.update(gameData);
+      // Local storage ga saqlash
+      saveGameData();
       
       showLoading(false);
-      
-      if (!result.isOk) {
-        showMessage('❌ Error occurred!');
-        gameData.diamonds += 10;
-        gameData.total_plays -= 1;
-        return;
-      }
       
       isPlaying = true;
       selectedChestIndex = null;
@@ -718,153 +707,26 @@
       indicator.style.display = show ? 'flex' : 'none';
     }
     
-    // Data handler
-    const dataHandler = {
-      onDataChanged(data) {
-        if (data.length > 0) {
-          // Mavjud foydalanuvchini topish
-          const existingUser = data.find(u => u.user_id === currentUser.user_id);
-          if (existingUser) {
-            gameData = existingUser;
-          } else {
-            // Yangi foydalanuvchi uchun ma'lumot yaratish
-            gameData = {
-              user_id: currentUser.user_id,
-              username: currentUser.username,
-              first_name: currentUser.first_name,
-              last_name: currentUser.last_name,
-              photo_url: currentUser.photo_url,
-              language_code: currentUser.language_code,
-              total_plays: 0,
-              diamonds: 0,
-              total_coins: 0,
-              last_played: new Date().toISOString(),
-              is_first_play: true,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            };
-          }
-        } else {
-          // Database bo'sh
-          gameData = {
-            user_id: currentUser.user_id,
-            username: currentUser.username,
-            first_name: currentUser.first_name,
-            last_name: currentUser.last_name,
-            photo_url: currentUser.photo_url,
-            language_code: currentUser.language_code,
-            total_plays: 0,
-            diamonds: 0,
-            total_coins: 0,
-            last_played: new Date().toISOString(),
-            is_first_play: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          };
-        }
-        
-        updateDisplay();
-        
-        // API dan balansni olish (sync emas)
-        fetchBotBalance().then(balance => {
-          if (balance && gameData) {
-            gameData.diamonds = balance.diamonds;
-            gameData.total_coins = balance.coins;
-            updateDisplay();
-          }
-        }).catch(err => {
-          console.warn('Failed to fetch balance', err);
-        });
+    // Local storage uchun funksiyalar
+    function saveGameData() {
+      if (gameData) {
+        localStorage.setItem('winter_game_' + currentUser.user_id, JSON.stringify(gameData));
       }
-    };
-    
-    // Config o'zgarishi
-    async function onConfigChange(config) {
-      const baseFont = config.font_family || defaultConfig.font_family;
-      const baseFontSize = config.font_size || defaultConfig.font_size;
-      
-      document.body.style.fontFamily = `${baseFont}, sans-serif`;
-      
-      const app = document.getElementById('app');
-      app.style.background = `linear-gradient(180deg, ${config.background_color || defaultConfig.background_color} 0%, ${config.surface_color || defaultConfig.surface_color} 100%)`;
-      
-      const title = document.getElementById('gameTitle');
-      title.textContent = config.game_title || defaultConfig.game_title;
-      title.style.color = config.text_color || defaultConfig.text_color;
-      title.style.fontSize = `${baseFontSize * 2}px`;
-      
-      const playButtonText = document.getElementById('playButtonText');
-      playButtonText.textContent = config.play_button_text || defaultConfig.play_button_text;
-      
-      const playButton = document.getElementById('playButton');
-      playButton.style.background = `linear-gradient(135deg, ${config.surface_color || defaultConfig.surface_color} 0%, ${config.primary_action_color || defaultConfig.primary_action_color} 100%)`;
-      playButton.style.color = config.text_color || defaultConfig.text_color;
     }
     
-    // Capabilities
-    function mapToCapabilities(config) {
-      return {
-        recolorables: [
-          {
-            get: () => config.background_color || defaultConfig.background_color,
-            set: (value) => {
-              config.background_color = value;
-              window.elementSdk.setConfig({ background_color: value });
-            }
-          },
-          {
-            get: () => config.surface_color || defaultConfig.surface_color,
-            set: (value) => {
-              config.surface_color = value;
-              window.elementSdk.setConfig({ surface_color: value });
-            }
-          },
-          {
-            get: () => config.text_color || defaultConfig.text_color,
-            set: (value) => {
-              config.text_color = value;
-              window.elementSdk.setConfig({ text_color: value });
-            }
-          },
-          {
-            get: () => config.primary_action_color || defaultConfig.primary_action_color,
-            set: (value) => {
-              config.primary_action_color = value;
-              window.elementSdk.setConfig({ primary_action_color: value });
-            }
-          },
-          {
-            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
-            set: (value) => {
-              config.secondary_action_color = value;
-              window.elementSdk.setConfig({ secondary_action_color: value });
-            }
-          }
-        ],
-        borderables: [],
-        fontEditable: {
-          get: () => config.font_family || defaultConfig.font_family,
-          set: (value) => {
-            config.font_family = value;
-            window.elementSdk.setConfig({ font_family: value });
-          }
-        },
-        fontSizeable: {
-          get: () => config.font_size || defaultConfig.font_size,
-          set: (value) => {
-            config.font_size = value;
-            window.elementSdk.setConfig({ font_size: value });
-          }
+    function loadGameData() {
+      const saved = localStorage.getItem('winter_game_' + currentUser.user_id);
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {
+          return null;
         }
-      };
+      }
+      return null;
     }
     
-    function mapToEditPanelValues(config) {
-      return new Map([
-        ['game_title', config.game_title || defaultConfig.game_title],
-        ['play_button_text', config.play_button_text || defaultConfig.play_button_text]
-      ]);
-    }
+
     
     // Initialization
     async function init() {
@@ -879,19 +741,15 @@
       // Foydalanuvchini yuklash
       await loadOrCreateUser();
       
-      const dataResult = await window.dataSdk.init(dataHandler);
-      if (!dataResult.isOk) {
-        showMessage('❌ Database error!');
-        showLoading(false);
-        return;
-      }
+      // Local storage dan yuklash
+      gameData = loadGameData();
       
-      // Agar bu foydalanuvchi database da yo'q bo'lsa, yaratamiz
+      // Agar ma'lumot yo'q bo'lsa yoki boshqa foydalanuvchi bo'lsa
       if (!gameData || gameData.user_id !== currentUser.user_id) {
         // API dan balansni olish
         const balance = await fetchBotBalance();
         
-        const createResult = await window.dataSdk.create({
+        gameData = {
           user_id: currentUser.user_id,
           username: currentUser.username,
           first_name: currentUser.first_name,
@@ -905,22 +763,20 @@
           is_first_play: true,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
-        });
+        };
         
-        if (!createResult.isOk) {
-          showMessage('❌ Failed to create user!');
+        saveGameData();
+      } else {
+        // Mavjud ma'lumot uchun API dan balansni yangilash
+        const balance = await fetchBotBalance();
+        if (balance) {
+          gameData.diamonds = balance.diamonds;
+          gameData.total_coins = balance.coins;
+          saveGameData();
         }
       }
       
-      if (window.elementSdk) {
-        window.elementSdk.init({
-          defaultConfig,
-          onConfigChange,
-          mapToCapabilities,
-          mapToEditPanelValues
-        });
-      }
-      
+      updateDisplay();
       createEffects();
       createChests();
       
@@ -932,5 +788,5 @@
     
     init();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b06d57890e2d2eb',t:'MTc2NjE0NjYxNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b06da14272fd2eb',t:'MTc2NjE0NjgwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
