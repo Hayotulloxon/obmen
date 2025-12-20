@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Real Treasure Hunt - Gold Chest Game</title>
+    <title>Pirate Treasure Chest - Gold Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Fredoka:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --real-gold: linear-gradient(135deg, #FFD700 0%, #DAA520 30%, #FFD700 70%, #F4C430 100%);
-            --real-wood: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%);
-            --real-metal: linear-gradient(135deg, #C0C0C0 0%, #808080 50%, #C0C0C0 100%);
-            --real-red: linear-gradient(135deg, #8B0000 0%, #B22222 50%, #8B0000 100%);
-            --shadow-heavy: 0 15px 35px rgba(0, 0, 0, 0.5);
-            --shadow-light: 0 8px 20px rgba(0, 0, 0, 0.3);
+            --pirate-dark: #1a0a0a;
+            --pirate-red: #8B0000;
+            --pirate-gold: #FFD700;
+            --pirate-wood: #8B4513;
+            --pirate-metal: #B87333;
+            --pirate-leather: #654321;
+            --pirate-ocean: #1a1a2e;
         }
         
         * {
@@ -32,34 +33,42 @@
             overflow: hidden;
             touch-action: manipulation;
             position: fixed;
-            font-family: 'Fredoka', sans-serif;
-            background: #1a1a2e;
+            font-family: 'Pirata One', 'Fredoka', sans-serif;
+            background: #0a0a14;
         }
         
-        /* Realistic background */
-        .real-bg {
+        /* Pirate ship background */
+        .pirate-bg {
             position: fixed;
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 30%, rgba(218, 165, 32, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-                linear-gradient(135deg, #0c0c14 0%, #1a1a2e 50%, #0c0c14 100%);
+                radial-gradient(circle at 20% 30%, rgba(139, 0, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(184, 115, 51, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, #0a0a14 0%, #1a1a2e 50%, #0a0a14 100%);
             z-index: -2;
         }
         
-        .gold-particle {
+        .rope {
             position: absolute;
-            width: 3px;
-            height: 3px;
-            background: #FFD700;
-            border-radius: 50%;
-            filter: blur(1px);
-            animation: goldFloat linear infinite;
+            background: linear-gradient(to right, 
+                #8B4513 0%, 
+                #A0522D 30%, 
+                #8B4513 70%, 
+                #654321 100%);
+            border-radius: 3px;
+            opacity: 0.3;
+            animation: ropeSwing 8s infinite ease-in-out;
         }
         
-        /* Main container - optimized for mobile */
+        .skull {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0.1;
+            animation: skullFloat 10s infinite linear;
+        }
+        
+        /* Main container */
         .app-container {
             width: 100%;
             height: 100%;
@@ -75,54 +84,64 @@
                 max(env(safe-area-inset-right), 5px)
                 max(env(safe-area-inset-bottom), 0px)
                 max(env(safe-area-inset-left), 5px);
-            background: rgba(10, 10, 20, 0.8);
+            background: rgba(10, 10, 20, 0.7);
         }
         
-        /* Header - Realistic Design */
+        /* Pirate Header */
         .header {
             flex-shrink: 0;
             padding: 12px 10px 10px;
-            background: linear-gradient(135deg, #2c2c3e 0%, #1a1a2e 100%);
-            border-bottom: 4px solid #8B4513;
+            background: 
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%238B0000"/><path d="M0,0 L100,100" stroke="%23FFD700" stroke-width="2"/><path d="M100,0 L0,100" stroke="%23FFD700" stroke-width="2"/></svg>'),
+                linear-gradient(135deg, var(--pirate-red) 0%, #8B0000 100%);
+            border-bottom: 6px solid var(--pirate-leather);
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
             position: relative;
             z-index: 10;
+            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="%23FFD700"/><circle cx="5" cy="5" r="2" fill="%238B0000"/><circle cx="15" cy="5" r="2" fill="%238B0000"/><circle cx="5" cy="15" r="2" fill="%238B0000"/><circle cx="15" cy="15" r="2" fill="%238B0000"/></svg>') 30 round;
+            border-image-width: 0 0 6px 0;
         }
         
-        .header::after {
+        .header::before {
             content: '';
             position: absolute;
-            bottom: -4px;
-            left: 10%;
-            right: 10%;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--pirate-gold), 
+                transparent);
         }
         
         .game-title {
             text-align: center;
             margin-bottom: 10px;
+            position: relative;
         }
         
         .game-title h1 {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 800;
-            color: #FFD700;
+            color: var(--pirate-gold);
             text-shadow: 
-                2px 2px 0 #8B4513,
-                0 0 10px rgba(255, 215, 0, 0.5);
-            letter-spacing: 1px;
-            margin-bottom: 3px;
+                3px 3px 0 var(--pirate-dark),
+                0 0 15px rgba(255, 215, 0, 0.5);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            font-family: 'Pirata One', cursive;
         }
         
         .game-subtitle {
-            font-size: 11px;
-            color: #C0C0C0;
+            font-size: 12px;
+            color: #FFD700;
             font-weight: 500;
             opacity: 0.9;
+            text-shadow: 1px 1px 0 #000;
         }
         
-        /* Balance Cards - Realistic Style */
+        /* Pirate Balance Cards */
         .balance-container {
             display: flex;
             gap: 8px;
@@ -133,34 +152,52 @@
             flex: 1;
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 8px;
-            background: linear-gradient(135deg, rgba(42, 42, 62, 0.9) 0%, rgba(26, 26, 46, 0.9) 100%);
-            border-radius: 12px;
-            border: 2px solid #8B4513;
+            gap: 10px;
+            padding: 12px 10px;
+            background: 
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231a0a0a"/><path d="M0,0 L100,100" stroke="%238B4513" stroke-width="1" stroke-opacity="0.3"/><path d="M100,0 L0,100" stroke="%238B4513" stroke-width="1" stroke-opacity="0.3"/></svg>'),
+                linear-gradient(135deg, rgba(26, 10, 10, 0.9) 0%, rgba(40, 20, 20, 0.9) 100%);
+            border-radius: 15px;
+            border: 3px solid var(--pirate-leather);
             box-shadow: 
-                inset 0 0 15px rgba(0, 0, 0, 0.5),
-                0 4px 10px rgba(0, 0, 0, 0.6);
+                inset 0 0 20px rgba(0, 0, 0, 0.7),
+                0 5px 15px rgba(0, 0, 0, 0.8),
+                0 0 0 2px rgba(139, 0, 0, 0.3);
             position: relative;
             overflow: hidden;
-            min-height: 50px;
+            min-height: 55px;
         }
         
         .balance-card::before {
+            content: '✪';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 18px;
+            color: var(--pirate-gold);
+            text-shadow: 1px 1px 0 #000;
+            opacity: 0.6;
+        }
+        
+        .balance-card::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--pirate-gold), 
+                transparent);
         }
         
         .balance-icon {
-            font-size: 24px;
-            filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.8));
-            min-width: 30px;
+            font-size: 28px;
+            filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.9));
+            min-width: 35px;
             text-align: center;
+            animation: bouncePirate 3s infinite ease-in-out;
         }
         
         .balance-info {
@@ -169,111 +206,121 @@
         }
         
         .balance-label {
-            font-size: 10px;
-            color: #C0C0C0;
-            font-weight: 600;
+            font-size: 11px;
+            color: #FFD700;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 0 #000;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         
         .balance-value {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 900;
             color: #FFD700;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            text-shadow: 
+                2px 2px 0 #000,
+                0 0 10px rgba(255, 215, 0, 0.5);
             line-height: 1;
-            margin-top: 2px;
+            margin-top: 3px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-family: 'Pirata One', cursive;
         }
         
         .user-id {
             text-align: center;
             margin-top: 8px;
-            font-size: 9px;
-            color: #888;
-            font-weight: 500;
+            font-size: 10px;
+            color: #FFD700;
+            font-weight: 600;
+            text-shadow: 1px 1px 0 #000;
+            opacity: 0.8;
         }
         
-        /* Game Area - Treasure Room */
+        /* Pirate Game Area */
         .game-area {
             flex: 1;
-            padding: 12px 10px;
+            padding: 15px 10px;
             overflow: hidden;
             position: relative;
             background: 
-                radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.2) 0%, transparent 40%),
-                radial-gradient(circle at 80% 20%, rgba(218, 165, 32, 0.2) 0%, transparent 40%),
-                linear-gradient(to bottom, #0f0f1a 0%, #1a1a2e 100%);
-            border-top: 2px solid rgba(139, 69, 19, 0.3);
-            border-bottom: 2px solid rgba(139, 69, 19, 0.3);
+                radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.3) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(184, 115, 51, 0.3) 0%, transparent 40%),
+                linear-gradient(to bottom, #0a0a14 0%, #1a0a0a 100%);
+            border-top: 4px solid var(--pirate-leather);
+            border-bottom: 4px solid var(--pirate-leather);
+            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="%238B4513"/><circle cx="10" cy="10" r="3" fill="%23FFD700"/></svg>') 30 round;
+            border-image-width: 4px 0;
         }
         
         .game-area::before {
             content: '';
             position: absolute;
-            top: 5px;
-            left: 10px;
-            right: 10px;
-            height: 3px;
+            top: 8px;
+            left: 15px;
+            right: 15px;
+            height: 4px;
             background: linear-gradient(90deg, 
-                #8B0000, 
-                #8B4513, 
-                #DAA520, 
-                #8B4513, 
-                #8B0000);
+                transparent, 
+                var(--pirate-red), 
+                var(--pirate-gold), 
+                var(--pirate-red), 
+                transparent);
             border-radius: 2px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
             z-index: 2;
         }
         
-        /* Treasure Grid - Realistic Layout */
+        /* Pirate Treasure Grid */
         .treasure-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 12px;
             width: 100%;
             height: 100%;
             margin: 0 auto;
-            padding: 12px;
+            padding: 15px;
             background: 
-                radial-gradient(circle at center, rgba(26, 26, 46, 0.9) 0%, rgba(10, 10, 20, 0.95) 100%),
-                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><path d="M0,0 L100,100" stroke="%238B4513" stroke-width="0.5" stroke-opacity="0.1"/><path d="M100,0 L0,100" stroke="%238B4513" stroke-width="0.5" stroke-opacity="0.1"/></svg>');
-            border-radius: 15px;
-            border: 3px solid #8B4513;
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%231a0a0a"/><path d="M0,0 L200,200" stroke="%238B0000" stroke-width="1" stroke-opacity="0.2"/><path d="M200,0 L0,200" stroke="%238B0000" stroke-width="1" stroke-opacity="0.2"/><circle cx="100" cy="100" r="50" fill="none" stroke="%238B4513" stroke-width="0.5" stroke-opacity="0.1"/></svg>'),
+                radial-gradient(circle at center, rgba(26, 10, 10, 0.95) 0%, rgba(10, 5, 5, 0.98) 100%);
+            border-radius: 20px;
+            border: 5px solid var(--pirate-leather);
             box-shadow: 
-                inset 0 0 30px rgba(0, 0, 0, 0.8),
-                0 10px 25px rgba(0, 0, 0, 0.7),
-                inset 0 0 0 2px rgba(255, 215, 0, 0.1);
+                inset 0 0 40px rgba(0, 0, 0, 0.9),
+                0 12px 30px rgba(0, 0, 0, 0.8),
+                0 0 0 3px rgba(139, 0, 0, 0.4),
+                inset 0 0 0 3px rgba(255, 215, 0, 0.1);
             position: relative;
             overflow: hidden;
         }
         
         .treasure-grid::before {
-            content: '';
+            content: '☠';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #FFD700, transparent);
-            z-index: 1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            color: rgba(139, 0, 0, 0.1);
+            z-index: 0;
         }
         
-        /* Realistic Treasure Chest */
+        /* PIRATE CHEST - Qaroqchi sandiqi */
         .treasure-chest {
             width: 100%;
             height: 100%;
-            min-height: 85px;
+            min-height: 90px;
             position: relative;
             cursor: pointer;
             perspective: 1000px;
             transition: all 0.3s ease;
             transform-style: preserve-3d;
+            z-index: 1;
         }
         
         .chest-container {
@@ -281,229 +328,210 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
-        /* Chest Base - Ultra Realistic */
+        /* Pirate Chest Base - Qaroqchi uslubida */
         .chest-base {
             position: absolute;
             width: 100%;
-            height: 65%;
+            height: 60%;
             bottom: 0;
             background: 
-                /* Wood texture */
-                repeating-linear-gradient(
-                    90deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(139, 69, 19, 0.3) 2px,
-                    rgba(139, 69, 19, 0.3) 4px
-                ),
-                repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(139, 69, 19, 0.2) 2px,
-                    rgba(139, 69, 19, 0.2) 4px
-                ),
-                /* Gold overlay */
-                radial-gradient(
-                    ellipse at 30% 70%,
-                    rgba(255, 215, 0, 0.4) 0%,
-                    rgba(255, 215, 0, 0.1) 30%,
-                    transparent 60%
-                ),
-                radial-gradient(
-                    ellipse at 70% 30%,
-                    rgba(255, 215, 0, 0.3) 0%,
-                    rgba(255, 215, 0, 0.05) 25%,
-                    transparent 50%
-                ),
-                /* Main gradient */
-                linear-gradient(
-                    145deg,
-                    #8B4513 0%,
-                    #A0522D 25%,
-                    #8B4513 50%,
-                    #A0522D 75%,
-                    #8B4513 100%
-                );
-            border-radius: 10px 10px 12px 12px;
-            border: 3px solid #5D4037;
+                /* Old sea wood texture */
+                linear-gradient(145deg, 
+                    #5D4037 0%, 
+                    #8B4513 25%, 
+                    #A0522D 50%, 
+                    #8B4513 75%, 
+                    #5D4037 100%),
+                /* Water damage stains */
+                radial-gradient(circle at 30% 70%, 
+                    rgba(101, 67, 33, 0.6) 0%, 
+                    transparent 30%),
+                radial-gradient(circle at 70% 30%, 
+                    rgba(101, 67, 33, 0.6) 0%, 
+                    transparent 30%),
+                /* Nail holes */
+                repeating-linear-gradient(90deg, 
+                    transparent, 
+                    transparent 15px, 
+                    rgba(0, 0, 0, 0.2) 15px, 
+                    rgba(0, 0, 0, 0.2) 17px);
+            border-radius: 10px 10px 15px 15px;
+            border: 4px solid #654321;
             box-shadow: 
-                inset 0 -8px 20px rgba(0, 0, 0, 0.8),
-                inset 0 8px 20px rgba(255, 255, 255, 0.1),
+                inset 0 -10px 25px rgba(0, 0, 0, 0.8),
+                inset 0 5px 15px rgba(255, 215, 0, 0.1),
                 0 8px 20px rgba(0, 0, 0, 0.9),
-                0 0 0 2px rgba(255, 215, 0, 0.05);
+                0 0 0 3px rgba(139, 0, 0, 0.3);
             z-index: 1;
             transform-style: preserve-3d;
         }
         
-        /* Chest Lid - Ultra Realistic */
+        /* Pirate Chest Lid */
         .chest-lid {
             position: absolute;
             width: 100%;
-            height: 35%;
+            height: 40%;
             top: 0;
             background: 
-                /* Wood grain */
-                repeating-linear-gradient(
-                    45deg,
-                    transparent,
-                    transparent 3px,
-                    rgba(139, 69, 19, 0.4) 3px,
-                    rgba(139, 69, 19, 0.4) 6px
-                ),
-                /* Gold highlights */
-                radial-gradient(
-                    ellipse at 50% 20%,
-                    rgba(255, 215, 0, 0.6) 0%,
-                    rgba(255, 215, 0, 0.2) 20%,
-                    transparent 40%
-                ),
-                /* Main lid gradient */
-                linear-gradient(
-                    145deg,
-                    #8B4513 0%,
-                    #A0522D 30%,
-                    #8B4513 60%,
-                    #A0522D 90%,
-                    #8B4513 100%
-                );
-            border-radius: 12px 12px 10px 10px;
-            border: 3px solid #5D4037;
+                /* Weathered wood */
+                linear-gradient(145deg, 
+                    #8B4513 0%, 
+                    #A0522D 30%, 
+                    #8B4513 60%, 
+                    #654321 100%),
+                /* Cracked texture */
+                repeating-linear-gradient(45deg, 
+                    transparent, 
+                    transparent 8px, 
+                    rgba(101, 67, 33, 0.4) 8px, 
+                    rgba(101, 67, 33, 0.4) 10px),
+                /* Moss and mold */
+                radial-gradient(circle at 20% 80%, 
+                    rgba(34, 139, 34, 0.1) 0%, 
+                    transparent 25%);
+            border-radius: 15px 15px 10px 10px;
+            border: 4px solid #654321;
             border-bottom: none;
             box-shadow: 
-                inset 0 8px 20px rgba(255, 255, 255, 0.15),
-                inset 0 -8px 20px rgba(0, 0, 0, 0.6),
+                inset 0 8px 20px rgba(255, 215, 0, 0.15),
+                inset 0 -10px 25px rgba(0, 0, 0, 0.7),
                 0 -8px 20px rgba(0, 0, 0, 0.9),
-                0 0 0 2px rgba(255, 215, 0, 0.05);
+                0 0 0 3px rgba(139, 0, 0, 0.3);
             transform-origin: bottom center;
-            transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 2.55);
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 3;
             transform-style: preserve-3d;
         }
         
-        /* Realistic Metal Handle */
+        /* Pirate Metal Bands - Rusty */
+        .chest-band {
+            position: absolute;
+            width: 90%;
+            height: 12px;
+            left: 5%;
+            background: 
+                linear-gradient(to right, 
+                    #5D4037 0%,
+                    #B87333 20%,
+                    #8B4513 50%,
+                    #B87333 80%,
+                    #5D4037 100%),
+                /* Rust texture */
+                radial-gradient(circle at 30% 50%, 
+                    rgba(139, 0, 0, 0.3) 0%, 
+                    transparent 50%);
+            border-radius: 6px;
+            border: 2px solid #654321;
+            box-shadow: 
+                inset 0 2px 5px rgba(255, 255, 255, 0.1),
+                0 2px 5px rgba(0, 0, 0, 0.7),
+                inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .band-1 { top: 25%; }
+        .band-2 { top: 50%; }
+        .band-3 { top: 75%; }
+        
+        /* Pirate Handle - Bone or Metal */
         .chest-handle {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 40px;
-            height: 12px;
+            width: 45px;
+            height: 16px;
             background: 
-                radial-gradient(ellipse at center, 
-                    #FFD700 0%,
-                    #DAA520 30%,
-                    #B8860B 70%,
-                    #8B4513 100%);
-            border-radius: 6px;
-            border: 2px solid #5D4037;
+                linear-gradient(135deg, 
+                    #8B4513 0%, 
+                    #B87333 30%, 
+                    #8B4513 70%, 
+                    #654321 100%),
+                /* Bone texture */
+                radial-gradient(circle at 30% 50%, 
+                    rgba(255, 255, 255, 0.2) 0%, 
+                    transparent 50%);
+            border-radius: 8px;
+            border: 3px solid #654321;
             box-shadow: 
-                0 4px 12px rgba(0, 0, 0, 0.8),
-                inset 0 1px 3px rgba(255, 255, 255, 0.3),
-                0 0 5px rgba(255, 215, 0, 0.5);
+                0 4px 10px rgba(0, 0, 0, 0.8),
+                inset 0 2px 5px rgba(255, 215, 0, 0.3),
+                0 0 8px rgba(255, 215, 0, 0.4);
             z-index: 4;
         }
         
         .chest-handle::before {
-            content: '';
+            content: '💀';
             position: absolute;
-            top: -6px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
-            width: 20px;
-            height: 5px;
-            background: #5D4037;
-            border-radius: 3px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+            font-size: 14px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         }
         
-        /* Realistic Lock */
+        /* Pirate Lock - Old rusty lock */
         .chest-lock {
             position: absolute;
-            bottom: -10px;
+            bottom: -12px;
             left: 50%;
             transform: translateX(-50%);
-            width: 28px;
-            height: 16px;
-            background: linear-gradient(135deg, 
-                #C0C0C0 0%,
-                #808080 30%,
-                #606060 70%,
-                #404040 100%);
+            width: 30px;
+            height: 18px;
+            background: 
+                linear-gradient(135deg, 
+                    #5D4037 0%,
+                    #B87333 30%,
+                    #8B4513 70%,
+                    #654321 100%);
             border-radius: 8px;
-            border: 2px solid #404040;
+            border: 3px solid #654321;
             z-index: 4;
             box-shadow: 
                 0 4px 10px rgba(0, 0, 0, 0.7),
-                inset 0 1px 3px rgba(255, 255, 255, 0.2);
+                inset 0 2px 5px rgba(255, 255, 255, 0.1);
         }
         
         .chest-lock::after {
-            content: '';
+            content: '🔒';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 6px;
-            height: 6px;
-            background: #8B0000;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #8B0000;
+            font-size: 10px;
+            color: #FFD700;
+            text-shadow: 1px 1px 0 #000;
         }
         
-        /* Metal Reinforcements */
-        .chest-corner {
+        /* Pirate Nails/Studs */
+        .chest-nail {
             position: absolute;
-            width: 14px;
-            height: 14px;
-            background: linear-gradient(135deg, 
-                #C0C0C0 0%,
-                #808080 50%,
-                #606060 100%);
-            border-radius: 4px;
-            border: 2px solid #404040;
+            width: 8px;
+            height: 8px;
+            background: 
+                radial-gradient(circle at 30% 30%, #B87333 0%, #8B4513 100%);
+            border-radius: 50%;
+            border: 1px solid #654321;
             box-shadow: 
-                0 2px 6px rgba(0, 0, 0, 0.7),
-                inset 0 1px 3px rgba(255, 255, 255, 0.2);
+                0 2px 4px rgba(0, 0, 0, 0.7),
+                inset 0 1px 2px rgba(255, 215, 0, 0.2);
             transform: rotate(45deg);
         }
         
-        .corner-tl { top: 4px; left: 4px; }
-        .corner-tr { top: 4px; right: 4px; }
-        .corner-bl { bottom: 4px; left: 4px; }
-        .corner-br { bottom: 4px; right: 4px; }
-        
-        /* Metal Bands */
-        .chest-band {
-            position: absolute;
-            width: 86%;
-            height: 8px;
-            left: 7%;
-            background: linear-gradient(to right, 
-                transparent 5%,
-                #C0C0C0 5%,
-                #808080 50%,
-                #C0C0C0 95%,
-                transparent 95%);
-            border-radius: 4px;
-            border: 1px solid #404040;
-            box-shadow: 
-                inset 0 1px 3px rgba(0, 0, 0, 0.8),
-                0 1px 3px rgba(255, 255, 255, 0.1);
-        }
-        
-        .band-1 { top: 20%; }
-        .band-2 { top: 45%; }
-        .band-3 { top: 70%; }
+        .nail-tl { top: 10px; left: 10px; }
+        .nail-tr { top: 10px; right: 10px; }
+        .nail-bl { bottom: 10px; left: 10px; }
+        .nail-br { bottom: 10px; right: 10px; }
+        .nail-lm { left: 10px; top: 50%; transform: translateY(-50%) rotate(45deg); }
+        .nail-rm { right: 10px; top: 50%; transform: translateY(-50%) rotate(45deg); }
         
         /* Treasure Inside */
         .treasure-inside {
             position: absolute;
             width: 100%;
-            height: 65%;
+            height: 60%;
             bottom: 0;
             display: flex;
             align-items: center;
@@ -511,7 +539,7 @@
             overflow: hidden;
             z-index: 2;
             opacity: 0;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.5s ease;
             background: radial-gradient(circle at center, 
                 rgba(255, 215, 0, 0.3) 0%,
                 rgba(255, 215, 0, 0.1) 30%,
@@ -523,13 +551,18 @@
             font-weight: 900;
             color: #FFD700;
             text-shadow: 
-                2px 2px 0 #000,
-                0 0 15px rgba(255, 215, 0, 0.9),
-                0 0 30px rgba(255, 215, 0, 0.6);
+                3px 3px 0 #8B0000,
+                0 0 20px rgba(255, 215, 0, 1),
+                0 0 40px rgba(255, 215, 0, 0.7);
             transform: translateY(25px) scale(0.8);
-            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             z-index: 1;
+            padding: 5px 10px;
+            border-radius: 8px;
+            background: rgba(139, 0, 0, 0.5);
+            border: 2px solid #FFD700;
+            font-family: 'Pirata One', cursive;
         }
         
         /* Chest States */
@@ -546,89 +579,116 @@
         }
         
         /* Chest Interactions */
+        .treasure-chest:hover .chest-container {
+            transform: translateY(-6px) rotateX(5deg);
+            filter: drop-shadow(0 10px 15px rgba(255, 215, 0, 0.3));
+        }
+        
         .treasure-chest:active .chest-container {
-            transform: scale(0.95);
+            transform: scale(0.95) rotateX(5deg);
             transition: transform 0.1s;
         }
         
         .treasure-chest.selected {
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7));
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
         }
         
-        /* Footer */
+        .treasure-chest.selected .chest-handle {
+            animation: pirateGlow 1.5s infinite alternate;
+        }
+        
+        /* Pirate Footer */
         .footer {
             flex-shrink: 0;
-            padding: 12px 10px;
-            background: linear-gradient(135deg, #2c2c3e 0%, #1a1a2e 100%);
-            border-top: 4px solid #8B4513;
+            padding: 15px 10px;
+            background: 
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%238B0000"/><path d="M0,50 L100,50" stroke="%23FFD700" stroke-width="2"/><path d="M50,0 L50,100" stroke="%23FFD700" stroke-width="2"/></svg>'),
+                linear-gradient(135deg, var(--pirate-red) 0%, #8B0000 100%);
+            border-top: 6px solid var(--pirate-leather);
             box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.8);
             position: relative;
             z-index: 10;
+            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="%23FFD700"/><circle cx="10" cy="10" r="4" fill="%238B0000"/></svg>') 30 round;
+            border-image-width: 6px 0 0 0;
         }
         
         .footer::before {
             content: '';
             position: absolute;
-            top: -4px;
-            left: 10%;
-            right: 10%;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--pirate-gold), 
+                transparent);
         }
         
-        /* Real Play Button */
+        /* Pirate Play Button */
         .play-button {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             background: 
                 linear-gradient(135deg, 
-                    #8B4513 0%,
-                    #A0522D 30%,
-                    #8B4513 70%,
-                    #5D4037 100%);
-            border: 3px solid #5D4037;
-            border-radius: 15px;
-            color: #FFD700;
-            font-size: 16px;
+                    var(--pirate-red) 0%, 
+                    #8B0000 30%, 
+                    var(--pirate-red) 70%, 
+                    #650000 100%);
+            border: 4px solid var(--pirate-leather);
+            border-radius: 20px;
+            color: var(--pirate-gold);
+            font-size: 18px;
             font-weight: 800;
             cursor: pointer;
             transition: all 0.2s ease;
             margin: 0 auto;
             display: block;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            text-shadow: 
+                2px 2px 0 var(--pirate-dark),
+                0 0 10px rgba(255, 215, 0, 0.5);
             box-shadow: 
-                0 8px 0 #5D4037,
-                0 12px 20px rgba(0, 0, 0, 0.6),
-                inset 0 2px 8px rgba(255, 255, 255, 0.1);
+                0 10px 0 #654321,
+                0 15px 25px rgba(139, 0, 0, 0.6),
+                inset 0 4px 10px rgba(255, 215, 0, 0.2);
             position: relative;
             overflow: hidden;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            font-family: 'Pirata One', cursive;
         }
         
         .play-button::before {
-            content: '';
+            content: '⚓';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(255, 215, 0, 0.2), 
-                transparent);
-            transition: left 0.6s;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
         }
         
-        .play-button:hover::before {
-            left: 100%;
+        .play-button::after {
+            content: '☠';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+        }
+        
+        .play-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 13px 0 #654321,
+                0 20px 30px rgba(139, 0, 0, 0.7),
+                inset 0 4px 10px rgba(255, 215, 0, 0.3);
         }
         
         .play-button:active {
-            transform: translateY(4px);
+            transform: translateY(6px);
             box-shadow: 
-                0 4px 0 #5D4037,
-                0 6px 10px rgba(0, 0, 0, 0.6),
-                inset 0 2px 8px rgba(255, 255, 255, 0.1);
+                0 4px 0 #654321,
+                0 8px 15px rgba(139, 0, 0, 0.5),
+                inset 0 4px 10px rgba(255, 215, 0, 0.2);
         }
         
         .play-button:disabled {
@@ -636,104 +696,144 @@
             cursor: not-allowed;
             transform: none;
             box-shadow: 
-                0 4px 0 #5D4037,
-                0 6px 10px rgba(0, 0, 0, 0.6);
+                0 4px 0 #654321,
+                0 8px 15px rgba(139, 0, 0, 0.5);
         }
         
-        /* Message Area */
+        /* Pirate Message Area */
         .message-area {
-            margin-top: 10px;
-            font-size: 13px;
+            margin-top: 12px;
+            font-size: 14px;
             font-weight: 600;
             color: #FFD700;
             text-align: center;
-            padding: 10px;
-            background: linear-gradient(135deg, 
-                rgba(42, 42, 62, 0.9) 0%, 
-                rgba(26, 26, 46, 0.9) 100%);
-            border-radius: 10px;
-            border: 2px solid #8B4513;
+            padding: 12px;
+            background: 
+                linear-gradient(135deg, 
+                    rgba(26, 10, 10, 0.9) 0%, 
+                    rgba(40, 20, 20, 0.9) 100%);
+            border-radius: 15px;
+            border: 3px solid var(--pirate-leather);
             box-shadow: 
-                inset 0 0 10px rgba(0, 0, 0, 0.5),
-                0 3px 8px rgba(0, 0, 0, 0.6);
-            min-height: 45px;
+                inset 0 0 15px rgba(0, 0, 0, 0.6),
+                0 4px 10px rgba(0, 0, 0, 0.7),
+                0 0 0 2px rgba(139, 0, 0, 0.3);
+            min-height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
+            font-family: 'Pirata One', cursive;
         }
         
-        /* Error Message */
+        .message-area::before {
+            content: '💬';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+        
+        /* Pirate Error Message */
         .error-message {
-            background: linear-gradient(135deg, 
-                #8B0000 0%,
-                #B22222 100%);
-            border: 2px solid #5D4037;
+            background: 
+                linear-gradient(135deg, 
+                    #8B0000 0%,
+                    #650000 100%);
+            border: 3px solid var(--pirate-leather);
             color: #FFD700;
-            padding: 10px;
-            border-radius: 10px;
-            margin-top: 10px;
-            font-size: 12px;
+            padding: 12px;
+            border-radius: 15px;
+            margin-top: 12px;
+            font-size: 13px;
             font-weight: 600;
             text-align: center;
             display: none;
             box-shadow: 
-                inset 0 0 10px rgba(0, 0, 0, 0.6),
-                0 3px 8px rgba(0, 0, 0, 0.7);
+                inset 0 0 15px rgba(0, 0, 0, 0.7),
+                0 4px 10px rgba(0, 0, 0, 0.8);
             animation: shake 0.5s ease;
+            font-family: 'Pirata One', cursive;
         }
         
-        /* Audio Control */
+        /* Pirate Audio Control */
         .audio-control {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 35px;
-            height: 35px;
-            background: linear-gradient(135deg, 
-                #2c2c3e 0%,
-                #1a1a2e 100%);
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: 
+                linear-gradient(135deg, 
+                    var(--pirate-red) 0%, 
+                    #8B0000 100%);
             border-radius: 50%;
-            border: 2px solid #8B4513;
+            border: 3px solid var(--pirate-leather);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 100;
             box-shadow: 
-                0 3px 8px rgba(0, 0, 0, 0.6),
-                inset 0 0 5px rgba(255, 255, 255, 0.1);
+                0 4px 10px rgba(0, 0, 0, 0.7),
+                inset 0 0 8px rgba(255, 215, 0, 0.3);
+        }
+        
+        .audio-control:hover {
+            transform: scale(1.1) rotate(10deg);
         }
         
         .audio-icon {
-            font-size: 16px;
+            font-size: 18px;
             color: #FFD700;
         }
         
         /* Coin Animation */
         .coin {
             position: fixed;
-            font-size: 20px;
+            font-size: 22px;
             z-index: 1000;
             pointer-events: none;
             opacity: 0;
-            filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.8));
+            filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.9));
         }
         
-        /* Animations */
-        @keyframes goldFloat {
-            from { transform: translateY(-100px) rotate(0deg); }
-            to { transform: translateY(100vh) rotate(360deg); }
+        /* Pirate Animations */
+        @keyframes ropeSwing {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
         }
         
-        @keyframes chestSelect {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
+        @keyframes skullFloat {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
         }
         
-        @keyframes glow {
-            0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5)); }
-            50% { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)); }
+        @keyframes bouncePirate {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-5px) rotate(-5deg); }
+            75% { transform: translateY(-5px) rotate(5deg); }
+        }
+        
+        @keyframes pirateGlow {
+            0%, 100% { 
+                box-shadow: 
+                    0 4px 10px rgba(0, 0, 0, 0.8),
+                    inset 0 2px 5px rgba(255, 215, 0, 0.3),
+                    0 0 8px rgba(255, 215, 0, 0.4);
+            }
+            50% { 
+                box-shadow: 
+                    0 4px 15px rgba(0, 0, 0, 0.9),
+                    inset 0 2px 5px rgba(255, 215, 0, 0.5),
+                    0 0 15px rgba(255, 215, 0, 0.8);
+            }
+        }
+        
+        @keyframes chestOpen {
+            0% { transform: rotateX(0); }
+            100% { transform: rotateX(-115deg); }
         }
         
         @keyframes coinFly {
@@ -750,98 +850,95 @@
         
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
         }
         
         /* Apply animations */
-        .glow {
-            animation: glow 2s infinite alternate;
+        .pirate-float {
+            animation: ropeSwing 5s infinite ease-in-out;
         }
         
-        /* Responsive Design for All Phones */
+        /* Responsive Design */
         @media (max-width: 480px) {
+            .treasure-grid {
+                gap: 10px;
+                padding: 12px;
+            }
+            
+            .treasure-chest {
+                min-height: 80px;
+            }
+            
+            .game-title h1 {
+                font-size: 20px;
+            }
+            
+            .play-button {
+                padding: 16px;
+                font-size: 16px;
+            }
+            
+            .balance-card {
+                padding: 10px 8px;
+            }
+            
+            .balance-icon {
+                font-size: 24px;
+            }
+            
+            .balance-value {
+                font-size: 18px;
+            }
+        }
+        
+        @media (max-width: 380px) {
             .treasure-grid {
                 gap: 8px;
                 padding: 10px;
             }
             
             .treasure-chest {
-                min-height: 75px;
+                min-height: 70px;
             }
             
             .chest-handle {
-                width: 35px;
-                height: 10px;
-            }
-            
-            .chest-lock {
-                width: 25px;
+                width: 38px;
                 height: 14px;
             }
             
-            .treasure-reward {
-                font-size: 20px;
-            }
-            
-            .play-button {
-                padding: 14px;
-                font-size: 15px;
+            .chest-handle::before {
+                font-size: 12px;
+                top: -12px;
             }
             
             .game-title h1 {
                 font-size: 18px;
             }
             
-            .balance-card {
-                padding: 8px 6px;
-                min-height: 45px;
-            }
-            
-            .balance-icon {
-                font-size: 22px;
-            }
-            
-            .balance-value {
-                font-size: 17px;
-            }
-            
-            .message-area {
-                font-size: 12px;
-                padding: 8px;
-                min-height: 40px;
+            .play-button {
+                padding: 14px;
+                font-size: 15px;
             }
         }
         
-        @media (max-width: 380px) {
-            .treasure-grid {
-                gap: 6px;
-                padding: 8px;
+        @media (max-height: 700px) {
+            .treasure-chest {
+                min-height: 75px;
             }
             
+            .game-area {
+                padding: 12px 10px;
+            }
+            
+            .header, .footer {
+                padding: 10px 8px;
+            }
+        }
+        
+        @media (max-height: 600px) {
             .treasure-chest {
                 min-height: 65px;
-            }
-            
-            .chest-handle {
-                width: 30px;
-                height: 9px;
-            }
-            
-            .chest-handle::before {
-                width: 18px;
-                height: 4px;
-                top: -5px;
-            }
-            
-            .chest-lock {
-                width: 22px;
-                height: 12px;
-            }
-            
-            .chest-corner {
-                width: 12px;
-                height: 12px;
             }
             
             .treasure-reward {
@@ -852,138 +949,6 @@
                 padding: 12px;
                 font-size: 14px;
             }
-            
-            .game-title h1 {
-                font-size: 16px;
-            }
-            
-            .balance-container {
-                gap: 6px;
-            }
-            
-            .balance-card {
-                padding: 6px 5px;
-                min-height: 40px;
-            }
-            
-            .balance-icon {
-                font-size: 20px;
-                min-width: 25px;
-            }
-            
-            .balance-value {
-                font-size: 16px;
-            }
-            
-            .game-area {
-                padding: 10px 8px;
-            }
-            
-            .header, .footer {
-                padding: 10px 8px;
-            }
-        }
-        
-        @media (max-height: 700px) {
-            .treasure-chest {
-                min-height: 60px;
-            }
-            
-            .header {
-                padding: 10px 8px 8px;
-            }
-            
-            .footer {
-                padding: 10px 8px;
-            }
-            
-            .game-area {
-                padding: 10px 8px;
-            }
-        }
-        
-        @media (max-height: 600px) {
-            .treasure-chest {
-                min-height: 55px;
-            }
-            
-            .treasure-reward {
-                font-size: 16px;
-            }
-            
-            .play-button {
-                padding: 10px;
-                font-size: 13px;
-            }
-            
-            .balance-card {
-                padding: 5px 4px;
-                min-height: 35px;
-            }
-            
-            .balance-icon {
-                font-size: 18px;
-            }
-            
-            .balance-value {
-                font-size: 15px;
-            }
-        }
-        
-        /* Landscape orientation */
-        @media (orientation: landscape) and (max-height: 500px) {
-            .app-container {
-                flex-direction: row;
-            }
-            
-            .header {
-                width: 150px;
-                border-radius: 0 15px 15px 0;
-                border-right: 4px solid #8B4513;
-                padding: 10px 8px;
-            }
-            
-            .game-area {
-                flex: 1;
-                border: none;
-                border-left: 2px solid rgba(139, 69, 19, 0.3);
-                border-right: 2px solid rgba(139, 69, 19, 0.3);
-            }
-            
-            .footer {
-                width: 150px;
-                border-radius: 15px 0 0 15px;
-                border-left: 4px solid #8B4513;
-                padding: 10px 8px;
-            }
-            
-            .balance-container {
-                flex-direction: column;
-                gap: 5px;
-            }
-            
-            .treasure-grid {
-                grid-template-columns: repeat(3, 1fr);
-                padding: 8px;
-            }
-            
-            .game-title h1 {
-                font-size: 14px;
-                writing-mode: vertical-rl;
-                text-orientation: mixed;
-                margin: 5px auto;
-            }
-            
-            .game-subtitle {
-                display: none;
-            }
-            
-            .play-button {
-                writing-mode: vertical-rl;
-                text-orientation: mixed;
-                padding: 20px 10px;
-                font-size: 12px;
-            }
         }
         
         /* Tablet support */
@@ -991,8 +956,6 @@
             .app-container {
                 max-width: 500px;
                 margin: 0 auto;
-                border-left: 2px solid #8B4513;
-                border-right: 2px solid #8B4513;
             }
             
             .treasure-chest {
@@ -1000,68 +963,18 @@
             }
             
             .game-title h1 {
-                font-size: 24px;
+                font-size: 28px;
             }
             
             .play-button {
-                font-size: 18px;
+                font-size: 20px;
             }
-        }
-        
-        /* Dark mode optimization */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: #0a0a14;
-            }
-            
-            .treasure-grid {
-                background: 
-                    radial-gradient(circle at center, 
-                        rgba(15, 15, 25, 0.95) 0%,
-                        rgba(5, 5, 10, 0.98) 100%);
-            }
-        }
-        
-        /* High contrast mode */
-        @media (prefers-contrast: high) {
-            .balance-card {
-                border: 3px solid #FFD700;
-            }
-            
-            .treasure-grid {
-                border: 3px solid #FFD700;
-            }
-            
-            .play-button {
-                border: 3px solid #FFD700;
-            }
-        }
-        
-        /* Reduced motion */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-        
-        /* Touch optimization */
-        .treasure-chest {
-            -webkit-touch-callout: none;
-            touch-action: manipulation;
-        }
-        
-        /* Prevent text selection on mobile */
-        .no-select {
-            -webkit-user-select: none;
-            user-select: none;
         }
     </style>
 </head>
 <body>
-    <!-- Realistic background -->
-    <div class="real-bg" id="realBg"></div>
+    <!-- Pirate background -->
+    <div class="pirate-bg" id="pirateBg"></div>
     
     <audio id="backgroundMusic" loop preload="auto">
         <source src="https://s35.surkhandc1.uz/399837962.mp3" type="audio/mpeg">
@@ -1074,9 +987,9 @@
     <div class="app-container">
         <div class="header">
             <div class="game-title">
-                <h1>💰 REAL TREASURE HUNT 💰</h1>
+                <h1>🏴‍☠️ QAROQCHI SANDIQLARI 🏴‍☠️</h1>
                 <div class="game-subtitle">
-                    Haqiqiy sandiqlardan boylik toping!
+                    Dengiz qaroqchilarining boyliklarini toping!
                 </div>
             </div>
             
@@ -1086,7 +999,7 @@
                         💎
                     </div>
                     <div class="balance-info">
-                        <div class="balance-label">OLMOSLAR</div>
+                        <div class="balance-label">QAROQCHI OLMOSLARI</div>
                         <div id="diamondCount" class="balance-value">
                             0
                         </div>
@@ -1098,7 +1011,7 @@
                         🪙
                     </div>
                     <div class="balance-info">
-                        <div class="balance-label">TANGALAR</div>
+                        <div class="balance-label">QAROQCHI TANGALARI</div>
                         <div id="coinCount" class="balance-value">
                             0
                         </div>
@@ -1107,23 +1020,23 @@
             </div>
             
             <div id="userIdDisplay" class="user-id">
-                ID: yuklanmoqda...
+                🏴‍☠️ Qaroqchi ID: yuklanmoqda...
             </div>
         </div>
         
         <div class="game-area">
             <div id="treasureGrid" class="treasure-grid">
-                <!-- Real sandiqlar bu yerda yaratiladi -->
+                <!-- Qaroqchi sandiqlari bu yerda yaratiladi -->
             </div>
         </div>
         
         <div class="footer">
             <button id="playButton" class="play-button">
-                <span id="playButtonText">🎮 O'YINNI BOSHLASH (10 💎)</span>
+                <span id="playButtonText">🎮 DENGIZ JANGINI BOSHLASH (10 💎)</span>
             </button>
             
             <div id="messageArea" class="message-area">
-                🎯 Haqiqiy sandiq tanlang!
+                🎯 Qaroqchi sandig'ini tanlang!
             </div>
             
             <div id="errorMessage" class="error-message"></div>
@@ -1163,29 +1076,36 @@
                 GET_BALANCE: '/Showbalance.php',
                 GET_DIAMONDS: '/get_balance.php',
                 REMOVE_DIAMONDS: '/remove.php',
-                ADD_COINS: '/coinmanage.php',
-                SAVE_STATS: '/save_stats.php'
+                ADD_COINS: '/coinmanage.php'
             }
         };
         
-        // LOCALSTORAGE ma'lumotlar bazasi
-        const USER_STATS_DB = 'treasure_hunt_user_stats';
-        
-        // Haqiqiy background elementi yaratish
-        function createRealBackground() {
-            const bg = document.getElementById('realBg');
+        // Qaroqchi background elementlarini yaratish
+        function createPirateBackground() {
+            const bg = document.getElementById('pirateBg');
             
-            // Gold particles
-            for (let i = 0; i < 15; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'gold-particle';
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.width = `${Math.random() * 2 + 2}px`;
-                particle.style.height = particle.style.width;
-                particle.style.opacity = Math.random() * 0.3 + 0.1;
-                particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
-                particle.style.animationDelay = `${Math.random() * 5}s`;
-                bg.appendChild(particle);
+            // Arqonlar
+            for (let i = 0; i < 8; i++) {
+                const rope = document.createElement('div');
+                rope.className = 'rope';
+                rope.style.width = `${Math.random() * 100 + 50}px`;
+                rope.style.height = '3px';
+                rope.style.left = `${Math.random() * 100}%`;
+                rope.style.top = `${Math.random() * 100}%`;
+                rope.style.animationDelay = `${Math.random() * 5}s`;
+                bg.appendChild(rope);
+            }
+            
+            // Bosh suyaklari
+            for (let i = 0; i < 6; i++) {
+                const skull = document.createElement('div');
+                skull.className = 'skull';
+                skull.innerHTML = '☠';
+                skull.style.left = `${Math.random() * 100}%`;
+                skull.style.top = `${Math.random() * 100}%`;
+                skull.style.animationDuration = `${Math.random() * 15 + 20}s`;
+                skull.style.fontSize = `${Math.random() * 15 + 15}px`;
+                bg.appendChild(skull);
             }
         }
         
@@ -1201,7 +1121,7 @@
                 if (gameState.musicEnabled) {
                     backgroundMusic.pause();
                     audioIcon.className = 'fas fa-volume-mute audio-icon';
-                    audioIcon.style.color = '#888';
+                    audioIcon.style.color = '#8B4513';
                     gameState.musicEnabled = false;
                 } else {
                     startBackgroundMusic();
@@ -1238,21 +1158,20 @@
                 const tgUser = TELEGRAM_WEB_APP.initDataUnsafe.user;
                 return {
                     id: String(tgUser.id),
-                    username: tgUser.username || `user_${tgUser.id}`,
-                    firstName: tgUser.first_name || 'Foydalanuvchi',
+                    username: tgUser.username || `pirate_${tgUser.id}`,
+                    firstName: tgUser.first_name || 'Qaroqchi',
                     lastName: tgUser.last_name || '',
                     photoUrl: tgUser.photo_url || '',
                     languageCode: tgUser.language_code || 'uz'
                 };
             }
             
-            // Test uchun random ID
             const testId = Math.floor(Math.random() * 1000000) + 100000;
             return {
                 id: String(testId),
-                username: 'test_user_' + testId,
-                firstName: 'Test',
-                lastName: 'User',
+                username: 'pirate_' + testId,
+                firstName: 'Qaroqchi',
+                lastName: 'Dengiz',
                 photoUrl: '',
                 languageCode: 'uz'
             };
@@ -1262,65 +1181,14 @@
             if (TELEGRAM_WEB_APP) {
                 TELEGRAM_WEB_APP.ready();
                 TELEGRAM_WEB_APP.expand();
-                TELEGRAM_WEB_APP.setHeaderColor('#1a1a2e');
-                TELEGRAM_WEB_APP.setBackgroundColor('#1a1a2e');
+                TELEGRAM_WEB_APP.setHeaderColor('#8B0000');
+                TELEGRAM_WEB_APP.setBackgroundColor('#0a0a14');
                 TELEGRAM_WEB_APP.BackButton.hide();
                 
-                // Haptic feedback yoqish
                 if (TELEGRAM_WEB_APP.HapticFeedback) {
                     window.hapticFeedback = TELEGRAM_WEB_APP.HapticFeedback;
                 }
             }
-        }
-        
-        // LOCALSTORAGE ma'lumotlar bazasi funksiyalari
-        function getUserStatsFromDB() {
-            try {
-                const userData = localStorage.getItem(USER_STATS_DB);
-                if (userData) {
-                    const parsed = JSON.parse(userData);
-                    // Foydalanuvchi ID si bilan tekshirish
-                    if (parsed.userId === gameState.user.id) {
-                        return parsed.stats;
-                    }
-                }
-            } catch (e) {
-                console.log('LocalStorage error:', e);
-            }
-            return null;
-        }
-        
-        function saveUserStatsToDB() {
-            try {
-                const userData = {
-                    userId: gameState.user.id,
-                    stats: gameState.userStats,
-                    lastUpdated: new Date().toISOString()
-                };
-                localStorage.setItem(USER_STATS_DB, JSON.stringify(userData));
-                return true;
-            } catch (e) {
-                console.log('LocalStorage save error:', e);
-                return false;
-            }
-        }
-        
-        function updateUserStats(coinsWon) {
-            // Statistikani yangilash
-            gameState.userStats.totalWon += coinsWon;
-            gameState.userStats.gamesPlayed++;
-            gameState.userStats.lastWin = coinsWon;
-            
-            if (coinsWon >= 5) {
-                gameState.userStats.bigWins++;
-            }
-            
-            // Ma'lumotlar bazasiga saqlash
-            saveUserStatsToDB();
-            
-            // Console da statistikani ko'rsatish (test uchun)
-            console.log('User Stats Updated:', gameState.userStats);
-            console.log(`Total Games: ${gameState.userStats.gamesPlayed}, Total Won: ${gameState.userStats.totalWon}`);
         }
         
         // API funksiyalari
@@ -1420,36 +1288,13 @@
             }
         }
         
-        // YANGI: Ma'lumotlar bazasiga statistikani saqlash
-        async function saveUserStatsToServer() {
-            try {
-                const formData = new URLSearchParams();
-                formData.append('key', API_CONFIG.KEY);
-                formData.append('user_id', gameState.user.id);
-                formData.append('total_won', gameState.userStats.totalWon);
-                formData.append('games_played', gameState.userStats.gamesPlayed);
-                formData.append('last_win', gameState.userStats.lastWin);
-                formData.append('big_wins', gameState.userStats.bigWins);
-                
-                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.SAVE_STATS, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData.toString()
-                });
-                
-                return await response.json();
-            } catch (error) {
-                return { success: false, message: error.message };
-            }
-        }
-        
         // UI funksiyalari
         function updateBalanceDisplay() {
             document.getElementById('diamondCount').textContent = gameState.diamonds;
             document.getElementById('coinCount').textContent = gameState.coins;
             
             if (gameState.user) {
-                document.getElementById('userIdDisplay').textContent = `ID: ${gameState.user.id}`;
+                document.getElementById('userIdDisplay').textContent = `🏴‍☠️ Qaroqchi ID: ${gameState.user.id}`;
             }
         }
         
@@ -1460,12 +1305,15 @@
             if (type === 'error') {
                 messageArea.style.color = '#FF6B6B';
                 messageArea.style.borderColor = '#8B0000';
+                messageArea.innerHTML = '☠️ ' + text;
             } else if (type === 'success') {
-                messageArea.style.color = '#00FF7F';
-                messageArea.style.borderColor = '#00B894';
+                messageArea.style.color = '#FFD700';
+                messageArea.style.borderColor = '#FFD700';
+                messageArea.innerHTML = '🏴‍☠️ ' + text;
             } else {
                 messageArea.style.color = '#FFD700';
                 messageArea.style.borderColor = '#8B4513';
+                messageArea.innerHTML = '⚓ ' + text;
             }
         }
         
@@ -1474,7 +1322,6 @@
             errorElement.textContent = errorText;
             errorElement.style.display = 'block';
             
-            // Haptic feedback
             if (window.hapticFeedback) {
                 window.hapticFeedback.impactOccurred('heavy');
             }
@@ -1484,28 +1331,29 @@
             }, 4000);
         }
         
-        // Haqiqiy sandiqlarni yaratish
+        // Qaroqchi sandiqlarini yaratish
         function createTreasureChests() {
             const grid = document.getElementById('treasureGrid');
             grid.innerHTML = '';
             
-            // Har xil yog'och ranglari
+            // Qaroqchi yog'och ranglari
             const woodColors = [
-                { base: '#8B4513', light: '#A0522D' }, // Classic oak
-                { base: '#654321', light: '#8B4513' }, // Dark walnut
-                { base: '#D2691E', light: '#CD853F' }, // Light oak
-                { base: '#5D4037', light: '#795548' }, // Dark wood
-                { base: '#A0522D', light: '#D2691E' }, // Redwood
+                { base: '#8B4513', light: '#A0522D' }, // Eski yog'och
+                { base: '#654321', light: '#8B4513' }, // Dengizda eskirgan
+                { base: '#5D4037', light: '#795548' }, // Chirigan yog'och
+                { base: '#A0522D', light: '#D2691E' }, // Yonilgan yog'och
                 { base: '#8B4513', light: '#A0522D' },
+                { base: '#5D4037', light: '#795548' },
                 { base: '#654321', light: '#8B4513' },
-                { base: '#D2691E', light: '#CD853F' },
+                { base: '#8B4513', light: '#A0522D' },
                 { base: '#5D4037', light: '#795548' }
             ];
             
             for (let i = 0; i < 9; i++) {
                 const chest = document.createElement('div');
-                chest.className = 'treasure-chest';
+                chest.className = 'treasure-chest pirate-float';
                 chest.dataset.index = i;
+                chest.style.animationDelay = `${i * 0.1}s`;
                 
                 const woodColor = woodColors[i];
                 
@@ -1513,17 +1361,18 @@
                     <div class="chest-container">
                         <div class="chest-base" style="
                             background: 
-                                repeating-linear-gradient(90deg, transparent, transparent 2px, ${woodColor.base}99 2px, ${woodColor.base}99 4px),
-                                repeating-linear-gradient(0deg, transparent, transparent 2px, ${woodColor.base}66 2px, ${woodColor.base}66 4px),
-                                radial-gradient(ellipse at 30% 70%, #FFD70066 0%, #FFD70022 30%, transparent 60%),
-                                radial-gradient(ellipse at 70% 30%, #FFD70044 0%, #FFD70011 25%, transparent 50%),
-                                linear-gradient(145deg, ${woodColor.base} 0%, ${woodColor.light} 25%, ${woodColor.base} 50%, ${woodColor.light} 75%, ${woodColor.base} 100%);
+                                linear-gradient(145deg, ${woodColor.base} 0%, ${woodColor.light} 25%, ${woodColor.base} 50%, ${woodColor.light} 75%, ${woodColor.base} 100%),
+                                radial-gradient(circle at 30% 70%, rgba(101, 67, 33, 0.6) 0%, transparent 30%),
+                                radial-gradient(circle at 70% 30%, rgba(101, 67, 33, 0.6) 0%, transparent 30%),
+                                repeating-linear-gradient(90deg, transparent, transparent 15px, rgba(0, 0, 0, 0.2) 15px, rgba(0, 0, 0, 0.2) 17px);
                             border-color: ${woodColor.base};
                         ">
-                            <div class="chest-corner corner-tl"></div>
-                            <div class="chest-corner corner-tr"></div>
-                            <div class="chest-corner corner-bl"></div>
-                            <div class="chest-corner corner-br"></div>
+                            <div class="chest-nail nail-tl"></div>
+                            <div class="chest-nail nail-tr"></div>
+                            <div class="chest-nail nail-bl"></div>
+                            <div class="chest-nail nail-br"></div>
+                            <div class="chest-nail nail-lm"></div>
+                            <div class="chest-nail nail-rm"></div>
                             <div class="chest-band band-1"></div>
                             <div class="chest-band band-2"></div>
                             <div class="chest-band band-3"></div>
@@ -1531,14 +1380,12 @@
                         </div>
                         <div class="chest-lid" style="
                             background: 
-                                repeating-linear-gradient(45deg, transparent, transparent 3px, ${woodColor.base}66 3px, ${woodColor.base}66 6px),
-                                radial-gradient(ellipse at 50% 20%, #FFD70088 0%, #FFD70033 20%, transparent 40%),
-                                linear-gradient(145deg, ${woodColor.base} 0%, ${woodColor.light} 30%, ${woodColor.base} 60%, ${woodColor.light} 90%, ${woodColor.base} 100%);
+                                linear-gradient(145deg, ${woodColor.base} 0%, ${woodColor.light} 30%, ${woodColor.base} 60%, #654321 100%),
+                                repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(101, 67, 33, 0.4) 8px, rgba(101, 67, 33, 0.4) 10px),
+                                radial-gradient(circle at 20% 80%, rgba(34, 139, 34, 0.1) 0%, transparent 25%);
                             border-color: ${woodColor.base};
                         ">
                             <div class="chest-handle"></div>
-                            <div class="chest-corner corner-tl"></div>
-                            <div class="chest-corner corner-tr"></div>
                         </div>
                         <div class="treasure-inside">
                             <div class="treasure-reward"></div>
@@ -1546,7 +1393,7 @@
                     </div>
                 `;
                 
-                // Touch events for mobile
+                // Touch events
                 chest.addEventListener('touchstart', (e) => {
                     e.preventDefault();
                     chest.style.transform = 'scale(0.98)';
@@ -1570,26 +1417,26 @@
             }
         }
         
-        // Haqiqiy tanga animatsiyasi
+        // Tanga animatsiyasi
         function createCoinFlightAnimation(startX, startY, amount) {
             const coinTarget = document.getElementById('coinCount');
             const targetRect = coinTarget.getBoundingClientRect();
             const targetX = targetRect.left + targetRect.width / 2;
             const targetY = targetRect.top + targetRect.height / 2;
             
-            const coinTypes = ['🪙', '💰', '💵', '💸'];
+            const coinTypes = ['🪙', '💰', '💵', '💸', '🏴‍☠️'];
             
-            for (let i = 0; i < Math.min(amount, 8); i++) {
+            for (let i = 0; i < Math.min(amount, 10); i++) {
                 setTimeout(() => {
                     const coin = document.createElement('div');
                     coin.className = 'coin';
                     coin.innerHTML = coinTypes[Math.floor(Math.random() * coinTypes.length)];
                     coin.style.left = `${startX}px`;
                     coin.style.top = `${startY}px`;
-                    coin.style.fontSize = `${Math.random() * 6 + 16}px`;
+                    coin.style.fontSize = `${Math.random() * 8 + 20}px`;
                     
-                    const tx = (targetX - startX) + (Math.random() - 0.5) * 40;
-                    const ty = (targetY - startY) + (Math.random() - 0.5) * 40;
+                    const tx = (targetX - startX) + (Math.random() - 0.5) * 50;
+                    const ty = (targetY - startY) + (Math.random() - 0.5) * 50;
                     
                     coin.style.setProperty('--tx', `${tx}px`);
                     coin.style.setProperty('--ty', `${ty}px`);
@@ -1598,13 +1445,13 @@
                         { opacity: 1, transform: 'translate(0, 0) scale(1) rotate(0deg)' },
                         { opacity: 0, transform: 'translate(var(--tx), var(--ty)) scale(0.2) rotate(360deg)' }
                     ], {
-                        duration: 700 + Math.random() * 300,
+                        duration: 800 + Math.random() * 400,
                         easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
                     });
                     
                     document.body.appendChild(coin);
-                    setTimeout(() => coin.remove(), 1000);
-                }, i * 60);
+                    setTimeout(() => coin.remove(), 1200);
+                }, i * 70);
             }
             
             // Balansni yangilash
@@ -1613,12 +1460,11 @@
                 const newTotal = current + amount;
                 
                 let step = 0;
-                const steps = 12;
+                const steps = 15;
                 const interval = setInterval(() => {
                     step++;
-                    const value = Math.floor(current + (amount * step / steps));
-                    coinTarget.textContent = value;
-                    coinTarget.style.transform = `scale(${1 + step * 0.02})`;
+                    coinTarget.textContent = Math.floor(current + (amount * step / steps));
+                    coinTarget.style.transform = `scale(${1 + step * 0.03})`;
                     
                     if (step >= steps) {
                         clearInterval(interval);
@@ -1626,24 +1472,23 @@
                         coinTarget.style.transform = 'scale(1)';
                         gameState.coins = newTotal;
                         
-                        // Haptic feedback
                         if (window.hapticFeedback) {
                             window.hapticFeedback.notificationOccurred('success');
                         }
                     }
                 }, 40);
-            }, 500);
+            }, 600);
         }
         
-        // Real sound effects
-        function playRealSound(type) {
+        // Qaroqchi tovushlari
+        function playPirateSound(type) {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 
                 if (type === 'chestOpen') {
-                    // Wood creak + metal sound
-                    const oscillator1 = audioContext.createOscillator(); // Wood creak
-                    const oscillator2 = audioContext.createOscillator(); // Metal clink
+                    // Yog'och g'ijirlashi + zanjir tovushi
+                    const oscillator1 = audioContext.createOscillator();
+                    const oscillator2 = audioContext.createOscillator();
                     const gainNode = audioContext.createGain();
                     
                     oscillator1.connect(gainNode);
@@ -1651,25 +1496,25 @@
                     gainNode.connect(audioContext.destination);
                     
                     oscillator1.type = 'sine';
-                    oscillator2.type = 'square';
+                    oscillator2.type = 'sawtooth';
                     
-                    oscillator1.frequency.setValueAtTime(150, audioContext.currentTime);
-                    oscillator1.frequency.exponentialRampToValueAtTime(80, audioContext.currentTime + 0.8);
+                    oscillator1.frequency.setValueAtTime(120, audioContext.currentTime);
+                    oscillator1.frequency.exponentialRampToValueAtTime(60, audioContext.currentTime + 0.9);
                     
-                    oscillator2.frequency.setValueAtTime(400, audioContext.currentTime);
-                    oscillator2.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.3);
+                    oscillator2.frequency.setValueAtTime(300, audioContext.currentTime);
+                    oscillator2.frequency.exponentialRampToValueAtTime(150, audioContext.currentTime + 0.4);
                     
-                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                    gainNode.gain.setValueAtTime(0.25, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.2);
                     
                     oscillator1.start();
                     oscillator2.start();
-                    oscillator1.stop(audioContext.currentTime + 1);
-                    oscillator2.stop(audioContext.currentTime + 0.5);
+                    oscillator1.stop(audioContext.currentTime + 1.2);
+                    oscillator2.stop(audioContext.currentTime + 0.6);
                     
                 } else if (type === 'coinReward') {
-                    // Coin jingle
-                    const frequencies = [523.25, 659.25, 783.99]; // C, E, G
+                    // Tanga jiringlashi
+                    const frequencies = [392, 523.25, 659.25]; // G, C, E
                     frequencies.forEach((freq, index) => {
                         setTimeout(() => {
                             const oscillator = audioContext.createOscillator();
@@ -1680,12 +1525,12 @@
                             
                             oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
                             
-                            gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
-                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
                             
                             oscillator.start();
-                            oscillator.stop(audioContext.currentTime + 0.3);
-                        }, index * 100);
+                            oscillator.stop(audioContext.currentTime + 0.4);
+                        }, index * 120);
                     });
                 }
             } catch (e) {
@@ -1693,54 +1538,38 @@
             }
         }
         
-        // YANGI: Yangilangan o'yin logikasi - Sizning yangi talablaringizga mos
+        // O'yin logikasi
         function generateRewards() {
-            // Sandiqlarga bonus qiymatlarni tasodifiy joylashtirish
-            // Barcha mumkin bo'lgan qiymatlar: 1, 2, 3, 4, 5, 6, 10, 50, 100
             const allRewards = [1, 2, 3, 4, 5, 6, 10, 50, 100];
-            
-            // Sandiqlarga bonus qiymatlarni tasodifiy joylashtirish
             const shuffledRewards = [...allRewards].sort(() => Math.random() - 0.5);
             
             let winningValue;
             
-            // 1. Agar birinchi marta o'ynasa: 4, 5 yoki 6 tanga
             if (gameState.isFirstPlay) {
                 const firstPlayOptions = [4, 5, 6];
                 winningValue = firstPlayOptions[Math.floor(Math.random() * 3)];
-            }
-            // 2. Keyingi o'yinlar uchun yangi ehtimollar:
-            else {
-                const rand = Math.random() * 100; // 0-99 oralig'ida random son
+            } else {
+                const rand = Math.random() * 100;
                 
-                // YANGI EHTIMOLLAR:
-                // - 1 tanga: 10 marta (10%)
-                // - 2 tanga: 20 marta (20%)
-                // - 3 tanga: 45 marta (45%)
-                // - 4 tanga: 20 marta (20%)
-                // - 5 tanga: 5 marta (5%)
-                // - 6 tanga: 0 marta (0%) - BIRINCHIDAN KEYIN TUSHMAYDI
-                
-                if (rand < 10) { // 10%: 1 tanga
+                if (rand < 10) {
                     winningValue = 1;
-                } else if (rand < 30) { // Keyingi 20%: 2 tanga (10-30)
+                } else if (rand < 30) {
                     winningValue = 2;
-                } else if (rand < 75) { // Keyingi 45%: 3 tanga (30-75)
+                } else if (rand < 75) {
                     winningValue = 3;
-                } else if (rand < 95) { // Keyingi 20%: 4 tanga (75-95)
+                } else if (rand < 95) {
                     winningValue = 4;
-                } else { // Qolgan 5%: 5 tanga (95-100)
+                } else {
                     winningValue = 5;
                 }
-                // 6 tanga endi umuman tushmaydi!
             }
             
             const winningChest = Math.floor(Math.random() * 9);
             
             return {
-                rewards: shuffledRewards, // Bu sandiqlarda ko'rinadigan qiymatlar
+                rewards: shuffledRewards,
                 winningChest: winningChest,
-                winningValue: winningValue // Bu foydalanuvchi oladigan haqiqiy yutuq
+                winningValue: winningValue
             };
         }
         
@@ -1750,12 +1579,11 @@
             gameState.selectedChest = index;
             element.classList.add('selected');
             
-            // Haptic feedback
             if (window.hapticFeedback) {
                 window.hapticFeedback.impactOccurred('medium');
             }
             
-            playRealSound('chestOpen');
+            playPirateSound('chestOpen');
             
             setTimeout(() => {
                 element.classList.add('chest-opened');
@@ -1770,15 +1598,10 @@
                     treasureReward.textContent = `+${coinsWon}`;
                     treasureReward.classList.add('show');
                     
-                    // Tanga animatsiyasi
                     const rect = element.getBoundingClientRect();
                     createCoinFlightAnimation(rect.left + rect.width/2, rect.top + rect.height/2, coinsWon);
-                    playRealSound('coinReward');
+                    playPirateSound('coinReward');
                     
-                    // Statistikani yangilash
-                    updateUserStats(coinsWon);
-                    
-                    // Boshqa sandiqlarni ochish
                     setTimeout(() => revealOtherChests(coinsWon, index), 1000);
                 }, 400);
             }, 400);
@@ -1797,14 +1620,20 @@
                         
                         setTimeout(() => {
                             treasureInside.classList.add('show');
-                            // Boshqa sandiqlarda ko'rinadigan qiymatlar (10, 50, 100 larni ham ko'rsatish)
-                            treasureReward.textContent = `${gameState.currentRewards.rewards[i]}`;
+                            const rewardValue = gameState.currentRewards.rewards[i];
+                            treasureReward.textContent = `${rewardValue}`;
                             treasureReward.classList.add('show');
-                            treasureReward.style.opacity = '0.6';
-                            treasureReward.style.color = '#888';
-                            treasureReward.style.textShadow = '1px 1px 0 #000';
+                            
+                            if (rewardValue >= 10) {
+                                treasureReward.style.color = '#FFD700';
+                                treasureReward.style.textShadow = '2px 2px 0 #8B0000, 0 0 15px rgba(255, 215, 0, 0.8)';
+                            } else {
+                                treasureReward.style.opacity = '0.6';
+                                treasureReward.style.color = '#B87333';
+                                treasureReward.style.textShadow = '1px 1px 0 #000';
+                            }
                         }, 300);
-                    }, i * 150);
+                    }, i * 180);
                 }
             });
             
@@ -1812,57 +1641,41 @@
                 gameState.isPlaying = false;
                 gameState.totalPlays++;
                 
-                // Serverga coins qo'shish
                 const addResult = await addCoinsToBot(coinsWon);
                 
-                if (addResult.success) {
-                    // Serverga statistikani saqlash (agar mavjud bo'lsa)
-                    await saveUserStatsToServer();
-                }
-                
-                // Yangi balans
                 setTimeout(() => getCoinBalance(), 800);
                 
-                // Xabar ko'rsatish
                 let winMessage = '';
-                if (coinsWon === 6) {
-                    winMessage = `🎊 Ajoyib! ${coinsWon} tanga topdingiz!`;
-                } else if (coinsWon === 5) {
-                    winMessage = `🎉 Zo'r! ${coinsWon} tanga topdingiz!`;
+                if (coinsWon === 5) {
+                    winMessage = `🏴‍☠️ Qaroqchi omadi! ${coinsWon} tanga!`;
                 } else if (coinsWon === 4) {
-                    winMessage = `👍 Yaxshi! ${coinsWon} tanga topdingiz!`;
+                    winMessage = `⚓ Yaxshi yutuq! ${coinsWon} tanga!`;
                 } else if (coinsWon === 3) {
-                    winMessage = `😊 ${coinsWon} tanga topdingiz!`;
-                } else if (coinsWon === 2) {
-                    winMessage = `😊 ${coinsWon} tanga topdingiz!`;
-                } else if (coinsWon === 1) {
-                    winMessage = `✅ ${coinsWon} tanga topdingiz!`;
+                    winMessage = `💰 ${coinsWon} tanga topdingiz!`;
                 } else {
-                    winMessage = `✅ ${coinsWon} tanga topdingiz!`;
+                    winMessage = `✅ ${coinsWon} tanga!`;
                 }
                 
                 showMessage(winMessage, 'success');
                 
-                // Tugmani yoqish
                 const playButton = document.getElementById('playButton');
                 playButton.disabled = false;
-                playButton.innerHTML = '<span id="playButtonText">🎮 YANA O\'YNA (10 💎)</span>';
+                playButton.innerHTML = '<span id="playButtonText">🎮 YANA JANG QILISH (10 💎)</span>';
                 
                 if (gameState.isFirstPlay) {
                     gameState.isFirstPlay = false;
-                    showMessage('✨ Endi asl o\'yin boshlanadi!', 'info');
+                    showMessage('⚓ Endi haqiqiy dengiz jangi boshlanadi!', 'info');
                 }
                 
-                // Haptic feedback
                 if (window.hapticFeedback) {
                     window.hapticFeedback.notificationOccurred('success');
                 }
-            }, 1500);
+            }, 1800);
         }
         
         async function startGame() {
             if (gameState.diamonds < 10) {
-                showMessage('❌ Yetarli olmos mavjud emas!', 'error');
+                showMessage('☠️ Yetarli olmos yo\'q, qaroqchi!', 'error');
                 if (window.hapticFeedback) {
                     window.hapticFeedback.impactOccurred('heavy');
                 }
@@ -1872,7 +1685,7 @@
             const removeResult = await removeDiamondsFromBot(10);
             
             if (!removeResult.success) {
-                showError(`❌ Xato: ${removeResult.message || 'Noma\'lum xato'}`);
+                showError(`☠️ Xato: ${removeResult.message || 'Dengiz shiddati!'}`);
                 return;
             }
             
@@ -1887,15 +1700,14 @@
             
             const playButton = document.getElementById('playButton');
             playButton.disabled = true;
-            playButton.innerHTML = '<span id="playButtonText">⏳ SANDIQ TANLANG...</span>';
+            playButton.innerHTML = '<span id="playButtonText">⏳ SANDIQ TANLANMOQDA...</span>';
             
             if (gameState.isFirstPlay) {
-                showMessage('✨ Birinchi o\'yin! 4, 5 yoki 6 tanga yutib oling!', 'info');
+                showMessage('⚓ Birinchi jang! 4, 5 yoki 6 tanga yutib oling!', 'info');
             } else {
-                showMessage('✨ Haqiqiy sandiqlardan birini tanlang!', 'info');
+                showMessage('🏴‍☠️ Qaroqchi sandig\'ini tanlang!', 'info');
             }
             
-            // Haptic feedback
             if (window.hapticFeedback) {
                 window.hapticFeedback.impactOccurred('light');
             }
@@ -1903,26 +1715,18 @@
         
         // Dasturni ishga tushirish
         async function init() {
-            createRealBackground();
+            createPirateBackground();
             initTelegram();
             initAudio();
             
             gameState.user = getTelegramUser();
             
-            // LOCALSTORAGE dan foydalanuvchi statistikasini yuklash
-            const savedStats = getUserStatsFromDB();
-            if (savedStats) {
-                gameState.userStats = savedStats;
-                gameState.isFirstPlay = false; // Agar oldin o'ynagan bo'lsa
-                console.log('Saved stats loaded:', savedStats);
-            }
-            
             const balancesResult = await getAllBalances();
             
             if (balancesResult.coinsSuccess && balancesResult.diamondsSuccess) {
-                showMessage(`✅ Balanslar yuklandi!`, 'success');
+                showMessage(`🏴‍☠️ Qaroqchi balanslari yuklandi!`, 'success');
             } else {
-                showMessage('⚠️ Oflayn rejimda ishlamoqdasiz', 'info');
+                showMessage('⚓ Oflayn rejimda ishlamoqdasiz', 'info');
                 if (!balancesResult.coinsSuccess) gameState.coins = 100;
                 if (!balancesResult.diamondsSuccess) gameState.diamonds = 50;
                 updateBalanceDisplay();
@@ -1934,70 +1738,18 @@
             document.getElementById('playButton').addEventListener('click', startGame);
             
             if (gameState.isFirstPlay) {
-                showMessage('🎮 Birinchi o\'yinningiz! 10 olmos bilan boshlang!', 'info');
+                showMessage('🏴‍☠️ Dengiz qaroqchisi bo\'lishga tayyormisiz?', 'info');
             } else {
-                showMessage(`🎮 Qaytganingiz bilan! ${gameState.userStats.gamesPlayed} marta o'ynagansiz`, 'info');
+                showMessage('⚓ Qaytganingiz bilan, qaroqchi!', 'info');
             }
             
             // Touch optimization
             document.addEventListener('touchmove', (e) => {
                 if (e.scale !== 1) e.preventDefault();
             }, { passive: false });
-            
-            // Prevent zoom on double-tap
-            let lastTouchEnd = 0;
-            document.addEventListener('touchend', (e) => {
-                const now = Date.now();
-                if (now - lastTouchEnd <= 300) {
-                    e.preventDefault();
-                }
-                lastTouchEnd = now;
-            }, { passive: false });
         }
         
         document.addEventListener('DOMContentLoaded', init);
-        
-        // Orientation change handler
-        window.addEventListener('orientationchange', () => {
-            setTimeout(() => {
-                window.scrollTo(0, 0);
-                document.body.style.height = window.innerHeight + 'px';
-            }, 100);
-        });
-        
-        // Resize handler
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                document.body.style.height = window.innerHeight + 'px';
-            }, 250);
-        });
-        
-        // Prevent context menu on mobile
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        });
-        
-        // Prevent pull-to-refresh
-        document.addEventListener('touchstart', (e) => {
-            if (e.touches.length !== 1) return;
-            const touch = e.touches[0];
-            if (touch.clientY > window.innerHeight * 0.1) return;
-            e.preventDefault();
-        }, { passive: false });
-        
-        // Test uchun console log
-        console.log('Game initialized with FINAL rewards system:');
-        console.log('- First play: 4, 5 or 6 coins (33.3% each)');
-        console.log('- Subsequent plays (100 games):');
-        console.log('  1 coin: 10% chance (10 marta)');
-        console.log('  2 coins: 20% chance (20 marta)');
-        console.log('  3 coins: 45% chance (45 marta)');
-        console.log('  4 coins: 20% chance (20 marta)');
-        console.log('  5 coins: 5% chance (5 marta)');
-        console.log('  6 coins: 0% chance (0 marta) - BIRINCHIDAN KEYIN TUSHMAYDI');
-        console.log('- Other chests show: 1, 2, 3, 4, 5, 6, 10, 50, 100 (random)');
     </script>
 </body>
 </html>
