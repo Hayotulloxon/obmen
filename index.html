@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>Winter Treasure - Olmos O'yini</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* ==================== ASOSIY STILLAR ==================== */
         * {
             margin: 0;
             padding: 0;
@@ -25,104 +26,45 @@
         }
         
         body {
-            font-family: 'Comic Neue', 'Fredoka', sans-serif;
-            background: linear-gradient(180deg, #0c1e3a 0%, #1a3b5d 30%, #2d4b7a 60%, #3d5a8c 100%);
-            color: white;
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(180deg, #FFC8DD 0%, #FFAFCC 30%, #BDE0FE 60%, #A2D2FF 100%);
+            color: #2D3047;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
+            overflow: hidden;
         }
         
-        /* Cartoon-style border */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            border: 6px dashed #FFD700;
-            border-radius: 30px;
-            pointer-events: none;
-            z-index: 100;
+        /* Cartoon style bulutlar */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            filter: blur(2px);
+            z-index: -1;
         }
         
-        /* Cartoon-style corner decorations */
-        .corner-decoration {
-            position: fixed;
-            width: 50px;
-            height: 50px;
-            z-index: 99;
+        .cloud-1 {
+            width: 120px;
+            height: 60px;
+            top: 10%;
+            left: 5%;
         }
         
-        .corner-tl {
-            top: 15px;
-            left: 15px;
-            border-top: 5px solid #00FFFF;
-            border-left: 5px solid #00FFFF;
-            border-top-left-radius: 20px;
-        }
-        
-        .corner-tr {
-            top: 15px;
-            right: 15px;
-            border-top: 5px solid #FF6B6B;
-            border-right: 5px solid #FF6B6B;
-            border-top-right-radius: 20px;
-        }
-        
-        .corner-bl {
-            bottom: 15px;
-            left: 15px;
-            border-bottom: 5px solid #4ade80;
-            border-left: 5px solid #4ade80;
-            border-bottom-left-radius: 20px;
-        }
-        
-        .corner-br {
-            bottom: 15px;
-            right: 15px;
-            border-bottom: 5px solid #FFD700;
-            border-right: 5px solid #FFD700;
-            border-bottom-right-radius: 20px;
-        }
-        
-        /* Cartoon-style floating elements */
-        .floating-element {
-            position: fixed;
-            z-index: 0;
-            opacity: 0.3;
-            animation: float 8s infinite ease-in-out;
-        }
-        
-        .floating-element:nth-child(1) {
+        .cloud-2 {
+            width: 150px;
+            height: 70px;
             top: 15%;
-            left: 10%;
-            font-size: 40px;
-            animation-delay: 0s;
-        }
-        
-        .floating-element:nth-child(2) {
-            top: 25%;
-            right: 15%;
-            font-size: 35px;
-            animation-delay: 1s;
-        }
-        
-        .floating-element:nth-child(3) {
-            bottom: 30%;
-            left: 15%;
-            font-size: 45px;
-            animation-delay: 2s;
-        }
-        
-        .floating-element:nth-child(4) {
-            bottom: 20%;
             right: 10%;
-            font-size: 30px;
-            animation-delay: 3s;
+        }
+        
+        .cloud-3 {
+            width: 100px;
+            height: 50px;
+            bottom: 20%;
+            left: 15%;
         }
         
         /* Asosiy container */
@@ -136,15 +78,17 @@
             flex-direction: column;
             padding: 0;
             z-index: 1;
+            overflow: hidden;
         }
         
-        /* Header */
+        /* Header - Cartoon style */
         .header {
             flex-shrink: 0;
-            padding: 12px 16px;
-            background: rgba(20, 40, 80, 0.95);
-            border-bottom: 4px solid #FFD700;
+            padding: 15px 16px;
+            background: linear-gradient(135deg, #FF9E6D 0%, #FF7E5F 100%);
+            border-bottom: 5px solid #FF6B35;
             border-radius: 0 0 30px 30px;
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -155,35 +99,47 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #00FFFF, #FF6B6B, #4ade80, #FFD700);
-            animation: rainbow-border 3s linear infinite;
+            height: 10px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.5) 10px,
+                rgba(255, 255, 255, 0.5) 20px
+            );
         }
         
-        /* Balans kartalari */
+        /* Balans kartalari - Cartoon style */
         .balance-container {
             display: flex;
-            gap: 10px;
-            margin-top: 8px;
+            gap: 15px;
+            margin-top: 12px;
         }
         
         .balance-card {
             flex: 1;
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 12px;
-            background: rgba(255, 255, 255, 0.15);
+            gap: 10px;
+            padding: 15px 12px;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
-            transform-style: preserve-3d;
-            transition: transform 0.2s;
+            border: 3px solid #2D3047;
+            box-shadow: 5px 5px 0px rgba(45, 48, 71, 0.2);
+            position: relative;
+            overflow: hidden;
         }
         
-        .balance-card:active {
-            transform: translateY(3px);
-            box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+        .balance-card::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 30px;
+            height: 30px;
+            background: #FFD166;
+            border-radius: 50%;
+            border: 3px solid #2D3047;
         }
         
         /* O'yin maydoni */
@@ -191,9 +147,20 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 15px;
+            padding: 20px 15px 0;
             overflow: hidden;
             position: relative;
+        }
+        
+        .game-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(90deg, #FF9E6D, #FFD166, #06D6A0, #118AB2, #EF476F);
+            border-radius: 5px;
         }
         
         /* Sandiqlar container */
@@ -202,11 +169,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 5px;
+            padding: 10px;
             margin: 0;
+            position: relative;
         }
         
-        /* Sandiqlar grid */
+        /* Zamonaviy sandiqlar grid */
         .chests-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -214,15 +182,21 @@
             width: 100%;
             max-width: 400px;
             aspect-ratio: 1/0.9;
-            padding: 5px;
+            padding: 15px;
             margin: 0 auto;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 30px;
+            border: 5px solid #FFD166;
+            box-shadow: 
+                inset 0 0 20px rgba(255, 209, 102, 0.5),
+                0 10px 30px rgba(0, 0, 0, 0.15);
         }
         
-        /* Sandiq kartasi */
+        /* Zamonaviy sandiq kartasi */
         .chest-card {
             width: 100%;
             height: 100%;
-            min-height: 85px;
+            min-height: 95px;
             background: linear-gradient(135deg, var(--chest-color-1), var(--chest-color-2));
             border: 4px solid var(--chest-border);
             border-radius: 20px;
@@ -231,120 +205,139 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
-            box-shadow: 0 8px 0 rgba(0, 0, 0, 0.3);
-            transform-style: preserve-3d;
+            box-shadow: 
+                0 8px 15px rgba(0, 0, 0, 0.2),
+                inset 0 -5px 10px rgba(0, 0, 0, 0.1);
+            perspective: 1000px;
+        }
+        
+        .chest-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 15px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .chest-card:hover {
+            transform: translateY(-5px);
         }
         
         .chest-card:active {
-            transform: translateY(4px) scale(0.98);
-            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
-        }
-        
-        /* Sandiq korpusi */
-        .chest-body {
-            width: 100%;
-            height: 70%;
-            position: absolute;
-            bottom: 0;
-            border-radius: 15px 15px 20px 20px;
-            background: linear-gradient(135deg, var(--chest-color-1), var(--chest-color-2));
-            z-index: 2;
+            transform: scale(0.95);
         }
         
         /* Sandiq qopqog'i */
         .chest-lid {
-            width: 110%;
-            height: 40%;
             position: absolute;
             top: 0;
-            left: -5%;
+            left: 0;
+            width: 100%;
+            height: 30%;
             background: linear-gradient(135deg, var(--chest-color-1), var(--chest-color-2));
-            border-radius: 50% 50% 15px 15px;
-            border: 4px solid var(--chest-border);
-            border-bottom: none;
-            transform-origin: bottom center;
-            transform: rotateX(0deg);
-            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 3;
-            box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.3);
+            border-radius: 20px 20px 0 0;
+            border-bottom: 4px solid var(--chest-border);
+            transform-origin: top center;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         
-        /* Qulf */
-        .chest-lock {
+        .chest-lid::after {
+            content: '';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 25px;
-            height: 25px;
-            background: #FFD700;
-            border-radius: 50%;
-            border: 3px solid #B8860B;
-            z-index: 4;
+            width: 40px;
+            height: 15px;
+            background: var(--chest-border);
+            border-radius: 10px;
+        }
+        
+        .chest-lid.open {
+            transform: rotateX(-120deg);
+        }
+        
+        /* Sandiq ichi */
+        .chest-inside {
+            position: absolute;
+            top: 30%;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(to bottom, var(--chest-color-2), #4a2c00);
+            border-radius: 0 0 20px 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            overflow: hidden;
+            z-index: 1;
         }
         
         /* Sandiq ichidagi mukofot */
         .chest-reward {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            font-size: 30px;
-            z-index: 1;
-            opacity: 0;
-            transition: all 0.5s ease 0.3s;
-            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
-        }
-        
-        .chest-reward-value {
-            position: absolute;
-            top: 60%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            font-size: 18px;
-            font-weight: 800;
+            font-size: 28px;
+            font-weight: 900;
             color: #FFD700;
-            text-shadow: 0 3px 10px rgba(255, 215, 0, 0.7);
+            text-shadow: 
+                0 0 10px rgba(255, 215, 0, 0.8),
+                2px 2px 0 rgba(0, 0, 0, 0.3);
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 3;
+            position: relative;
+        }
+        
+        .chest-reward.show {
+            transform: translateY(0);
+        }
+        
+        .chest-reward.coin {
+            color: #FFD700;
+        }
+        
+        .chest-reward.diamond {
+            color: #00FFFF;
+        }
+        
+        .chest-icon {
+            font-size: 45px;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.4));
+            position: relative;
             z-index: 1;
+        }
+        
+        /* Sandiq qiymati */
+        .chest-value {
+            font-size: 22px;
+            font-weight: 900;
+            color: #FFD700;
+            text-shadow: 
+                0 2px 10px rgba(255, 215, 0, 0.8),
+                1px 1px 0 rgba(0, 0, 0, 0.5);
             opacity: 0;
-            transition: all 0.5s ease 0.5s;
+            transition: opacity 0.3s ease;
+            position: relative;
+            z-index: 3;
         }
         
-        /* Sandiq ochilganda */
-        .chest-open .chest-lid {
-            transform: rotateX(-120deg);
-        }
-        
-        .chest-open .chest-reward {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
-        
-        .chest-open .chest-reward-value {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
-        
-        /* Sandiq yoritilganda */
-        .chest-highlighted {
-            animation: chest-highlight 1s infinite alternate;
-        }
-        
-        /* Footer */
+        /* Footer - Cartoon style */
         .footer {
             flex-shrink: 0;
-            padding: 15px;
-            background: rgba(20, 40, 80, 0.95);
-            border-top: 4px solid #FFD700;
+            padding: 20px 15px;
+            background: linear-gradient(135deg, #118AB2 0%, #06D6A0 100%);
+            border-top: 5px solid #073B4C;
             border-radius: 30px 30px 0 0;
             text-align: center;
+            box-shadow: 0 -8px 20px rgba(6, 214, 160, 0.3);
             position: relative;
         }
         
@@ -354,28 +347,34 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #FFD700, #4ade80, #FF6B6B, #00FFFF);
-            animation: rainbow-border 3s linear infinite reverse;
+            height: 10px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.5) 10px,
+                rgba(255, 255, 255, 0.5) 20px
+            );
         }
         
-        /* Play tugmasi */
+        /* Play tugmasi - Cartoon style */
         .play-button {
             width: 100%;
-            max-width: 300px;
+            max-width: 320px;
             padding: 18px;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            border: 4px solid rgba(255, 255, 255, 0.5);
-            border-radius: 30px;
+            background: linear-gradient(135deg, #EF476F 0%, #FF9E6D 100%);
+            border: 4px solid #2D3047;
+            border-radius: 25px;
             color: white;
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: 900;
             cursor: pointer;
             transition: all 0.2s ease;
             margin: 0 auto;
             display: block;
-            box-shadow: 0 8px 0 rgba(0, 100, 200, 0.4);
-            transform-style: preserve-3d;
+            box-shadow: 
+                0 10px 0 #2D3047,
+                0 15px 20px rgba(239, 71, 111, 0.4);
             position: relative;
             overflow: hidden;
         }
@@ -383,49 +382,62 @@
         .play-button::before {
             content: '';
             position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-            animation: button-shine 3s infinite linear;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .play-button:hover::before {
+            left: 100%;
         }
         
         .play-button:active {
-            transform: translateY(6px);
-            box-shadow: 0 2px 0 rgba(0, 100, 200, 0.4);
+            transform: translateY(5px);
+            box-shadow: 
+                0 5px 0 #2D3047,
+                0 8px 10px rgba(239, 71, 111, 0.4);
         }
         
         .play-button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
-            box-shadow: 0 4px 0 rgba(0, 100, 200, 0.2);
+            box-shadow: 
+                0 5px 0 #2D3047,
+                0 8px 10px rgba(239, 71, 111, 0.4);
         }
         
         /* Xabar maydoni */
         .message-area {
-            margin-top: 10px;
+            margin-top: 15px;
             font-size: 16px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
+            font-weight: 700;
+            color: rgba(45, 48, 71, 0.95);
             min-height: 24px;
             text-align: center;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            border: 3px solid #FFD166;
+            box-shadow: 3px 3px 0px rgba(255, 209, 102, 0.3);
         }
         
         /* Xatolik xabari */
         .error-message {
-            background: rgba(255, 100, 100, 0.3);
-            border: 3px solid rgba(255, 100, 100, 0.5);
-            color: #FF6B6B;
+            background: rgba(239, 71, 111, 0.95);
+            border: 3px solid #2D3047;
+            color: white;
             padding: 12px;
             border-radius: 20px;
-            margin-top: 10px;
-            font-size: 14px;
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: 700;
             text-align: center;
             display: none;
-            box-shadow: 0 4px 0 rgba(255, 0, 0, 0.2);
+            box-shadow: 3px 3px 0px rgba(45, 48, 71, 0.3);
         }
         
         /* Yuklanish overlay */
@@ -435,47 +447,19 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(255, 200, 221, 0.95);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(5px);
         }
         
-        /* Musiqa nazorati */
-        .music-control {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: rgba(20, 40, 80, 0.9);
-            border: 3px solid #FFD700;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s;
-        }
-        
-        .music-control:hover {
-            transform: scale(1.1);
-        }
-        
-        .music-control i {
-            font-size: 24px;
-            color: #FFD700;
-        }
-        
-        /* Sandiq turlari ranglari */
+        /* Sandiq turlari ranglari - Cartoon style */
         .chest-type-gold {
             --chest-color-1: #FFD700;
             --chest-color-2: #FFAA00;
-            --chest-border: #B8860B;
+            --chest-border: #FF6B35;
         }
         
         .chest-type-silver {
@@ -503,42 +487,50 @@
         }
         
         .chest-type-platinum {
-            --chest-color-1: #F0F0F0;
-            --chest-color-2: #D0D0D0;
-            --chest-border: #B0B0B0;
+            --chest-color-1: #E5E4E2;
+            --chest-color-2: #B8B8B8;
+            --chest-border: #A0A0A0;
+        }
+        
+        .chest-type-rainbow {
+            --chest-color-1: #FF6B6B;
+            --chest-color-2: #FFD166;
+            --chest-border: #EF476F;
+        }
+        
+        .chest-type-emerald {
+            --chest-color-1: #06D6A0;
+            --chest-color-2: #0CB48A;
+            --chest-border: #048A6F;
+        }
+        
+        .chest-type-ruby {
+            --chest-color-1: #EF476F;
+            --chest-color-2: #D43D63;
+            --chest-border: #B83254;
         }
         
         /* Animatsiyalar */
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
+        @keyframes chest-selected {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         
-        @keyframes rainbow-border {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
+        @keyframes reward-pop {
+            0% { transform: scale(0) translateY(100%); opacity: 0; }
+            70% { transform: scale(1.1) translateY(0); opacity: 1; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
         }
         
-        @keyframes chest-highlight {
-            0% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
-            100% { box-shadow: 0 0 40px rgba(255, 255, 255, 0.8); }
+        @keyframes coin-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
         
-        @keyframes chest-shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        
-        @keyframes button-shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        @keyframes coin-pop {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-            70% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        @keyframes diamond-sparkle {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.7)); }
+            50% { filter: drop-shadow(0 0 15px rgba(0, 255, 255, 1)); }
         }
         
         @keyframes spin {
@@ -546,68 +538,109 @@
             100% { transform: rotate(360deg); }
         }
         
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .chest-selected {
+            animation: chest-selected 0.5s ease infinite;
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.7),
+                0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .reward-pop {
+            animation: reward-pop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        .coin-bounce {
+            animation: coin-bounce 1s ease infinite;
+        }
+        
+        .diamond-sparkle {
+            animation: diamond-sparkle 1.5s ease-in-out infinite;
+        }
+        
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Konfetti */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            z-index: 10;
+        }
+        
         /* Responsive sozlamalar */
         @media (max-width: 380px) {
             .chests-grid {
-                gap: 10px;
+                gap: 12px;
                 aspect-ratio: 1/0.95;
+                padding: 12px;
+            }
+            
+            .chest-icon {
+                font-size: 40px;
+            }
+            
+            .chest-value {
+                font-size: 20px;
             }
             
             .chest-reward {
                 font-size: 24px;
             }
             
-            .chest-reward-value {
-                font-size: 16px;
-            }
-            
             .play-button {
-                padding: 14px;
-                font-size: 18px;
-            }
-            
-            .music-control {
-                width: 45px;
-                height: 45px;
-                bottom: 15px;
-                right: 15px;
+                padding: 16px;
+                font-size: 20px;
             }
         }
         
         @media (max-height: 700px) {
             .header {
-                padding: 10px 16px;
+                padding: 12px 16px;
             }
             
             .chests-grid {
                 aspect-ratio: 1/1;
+                padding: 10px;
             }
             
-            .chest-reward {
-                font-size: 24px;
+            .chest-icon {
+                font-size: 40px;
             }
             
             .footer {
-                padding: 12px 15px;
+                padding: 16px 15px;
             }
         }
         
         @media (max-height: 600px) {
             .chests-grid {
                 aspect-ratio: 1/1.1;
-                gap: 8px;
+                gap: 10px;
+                padding: 8px;
             }
             
             .chest-card {
-                min-height: 70px;
+                min-height: 85px;
+            }
+            
+            .chest-icon {
+                font-size: 35px;
             }
             
             .chest-reward {
-                font-size: 20px;
+                font-size: 22px;
             }
             
-            .chest-reward-value {
-                font-size: 14px;
+            .chest-value {
+                font-size: 18px;
             }
         }
         
@@ -617,46 +650,52 @@
                 padding-top: env(safe-area-inset-top);
                 padding-bottom: env(safe-area-inset-bottom);
             }
-            
-            .music-control {
-                bottom: calc(20px + env(safe-area-inset-bottom));
-            }
+        }
+        
+        /* Audio controller */
+        .audio-control {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            border: 3px solid #2D3047;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 3px 3px 0px rgba(45, 48, 71, 0.3);
         }
     </style>
 </head>
 <body>
-    <!-- Cartoon-style corner decorations -->
-    <div class="corner-decoration corner-tl"></div>
-    <div class="corner-decoration corner-tr"></div>
-    <div class="corner-decoration corner-bl"></div>
-    <div class="corner-decoration corner-br"></div>
-    
-    <!-- Floating cartoon elements -->
-    <div class="floating-element">❄️</div>
-    <div class="floating-element">🎁</div>
-    <div class="floating-element">💎</div>
-    <div class="floating-element">🪙</div>
-    
-    <!-- Musiqa nazorati -->
-    <div class="music-control" id="musicControl">
-        <i id="musicIcon" class="fas fa-volume-up"></i>
-    </div>
-    
-    <!-- Orqa fondagi audio -->
+    <!-- Background music -->
     <audio id="backgroundMusic" loop>
         <source src="https://s35.surkhandc1.uz/399837962.mp3" type="audio/mpeg">
     </audio>
     
-    <!-- Asosiy konteyner -->
+    <!-- Cartoon style bulutlar -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    
+    <!-- Audio control -->
+    <div class="audio-control" id="audioControl">
+        <i class="fas fa-volume-up" id="audioIcon" style="font-size: 20px; color: #EF476F;"></i>
+    </div>
+    
     <div class="app-container">
         
         <!-- Header: O'yin nomi va balanslar -->
         <div class="header">
-            <div style="text-align: center; margin-bottom: 5px;">
-                <h1 style="font-size: 24px; font-weight: 800; color: #FFFFFF; text-shadow: 0 0 20px rgba(79, 172, 254, 0.9); letter-spacing: 1px;">
-                    🎄 Winter Treasure 🎄
+            <div style="text-align: center; margin-bottom: 8px;">
+                <h1 style="font-size: 24px; font-weight: 900; color: #2D3047; text-shadow: 3px 3px 0px rgba(255, 209, 102, 0.8); letter-spacing: 1px;">
+                    ❄️ WINTER TREASURE ❄️
                 </h1>
-                <p style="font-size: 14px; color: rgba(255, 255, 255, 0.8); margin-top: 3px;">
+                <p style="font-size: 14px; color: rgba(45, 48, 71, 0.9); font-weight: 600;">
                     Olmos ishlat, tanga yut!
                 </p>
             </div>
@@ -664,12 +703,12 @@
             <div class="balance-container">
                 <!-- Diamonds balansi -->
                 <div class="balance-card">
-                    <div style="font-size: 28px; color: #00FFFF; filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.8));">
+                    <div style="font-size: 30px;" class="diamond-sparkle">
                         💎
                     </div>
                     <div>
-                        <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">Diamonds</div>
-                        <div id="diamondCount" style="font-size: 20px; font-weight: 800; color: #00FFFF;">
+                        <div style="font-size: 12px; color: rgba(45, 48, 71, 0.7); font-weight: 600;">DIAMONDS</div>
+                        <div id="diamondCount" style="font-size: 22px; font-weight: 900; color: #00FFFF; text-shadow: 1px 1px 0 #2D3047;">
                             0
                         </div>
                     </div>
@@ -677,12 +716,12 @@
                 
                 <!-- Coins balansi -->
                 <div class="balance-card">
-                    <div style="font-size: 28px; color: #FFD700; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));">
+                    <div style="font-size: 30px;" class="coin-bounce">
                         🪙
                     </div>
                     <div>
-                        <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">Coins</div>
-                        <div id="coinCount" style="font-size: 20px; font-weight: 800; color: #FFD700;">
+                        <div style="font-size: 12px; color: rgba(45, 48, 71, 0.7); font-weight: 600;">COINS</div>
+                        <div id="coinCount" style="font-size: 22px; font-weight: 900; color: #FFD700; text-shadow: 1px 1px 0 #2D3047;">
                             0
                         </div>
                     </div>
@@ -690,7 +729,7 @@
             </div>
             
             <!-- Foydalanuvchi ID -->
-            <div id="userIdDisplay" style="font-size: 11px; color: rgba(255, 255, 255, 0.6); text-align: center; margin-top: 8px;">
+            <div id="userIdDisplay" style="font-size: 12px; color: rgba(45, 48, 71, 0.7); text-align: center; margin-top: 10px; font-weight: 600;">
                 ID: yuklanmoqda...
             </div>
         </div>
@@ -707,11 +746,11 @@
         <!-- Footer: Tugma va xabarlar -->
         <div class="footer">
             <button id="playButton" class="play-button">
-                <span id="playButtonText">🎮 Play (10 💎)</span>
+                <span id="playButtonText">🎮 PLAY (10 💎)</span>
             </button>
             
             <div id="messageArea" class="message-area">
-                🎮 O'yinni boshlash uchun Play tugmasini bosing
+                🎮 O'yinni boshlash uchun PLAY tugmasini bosing!
             </div>
             
             <div id="errorMessage" class="error-message"></div>
@@ -721,10 +760,13 @@
     
     <!-- Yuklanish overlay -->
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
-        <div style="text-align: center; padding: 30px; background: rgba(20, 40, 80, 0.95); border-radius: 30px; border: 4px solid rgba(100, 200, 255, 0.5); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);">
-            <div style="width: 60px; height: 60px; border: 6px solid rgba(255, 255, 255, 0.3); border-top: 6px solid #FFD700; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-            <div id="loadingText" style="font-size: 20px; font-weight: 700; color: #FFFFFF; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+        <div style="text-align: center; padding: 30px; background: linear-gradient(135deg, #FF9E6D 0%, #FFD166 100%); border-radius: 30px; border: 4px solid #2D3047; box-shadow: 10px 10px 0px rgba(45, 48, 71, 0.3);">
+            <div style="width: 60px; height: 60px; border: 6px solid rgba(45, 48, 71, 0.3); border-top: 6px solid #EF476F; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            <div id="loadingText" style="font-size: 20px; font-weight: 900; color: #2D3047;">
                 Yuklanmoqda...
+            </div>
+            <div style="margin-top: 10px; font-size: 14px; color: rgba(45, 48, 71, 0.8); font-weight: 600;">
+                Winter Treasure
             </div>
         </div>
     </div>
@@ -762,18 +804,56 @@
             musicEnabled: true
         };
         
-        // Sandiq turlari
+        // Yangi sandiq turlari (zamonaviy)
         const CHEST_TYPES = [
             'chest-type-gold',
-            'chest-type-silver', 
+            'chest-type-rainbow',
             'chest-type-crystal',
             'chest-type-frost',
-            'chest-type-ice',
+            'chest-type-emerald',
             'chest-type-platinum',
-            'chest-type-gold',
+            'chest-type-ruby',
             'chest-type-silver',
-            'chest-type-crystal'
+            'chest-type-ice'
         ];
+        
+        // ==================== AUDIO FUNKTSIYALARI ====================
+        function initAudio() {
+            // Audio elementini sozlash
+            backgroundMusic.volume = 0.3; // Past ovoz
+            backgroundMusic.preload = 'auto';
+            
+            // Audio control
+            const audioControl = document.getElementById('audioControl');
+            const audioIcon = document.getElementById('audioIcon');
+            
+            audioControl.addEventListener('click', () => {
+                if (gameState.musicEnabled) {
+                    backgroundMusic.pause();
+                    audioIcon.className = 'fas fa-volume-mute';
+                    audioIcon.style.color = '#2D3047';
+                    gameState.musicEnabled = false;
+                } else {
+                    backgroundMusic.play().catch(e => console.log("Audio play error:", e));
+                    audioIcon.className = 'fas fa-volume-up';
+                    audioIcon.style.color = '#EF476F';
+                    gameState.musicEnabled = true;
+                }
+            });
+            
+            // Avtomatik o'ynatishni urinish
+            setTimeout(() => {
+                backgroundMusic.play().catch(e => {
+                    console.log("Avtomatik audio play xatosi:", e);
+                    // Foydalanuvchi interaktsiyasidan keyin qayta urinib ko'rish
+                    document.addEventListener('click', () => {
+                        if (gameState.musicEnabled) {
+                            backgroundMusic.play().catch(e => console.log("Audio play xatosi:", e));
+                        }
+                    }, { once: true });
+                });
+            }, 1000);
+        }
         
         // ==================== TELEGRAM FUNKTSIYALARI ====================
         function getTelegramUser() {
@@ -804,69 +884,16 @@
             if (TELEGRAM_WEB_APP) {
                 TELEGRAM_WEB_APP.ready();
                 TELEGRAM_WEB_APP.expand();
-                TELEGRAM_WEB_APP.setHeaderColor('#0c1e3a');
-                TELEGRAM_WEB_APP.setBackgroundColor('#0c1e3a');
+                TELEGRAM_WEB_APP.setHeaderColor('#FFC8DD');
+                TELEGRAM_WEB_APP.setBackgroundColor('#FFC8DD');
                 TELEGRAM_WEB_APP.BackButton.hide();
             }
         }
         
-        // ==================== MUSIQA FUNKTSIYALARI ====================
-        function initMusic() {
-            try {
-                // Musiqani yuklash
-                backgroundMusic.volume = 0.5;
-                
-                // Musiqa boshqaruv tugmasi
-                const musicControl = document.getElementById('musicControl');
-                const musicIcon = document.getElementById('musicIcon');
-                
-                musicControl.addEventListener('click', toggleMusic);
-                
-                // Avtomatik o'ynatishni boshlash
-                const playMusic = () => {
-                    if (gameState.musicEnabled) {
-                        backgroundMusic.play().catch(e => {
-                            console.log('Avtomatik o'ynatish bloklangan:', e);
-                        });
-                    }
-                    document.removeEventListener('click', playMusic);
-                    document.removeEventListener('touchstart', playMusic);
-                };
-                
-                // Foydalanuvchi bosishi/tutishi bilan o'ynatish
-                document.addEventListener('click', playMusic);
-                document.addEventListener('touchstart', playMusic);
-                
-                // Boshlang'ich holat
-                updateMusicIcon();
-            } catch (error) {
-                console.error('Musiqa ishga tushirishda xatolik:', error);
-            }
-        }
-        
-        function toggleMusic() {
-            gameState.musicEnabled = !gameState.musicEnabled;
-            
-            if (gameState.musicEnabled) {
-                backgroundMusic.play().catch(e => {
-                    console.log('Musiqani o'ynatishda xatolik:', e);
-                });
-            } else {
-                backgroundMusic.pause();
-            }
-            
-            updateMusicIcon();
-            showMessage(gameState.musicEnabled ? '🔊 Musiqa yoqildi' : '🔇 Musiqa o'chirildi', 'info');
-        }
-        
-        function updateMusicIcon() {
-            const musicIcon = document.getElementById('musicIcon');
-            musicIcon.className = gameState.musicEnabled ? 'fas fa-volume-up' : 'fas fa-volume-mute';
-        }
-        
         // ==================== API FUNKTSIYALARI ====================
+        // ... API funksiyalari o'zgarmagan, asl kodda bor ...
+        // (API funksiyalari o'zgarmagan, faqat joy tashash uchun olib tashlandi)
         
-        // Tanga balansini olish (Showbalance.php orqali)
         async function getCoinBalance() {
             try {
                 const url = new URL(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_BALANCE);
@@ -890,7 +917,6 @@
                 console.log('Tanga balans javobi:', data);
                 
                 if (data.success) {
-                    // Showbalance.php faqat coins qaytaradi!
                     const coins = parseInt(data.coins) || parseInt(data.balance) || 0;
                     gameState.coins = coins;
                     
@@ -908,7 +934,6 @@
             }
         }
         
-        // Olmos balansini olish (get_balance.php orqali)
         async function getDiamondBalance() {
             try {
                 const url = new URL(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_DIAMONDS);
@@ -932,7 +957,6 @@
                 console.log('Olmos balans javobi:', data);
                 
                 if (data.success) {
-                    // get_balance.php diamonds qaytaradi
                     const diamonds = parseInt(data.diamonds) || parseInt(data.balance) || 0;
                     gameState.diamonds = diamonds;
                     
@@ -950,7 +974,6 @@
             }
         }
         
-        // Ikkala balansni bir vaqtda olish
         async function getAllBalances() {
             showLoading(true, 'Balanslar yuklanmoqda...');
             
@@ -961,7 +984,6 @@
             
             showLoading(false);
             
-            // UI ni yangilash
             updateBalanceDisplay();
             
             return {
@@ -972,7 +994,6 @@
             };
         }
         
-        // Botdan diamonds ayirish
         async function removeDiamondsFromBot(amount) {
             try {
                 const formData = new URLSearchParams();
@@ -1001,7 +1022,6 @@
             }
         }
         
-        // Botga coins qo'shish
         async function addCoinsToBot(amount) {
             try {
                 const formData = new URLSearchParams();
@@ -1047,11 +1067,14 @@
             messageArea.textContent = text;
             
             if (type === 'error') {
-                messageArea.style.color = '#FF6B6B';
+                messageArea.style.color = '#EF476F';
+                messageArea.style.borderColor = '#EF476F';
             } else if (type === 'success') {
-                messageArea.style.color = '#4ade80';
+                messageArea.style.color = '#06D6A0';
+                messageArea.style.borderColor = '#06D6A0';
             } else {
-                messageArea.style.color = 'rgba(255, 255, 255, 0.9)';
+                messageArea.style.color = '#2D3047';
+                messageArea.style.borderColor = '#FFD166';
             }
             
             messageArea.style.opacity = '0';
@@ -1087,23 +1110,24 @@
             }
         }
         
-        // ==================== SANDIQLARNI YARATISH ====================
+        // ==================== ZAMONAVIY SANDIQLARNI YARATISH ====================
         function createChests() {
             const grid = document.getElementById('chestsGrid');
             grid.innerHTML = '';
             
             for (let i = 0; i < 9; i++) {
                 const chest = document.createElement('div');
-                chest.className = `chest-card ${CHEST_TYPES[i]}`;
+                chest.className = `chest-card ${CHEST_TYPES[i]} float`;
                 chest.dataset.index = i;
+                chest.style.animationDelay = `${i * 0.1}s`;
                 
                 chest.innerHTML = `
-                    <div class="chest-body"></div>
-                    <div class="chest-lid">
-                        <div class="chest-lock">🔒</div>
+                    <div class="chest-lid"></div>
+                    <div class="chest-inside">
+                        <div class="chest-reward"></div>
                     </div>
-                    <div class="chest-reward">🎁</div>
-                    <div class="chest-reward-value"></div>
+                    <div class="chest-icon">🎁</div>
+                    <div class="chest-value"></div>
                 `;
                 
                 chest.addEventListener('click', () => selectChest(i, chest));
@@ -1119,10 +1143,8 @@
             let winningValue;
             
             if (gameState.isFirstPlay) {
-                // Birinchi o'yin: faqat 4 yoki 6
                 winningValue = Math.random() < 0.5 ? 4 : 6;
             } else {
-                // Keyingi o'yinlar: ehtimollik tizimi
                 const rand = Math.random() * 100;
                 
                 if (rand < 5) {
@@ -1147,87 +1169,121 @@
             };
         }
         
+        // Konfetti animatsiyasi
+        function createConfetti(x, y) {
+            const colors = ['#EF476F', '#FFD166', '#06D6A0', '#118AB2', '#9A4DFF'];
+            
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${x}px`;
+                confetti.style.top = `${y}px`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = `${Math.random() * 10 + 5}px`;
+                confetti.style.height = `${Math.random() * 10 + 5}px`;
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                
+                document.body.appendChild(confetti);
+                
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = 3 + Math.random() * 3;
+                const vx = Math.cos(angle) * velocity;
+                const vy = Math.sin(angle) * velocity;
+                
+                let posX = x;
+                let posY = y;
+                
+                const animate = () => {
+                    posX += vx;
+                    posY += vy;
+                    vy += 0.1; // Gravity
+                    
+                    confetti.style.left = `${posX}px`;
+                    confetti.style.top = `${posY}px`;
+                    confetti.style.opacity = 1 - (posY - y) / 300;
+                    
+                    if (posY < window.innerHeight + 50) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        document.body.removeChild(confetti);
+                    }
+                };
+                
+                requestAnimationFrame(animate);
+            }
+        }
+        
         async function selectChest(index, element) {
             if (!gameState.isPlaying || gameState.selectedChest !== null) return;
             
             gameState.selectedChest = index;
             element.style.pointerEvents = 'none';
             
-            // Sandiqni qimirlatish animatsiyasi
-            element.style.animation = 'chest-shake 0.3s ease 3';
-            
-            // Qulf animatsiyasi
-            const lock = element.querySelector('.chest-lock');
-            lock.style.transform = 'translate(-50%, -50%) scale(1.2)';
-            lock.style.transition = 'transform 0.3s';
-            
-            setTimeout(() => {
-                lock.style.transform = 'translate(-50%, -50%) scale(1)';
-            }, 300);
+            // Sandiqni tanlangan holatga o'tkazish
+            element.classList.add('chest-selected');
             
             setTimeout(async () => {
-                element.style.animation = '';
-                element.classList.add('chest-highlighted');
+                // Sandiq qopqog'ini ochish
+                const lid = element.querySelector('.chest-lid');
+                const reward = element.querySelector('.chest-reward');
+                const valueDiv = element.querySelector('.chest-value');
+                
+                lid.classList.add('open');
                 
                 const coinsWon = gameState.currentRewards.winningValue;
                 
+                // Mukofotni ko'rsatish
                 setTimeout(() => {
-                    element.classList.remove('chest-highlighted');
-                    element.classList.add('chest-open');
+                    reward.textContent = `+${coinsWon}🪙`;
+                    reward.classList.add('show', 'reward-pop');
+                    reward.classList.add('coin');
                     
-                    // Mukofotni ko'rsatish
-                    const rewardIcon = element.querySelector('.chest-reward');
-                    const rewardValue = element.querySelector('.chest-reward-value');
+                    valueDiv.textContent = `+${coinsWon}`;
+                    valueDiv.style.opacity = '1';
                     
-                    // Mukofot ikonkasini belgilash
-                    const rewardIcons = ['🪙', '💰', '💎', '👑', '🏆', '✨'];
-                    const rewardIconType = coinsWon >= 50 ? '👑' : 
-                                         coinsWon >= 10 ? '💎' : 
-                                         coinsWon >= 5 ? '💰' : '🪙';
-                    
-                    rewardIcon.textContent = rewardIconType;
-                    rewardValue.textContent = `+${coinsWon}`;
-                    
-                    // Qulfni olib tashlash
-                    lock.style.display = 'none';
+                    // Konfetti animatsiyasi
+                    const rect = element.getBoundingClientRect();
+                    createConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
                     
                     // Local coins qo'shish
                     gameState.coins += coinsWon;
                     updateBalanceDisplay();
                     
-                    setTimeout(() => revealOtherChests(coinsWon), 1000);
-                }, 400);
-            }, 1000);
+                    // Boshqa sandiqlarni ochish
+                    setTimeout(() => revealOtherChests(coinsWon, index, element), 1000);
+                }, 500);
+            }, 500);
         }
         
-        function revealOtherChests(coinsWon) {
+        function revealOtherChests(coinsWon, selectedIndex, selectedElement) {
             const chests = document.querySelectorAll('.chest-card');
             
             chests.forEach((chest, i) => {
-                if (i !== gameState.selectedChest) {
+                if (i !== selectedIndex) {
                     setTimeout(() => {
-                        chest.classList.add('chest-open');
-                        chest.style.pointerEvents = 'none';
+                        const lid = chest.querySelector('.chest-lid');
+                        const reward = chest.querySelector('.chest-reward');
+                        const valueDiv = chest.querySelector('.chest-value');
                         
-                        const rewardValue = chest.querySelector('.chest-reward-value');
-                        const rewardIcon = chest.querySelector('.chest-reward');
-                        
-                        // Qulfni olib tashlash
-                        const lock = chest.querySelector('.chest-lock');
-                        if (lock) lock.style.display = 'none';
+                        // Sandiq qopqog'ini ochish
+                        lid.classList.add('open');
                         
                         // Mukofotni ko'rsatish
-                        const value = gameState.currentRewards.rewards[i];
-                        rewardValue.textContent = `${value}`;
-                        rewardValue.style.color = '#B0C4DE';
-                        rewardValue.style.textShadow = '0 2px 4px rgba(176, 196, 222, 0.5)';
+                        setTimeout(() => {
+                            const rewardValue = gameState.currentRewards.rewards[i];
+                            reward.textContent = `${rewardValue}🪙`;
+                            reward.classList.add('show');
+                            reward.style.opacity = '0.7';
+                            
+                            valueDiv.textContent = `${rewardValue}`;
+                            valueDiv.style.opacity = '0.8';
+                            valueDiv.style.color = '#B0C4DE';
+                        }, 300);
                         
-                        // Mukofot ikonkasini belgilash
-                        const rewardIconType = value >= 50 ? '👑' : 
-                                             value >= 10 ? '💎' : 
-                                             value >= 5 ? '💰' : '🪙';
-                        rewardIcon.textContent = rewardIconType;
-                    }, i * 150);
+                        chest.style.pointerEvents = 'none';
+                        chest.style.opacity = '0.8';
+                        chest.style.transform = 'scale(0.95)';
+                    }, i * 200);
                 }
             });
             
@@ -1245,11 +1301,9 @@
                 if (result.success) {
                     showMessage(`🎉 ${coinsWon} coins botga qo'shildi!`, 'success');
                     
-                    // Yangi tanga balansini olish
                     await getCoinBalance();
                     updateBalanceDisplay();
                 } else {
-                    // Agar coins qo'shishda xatolik bo'lsa
                     showError(`⚠️ Server xatosi: ${result.message || 'Noma\'lum xato'}`);
                     showMessage('⚠️ Coins faqat lokal saqlandi', 'info');
                 }
@@ -1257,7 +1311,7 @@
                 // Tugmani yoqish
                 const playButton = document.getElementById('playButton');
                 playButton.disabled = false;
-                playButton.textContent = '🎮 Play (10 💎)';
+                playButton.innerHTML = '<span id="playButtonText">🎮 PLAY (10 💎)</span>';
                 
                 // Birinchi o'yin tugashi
                 if (gameState.isFirstPlay) {
@@ -1310,10 +1364,10 @@
             // Tugmani o'chirish
             const playButton = document.getElementById('playButton');
             playButton.disabled = true;
-            playButton.textContent = '⏳ O\'yin davom etmoqda...';
+            playButton.innerHTML = '<span id="playButtonText">⏳ O\'YIN DAVOM ETMOQDA...</span>';
             
             showLoading(false);
-            showMessage('✨ Bir sandiqni tanlang!', 'info');
+            showMessage('✨ BIR SANDIQNI TANLANG!', 'info');
         }
         
         // ==================== DASTLABKI YUKLASH ====================
@@ -1324,8 +1378,8 @@
             // Telegram Web App ni ishga tushirish
             initTelegram();
             
-            // Musiqa tizimini ishga tushirish
-            initMusic();
+            // Audioni ishga tushirish
+            initAudio();
             
             // Foydalanuvchini olish
             gameState.user = getTelegramUser();
@@ -1356,7 +1410,7 @@
             
             // Yuklanishni yopish
             showLoading(false);
-            showMessage('🎮 O\'yinni boshlash uchun "Play" tugmasini bosing!', 'info');
+            showMessage('🎮 O\'YINNI BOSHLASH UCHUN "PLAY" TUGMASINI BOSING!', 'info');
         }
         
         // Dasturni ishga tushirish
