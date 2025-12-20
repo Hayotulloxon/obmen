@@ -1693,9 +1693,11 @@
             }
         }
         
-        // YANGI: Yangilangan o'yin logikasi - Sizning talablaringizga mos
+        // YANGI: Yangilangan o'yin logikasi - Sizning yangi talablaringizga mos
         function generateRewards() {
-            const allRewards = [1, 2, 3, 4, 5, 6]; // Faqat 1-6 gacha, 10, 50, 100 larni olib tashladik
+            // Sandiqlarga bonus qiymatlarni tasodifiy joylashtirish
+            // Barcha mumkin bo'lgan qiymatlar: 1, 2, 3, 4, 5, 6, 10, 50, 100
+            const allRewards = [1, 2, 3, 4, 5, 6, 10, 50, 100];
             
             // Sandiqlarga bonus qiymatlarni tasodifiy joylashtirish
             const shuffledRewards = [...allRewards].sort(() => Math.random() - 0.5);
@@ -1714,32 +1716,31 @@
                 // YANGI EHTIMOLLAR:
                 // - 1 tanga: 10 marta (10%)
                 // - 2 tanga: 20 marta (20%)
-                // - 3 tanga: 15 marta (15%) - oldin 45% edi, endi kamaydi
-                // - 4 tanga: 20 marta (20%) - oldin 20% edi
-                // - 5 tanga: 5 marta (5%) - oldin 5% edi
-                // - 6 tanga: 30 marta (30%) - oldin 2% edi, endi ko'paydi
+                // - 3 tanga: 45 marta (45%)
+                // - 4 tanga: 20 marta (20%)
+                // - 5 tanga: 5 marta (5%)
+                // - 6 tanga: 0 marta (0%) - BIRINCHIDAN KEYIN TUSHMAYDI
                 
                 if (rand < 10) { // 10%: 1 tanga
                     winningValue = 1;
                 } else if (rand < 30) { // Keyingi 20%: 2 tanga (10-30)
                     winningValue = 2;
-                } else if (rand < 45) { // Keyingi 15%: 3 tanga (30-45)
+                } else if (rand < 75) { // Keyingi 45%: 3 tanga (30-75)
                     winningValue = 3;
-                } else if (rand < 65) { // Keyingi 20%: 4 tanga (45-65)
+                } else if (rand < 95) { // Keyingi 20%: 4 tanga (75-95)
                     winningValue = 4;
-                } else if (rand < 70) { // Keyingi 5%: 5 tanga (65-70)
+                } else { // Qolgan 5%: 5 tanga (95-100)
                     winningValue = 5;
-                } else { // Qolgan 30%: 6 tanga (70-100)
-                    winningValue = 6;
                 }
+                // 6 tanga endi umuman tushmaydi!
             }
             
             const winningChest = Math.floor(Math.random() * 9);
             
             return {
-                rewards: shuffledRewards,
+                rewards: shuffledRewards, // Bu sandiqlarda ko'rinadigan qiymatlar
                 winningChest: winningChest,
-                winningValue: winningValue
+                winningValue: winningValue // Bu foydalanuvchi oladigan haqiqiy yutuq
             };
         }
         
@@ -1796,6 +1797,7 @@
                         
                         setTimeout(() => {
                             treasureInside.classList.add('show');
+                            // Boshqa sandiqlarda ko'rinadigan qiymatlar (10, 50, 100 larni ham ko'rsatish)
                             treasureReward.textContent = `${gameState.currentRewards.rewards[i]}`;
                             treasureReward.classList.add('show');
                             treasureReward.style.opacity = '0.6';
@@ -1833,6 +1835,8 @@
                     winMessage = `😊 ${coinsWon} tanga topdingiz!`;
                 } else if (coinsWon === 2) {
                     winMessage = `😊 ${coinsWon} tanga topdingiz!`;
+                } else if (coinsWon === 1) {
+                    winMessage = `✅ ${coinsWon} tanga topdingiz!`;
                 } else {
                     winMessage = `✅ ${coinsWon} tanga topdingiz!`;
                 }
@@ -1984,15 +1988,16 @@
         }, { passive: false });
         
         // Test uchun console log
-        console.log('Game initialized with NEW rewards system:');
+        console.log('Game initialized with FINAL rewards system:');
         console.log('- First play: 4, 5 or 6 coins (33.3% each)');
-        console.log('- Subsequent plays:');
+        console.log('- Subsequent plays (100 games):');
         console.log('  1 coin: 10% chance (10 marta)');
         console.log('  2 coins: 20% chance (20 marta)');
-        console.log('  3 coins: 15% chance');
-        console.log('  4 coins: 20% chance');
-        console.log('  5 coins: 5% chance');
-        console.log('  6 coins: 30% chance');
+        console.log('  3 coins: 45% chance (45 marta)');
+        console.log('  4 coins: 20% chance (20 marta)');
+        console.log('  5 coins: 5% chance (5 marta)');
+        console.log('  6 coins: 0% chance (0 marta) - BIRINCHIDAN KEYIN TUSHMAYDI');
+        console.log('- Other chests show: 1, 2, 3, 4, 5, 6, 10, 50, 100 (random)');
     </script>
 </body>
 </html>
