@@ -180,6 +180,12 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
         
+        /* Coins count element for animation target */
+        .coin-target {
+            position: relative;
+            display: inline-block;
+        }
+        
         /* O'yin maydoni - Treasure room */
         .game-area {
             flex: 1;
@@ -372,7 +378,7 @@
         
         .band-1 { top: 25%; }
         .band-2 { top: 50%; }
-        .band-3 { top: 75%; }
+        .band,3 { top: 75%; }
         
         /* Chest when opened */
         .chest-opened .chest-lid {
@@ -598,21 +604,6 @@
             text-shadow: 1px 1px 2px #000;
         }
         
-        /* Loading overlay - Minimal */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(10, 10, 20, 0.95);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-        
         /* Audio control */
         .audio-control {
             position: absolute;
@@ -653,6 +644,21 @@
             75% { transform: translateX(2px); }
         }
         
+        /* Coin flight animation */
+        @keyframes coinFly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--target-x), var(--target-y)) scale(0.3) rotate(180deg);
+            }
+        }
+        
         .treasure-chest.selected .chest-wrapper {
             animation: chestShake 0.3s ease infinite, glow 1.5s ease-in-out infinite;
         }
@@ -663,6 +669,15 @@
         
         .sparkle {
             animation: sparkle 2s ease-in-out infinite;
+        }
+        
+        /* Coin element for flight animation */
+        .coin {
+            position: fixed;
+            font-size: 20px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
         }
         
         /* Responsive */
@@ -772,14 +787,14 @@
                     </div>
                 </div>
                 
-                <!-- Coins balansi -->
+                <!-- Coins balansi - TANGA ANIMATSIYASI UCHUN TARGET -->
                 <div class="balance-card">
                     <div style="font-size: 28px;" class="sparkle">
                         🪙
                     </div>
                     <div>
                         <div style="font-size: 10px; color: #FFD700; font-weight: 600;">TANGALAR</div>
-                        <div id="coinCount" style="font-size: 22px; font-weight: 900; color: #FFD700; text-shadow: 0 0 8px #FFD700;">
+                        <div id="coinCount" class="coin-target" style="font-size: 22px; font-weight: 900; color: #FFD700; text-shadow: 0 0 8px #FFD700;">
                             0
                         </div>
                     </div>
@@ -814,18 +829,6 @@
         </div>
         
     </div>
-    
-    <!-- Minimal loading overlay -->
-    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
-        <div style="text-align: center; padding: 20px;">
-            <div style="width: 50px; height: 50px; margin: 0 auto 15px;">
-                <div style="width: 100%; height: 100%; background: radial-gradient(circle, #FFD700, #D4AF37); border-radius: 50%; border: 3px solid #8B4513; animation: sparkle 1.5s ease-in-out infinite;"></div>
-            </div>
-            <div id="loadingText" style="font-size: 18px; font-weight: 900; color: #FFD700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);">
-                Yuklanmoqda...
-            </div>
-        </div>
-    </div>
 
     <script>
         // ==================== MOBILE OPTIMIZATION ====================
@@ -840,8 +843,6 @@
                 snowflake.style.width = Math.random() * 5 + 2 + 'px';
                 snowflake.style.height = snowflake.style.width;
                 snowflake.style.left = Math.random() * 100 + '%';
-                snowflake.style.animationDelay = Math.random() * 5 + 's';
-                snowflake.style.animationDuration = Math.random() * 3 + 5 + 's';
                 snowflake.style.opacity = Math.random() * 0.5 + 0.3;
                 snowContainer.appendChild(snowflake);
             }
@@ -849,13 +850,9 @@
             // Animate snow
             const snowflakes = document.querySelectorAll('.snowflake');
             snowflakes.forEach((flake, index) => {
-                flake.style.animation = `fall ${Math.random() * 3 + 5}s linear infinite`;
-                flake.style.animationDelay = `${Math.random() * 5}s`;
-                
-                // Create falling animation
                 const style = document.createElement('style');
                 style.textContent = `
-                    @keyframes fall {
+                    @keyframes fall${index} {
                         0% {
                             transform: translateY(-10px) translateX(0);
                             opacity: ${Math.random() * 0.5 + 0.3};
@@ -867,7 +864,90 @@
                     }
                 `;
                 document.head.appendChild(style);
+                
+                flake.style.animation = `fall${index} ${Math.random() * 3 + 5}s linear infinite`;
+                flake.style.animationDelay = `${Math.random() * 5}s`;
             });
+        }
+        
+        // ==================== TANGA ANIMATSIYA FUNKTSIYALARI ====================
+        function createCoinFlightAnimation(startX, startY, amount) {
+            const coinTarget = document.querySelector('.coin-target');
+            const targetRect = coinTarget.getBoundingClientRect();
+            const targetX = targetRect.left + targetRect.width / 2;
+            const targetY = targetRect.top + targetRect.height / 2;
+            
+            // Har bir tanga uchun animatsiya
+            for (let i = 0; i < Math.min(amount, 15); i++) {
+                setTimeout(() => {
+                    const coin = document.createElement('div');
+                    coin.className = 'coin';
+                    coin.innerHTML = '🪙';
+                    coin.style.left = `${startX}px`;
+                    coin.style.top = `${startY}px`;
+                    coin.style.fontSize = `${Math.random() * 10 + 20}px`;
+                    
+                    // CSS custom properties orqali target koordinatalarini o'tkazish
+                    coin.style.setProperty('--target-x', `${targetX - startX}px`);
+                    coin.style.setProperty('--target-y', `${targetY - startY}px`);
+                    
+                    document.body.appendChild(coin);
+                    
+                    // Animatsiyani boshlash
+                    coin.animate([
+                        {
+                            opacity: 1,
+                            transform: 'translate(0, 0) scale(1) rotate(0deg)'
+                        },
+                        {
+                            opacity: 1,
+                            offset: 0.7
+                        },
+                        {
+                            opacity: 0,
+                            transform: `translate(${targetX - startX}px, ${targetY - startY}px) scale(0.3) rotate(180deg)`
+                        }
+                    ], {
+                        duration: 1000 + Math.random() * 500,
+                        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+                    });
+                    
+                    // Tangani olib tashlash
+                    setTimeout(() => {
+                        if (coin.parentNode) {
+                            document.body.removeChild(coin);
+                        }
+                    }, 1500);
+                }, i * 50);
+            }
+            
+            // Balansni yangilash (animatsiya davomida)
+            setTimeout(() => {
+                updateBalanceWithAnimation(amount);
+            }, 800);
+        }
+        
+        function updateBalanceWithAnimation(amount) {
+            const coinElement = document.getElementById('coinCount');
+            const currentCoins = parseInt(coinElement.textContent);
+            const newCoins = currentCoins + amount;
+            
+            // Balansni asta-sekin oshirish animatsiyasi
+            let step = 0;
+            const steps = 20;
+            const increment = amount / steps;
+            
+            const interval = setInterval(() => {
+                step++;
+                const displayCoins = Math.floor(currentCoins + (increment * step));
+                coinElement.textContent = displayCoins;
+                
+                if (step >= steps) {
+                    clearInterval(interval);
+                    coinElement.textContent = newCoins;
+                    gameState.coins = newCoins;
+                }
+            }, 30);
         }
         
         // ==================== KONFIGURATSIYA ====================
@@ -1013,6 +1093,7 @@
                 if (data.success) {
                     const coins = parseInt(data.coins) || parseInt(data.balance) || 0;
                     gameState.coins = coins;
+                    updateBalanceDisplay();
                     return { success: true, coins: coins };
                 } else {
                     return { success: false, message: data.message };
@@ -1040,6 +1121,7 @@
                 if (data.success) {
                     const diamonds = parseInt(data.diamonds) || parseInt(data.balance) || 0;
                     gameState.diamonds = diamonds;
+                    updateBalanceDisplay();
                     return { success: true, diamonds: diamonds };
                 } else {
                     return { success: false, message: data.message };
@@ -1050,15 +1132,10 @@
         }
         
         async function getAllBalances() {
-            showLoading(true, 'Balanslar yuklanmoqda...');
-            
             const [coinsResult, diamondsResult] = await Promise.all([
                 getCoinBalance(),
                 getDiamondBalance()
             ]);
-            
-            showLoading(false);
-            updateBalanceDisplay();
             
             return {
                 coinsSuccess: coinsResult.success,
@@ -1158,14 +1235,6 @@
             document.getElementById('errorMessage').style.display = 'none';
         }
         
-        function showLoading(show, text = 'Yuklanmoqda...') {
-            const overlay = document.getElementById('loadingOverlay');
-            const loadingText = document.getElementById('loadingText');
-            
-            overlay.style.display = show ? 'flex' : 'none';
-            if (show) loadingText.textContent = text;
-        }
-        
         // ==================== HAQIQIY SANDIQLARNI YARATISH ====================
         function createTreasureChests() {
             const grid = document.getElementById('treasureGrid');
@@ -1187,7 +1256,6 @@
                                 <div class="chest-corner corner-br"></div>
                                 <div class="chest-band band-1"></div>
                                 <div class="chest-band band-2"></div>
-                                <div class="chest-band band-3"></div>
                             </div>
                             <div class="chest-lock"></div>
                         </div>
@@ -1255,56 +1323,26 @@
             };
         }
         
-        // Treasure coins effect
-        function createCoinEffect(x, y, amount) {
-            for (let i = 0; i < 10; i++) {
-                const coin = document.createElement('div');
-                coin.innerHTML = '🪙';
-                coin.style.position = 'fixed';
-                coin.style.left = `${x}px`;
-                coin.style.top = `${y}px`;
-                coin.style.fontSize = '20px';
-                coin.style.zIndex = '1000';
-                coin.style.pointerEvents = 'none';
-                coin.style.opacity = '0';
-                coin.style.transform = 'scale(0)';
+        function playChestSound() {
+            // Simple sound effect using Web Audio API
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
                 
-                document.body.appendChild(coin);
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
                 
-                // Animate coin
-                const angle = Math.random() * Math.PI * 2;
-                const distance = 50 + Math.random() * 50;
-                const duration = 1000 + Math.random() * 500;
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
                 
-                const keyframes = [
-                    { 
-                        opacity: 0, 
-                        transform: 'scale(0) translate(0, 0)',
-                        offset: 0 
-                    },
-                    { 
-                        opacity: 1, 
-                        transform: `scale(1) translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance - 50}px)`,
-                        offset: 0.3 
-                    },
-                    { 
-                        opacity: 0, 
-                        transform: `scale(0.5) translate(${Math.cos(angle) * distance * 2}px, ${Math.sin(angle) * distance * 2}px)`,
-                        offset: 1 
-                    }
-                ];
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
                 
-                coin.animate(keyframes, {
-                    duration: duration,
-                    easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
-                });
-                
-                // Remove coin after animation
-                setTimeout(() => {
-                    if (coin.parentNode) {
-                        document.body.removeChild(coin);
-                    }
-                }, duration);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } catch (e) {
+                console.log("Audio context not supported");
             }
         }
         
@@ -1336,41 +1374,23 @@
                     treasureReward.textContent = `+${coinsWon}`;
                     treasureReward.classList.add('show');
                     
-                    // Coin effect
+                    // Tanga animatsiyasi - sandiqdan balansga uchib boradi
                     const rect = element.getBoundingClientRect();
-                    createCoinEffect(rect.left + rect.width / 2, rect.top + rect.height / 2, coinsWon);
+                    const startX = rect.left + rect.width / 2;
+                    const startY = rect.top + rect.height / 2;
                     
-                    // Local coins qo'shish
-                    gameState.coins += coinsWon;
-                    updateBalanceDisplay();
+                    // Tangalar uchib ketadi
+                    createCoinFlightAnimation(startX, startY, coinsWon);
+                    
+                    // Local coins qo'shish (animatsiya bilan)
+                    setTimeout(() => {
+                        gameState.coins += coinsWon;
+                    }, 800);
                     
                     // Boshqa sandiqlarni ochish
-                    setTimeout(() => revealOtherChests(coinsWon, index, element), 1000);
+                    setTimeout(() => revealOtherChests(coinsWon, index, element), 1500);
                 }, 500);
             }, 500);
-        }
-        
-        function playChestSound() {
-            // Simple sound effect using Web Audio API
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
-                
-                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.3);
-            } catch (e) {
-                console.log("Audio context not supported");
-            }
         }
         
         function revealOtherChests(coinsWon, selectedIndex, selectedElement) {
@@ -1402,22 +1422,19 @@
                 gameState.isPlaying = false;
                 gameState.totalPlays++;
                 
-                // Botga coins qo'shish
-                showLoading(true, 'Tangalar saqlanmoqda...');
+                // Botga coins qo'shish (silent, foydalanuvchiga ko'rinmas)
+                addCoinsToBot(coinsWon).then(result => {
+                    if (!result.success) {
+                        console.log("Server error:", result.message);
+                    }
+                });
                 
-                const result = await addCoinsToBot(coinsWon);
+                // Yangi tanga balansini olish
+                setTimeout(() => {
+                    getCoinBalance();
+                }, 1000);
                 
-                showLoading(false);
-                
-                if (result.success) {
-                    showMessage(`🎉 ${coinsWon} tanga topdingiz!`, 'success');
-                    
-                    await getCoinBalance();
-                    updateBalanceDisplay();
-                } else {
-                    showError(`⚠️ Server xatosi: ${result.message || 'Noma\'lum xato'}`);
-                    showMessage('⚠️ Tangalar faqat lokal saqlandi', 'info');
-                }
+                showMessage(`🎉 ${coinsWon} tanga topdingiz!`, 'success');
                 
                 // Tugmani yoqish
                 const playButton = document.getElementById('playButton');
@@ -1446,14 +1463,10 @@
                 return;
             }
             
-            showLoading(true, 'Sandıqlar tayyorlanmoqda...');
-            
             // Botdan diamonds ayirish
             const removeResult = await removeDiamondsFromBot(10);
             
             if (!removeResult.success) {
-                showLoading(false);
-                
                 const errorMsg = removeResult.message || 'Noma\'lum xato';
                 showError(`❌ Olmos ayirishda xatolik: ${errorMsg}`);
                 showMessage('❌ O\'yinni boshlab bo\'lmadi', 'error');
@@ -1477,15 +1490,11 @@
             playButton.disabled = true;
             playButton.innerHTML = '<span id="playButtonText">⏳ SANDIQ TANLANG...</span>';
             
-            showLoading(false);
             showMessage('✨ HAQIQIY SANDIQLARDAN BIRINI TANLANG!', 'info');
         }
         
         // ==================== DASTLABKI YUKLASH ====================
         async function init() {
-            // Yuklanishni ko'rsatish
-            showLoading(true, 'O\'yin yuklanmoqda...');
-            
             // Qor effektini yaratish
             createSnow();
             
@@ -1531,8 +1540,6 @@
                 playButton.style.transform = '';
             }, { passive: false });
             
-            // Yuklanishni yopish
-            showLoading(false);
             showMessage('🎮 O\'YINNI BOSHLASH UCHUN TUGMANI BOSING!', 'info');
         }
         
