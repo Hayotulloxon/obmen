@@ -17,8 +17,6 @@
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             -webkit-text-size-adjust: 100%;
-            -moz-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
         }
         
         html, body {
@@ -27,13 +25,12 @@
             overflow: hidden;
             touch-action: manipulation;
             position: fixed;
-            overscroll-behavior: none;
         }
         
         body {
             font-family: 'Fredoka', sans-serif;
-            background: linear-gradient(180deg, #FFC8DD 0%, #FFAFCC 30%, #BDE0FE 60%, #A2D2FF 100%);
-            color: #2D3047;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
             position: fixed;
             top: 0;
             left: 0;
@@ -42,46 +39,23 @@
             overflow: hidden;
         }
         
-        /* Safe area for notch phones */
-        .safe-area-top {
-            padding-top: env(safe-area-inset-top);
-            background: linear-gradient(135deg, #FF9E6D 0%, #FF7E5F 100%);
-        }
-        
-        .safe-area-bottom {
-            padding-bottom: env(safe-area-inset-bottom);
-            background: linear-gradient(135deg, #118AB2 0%, #06D6A0 100%);
-        }
-        
-        /* Cartoon style bulutlar */
-        .cloud {
+        /* Snow effect */
+        .snow {
             position: absolute;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            filter: blur(2px);
-            z-index: 0;
+            top: -10px;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
+            z-index: 1;
         }
         
-        .cloud-1 {
-            width: 80px;
-            height: 40px;
-            top: 5%;
-            left: 5%;
-        }
-        
-        .cloud-2 {
-            width: 100px;
-            height: 50px;
-            top: 10%;
-            right: 5%;
-        }
-        
-        .cloud-3 {
-            width: 70px;
-            height: 35px;
-            bottom: 20%;
-            left: 10%;
+        .snowflake {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            filter: blur(0.5px);
         }
         
         /* Asosiy container */
@@ -94,25 +68,19 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            z-index: 2;
         }
         
-        /* Header - Mobile optimized */
+        /* Header - Realistic design */
         .header {
             flex-shrink: 0;
-            padding: 12px 15px;
-            background: linear-gradient(135deg, #FF9E6D 0%, #FF7E5F 100%);
-            border-bottom: 4px solid #FF6B35;
-            border-radius: 0 0 25px 25px;
-            box-shadow: 0 6px 15px rgba(255, 107, 53, 0.3);
+            padding: 15px 12px 12px;
+            background: linear-gradient(to bottom, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.9));
+            border-bottom: 3px solid #8B4513;
             position: relative;
-            overflow: hidden;
             min-height: auto;
-        }
-        
-        .header-content {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
         }
         
         .header::before {
@@ -121,295 +89,448 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 8px;
-            background: repeating-linear-gradient(
-                90deg,
-                transparent,
-                transparent 8px,
-                rgba(255, 255, 255, 0.5) 8px,
-                rgba(255, 255, 255, 0.5) 16px
-            );
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
         }
         
-        /* Balans kartalari - Mobile optimized */
+        /* Game title with treasure theme */
+        .game-title {
+            text-align: center;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .game-title h1 {
+            font-size: 22px;
+            font-weight: 900;
+            color: #FFD700;
+            text-shadow: 
+                0 0 10px rgba(255, 215, 0, 0.8),
+                2px 2px 0 #000,
+                0 0 20px rgba(255, 215, 0, 0.4);
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+            padding: 0 15px;
+        }
+        
+        .game-title h1::before,
+        .game-title h1::after {
+            content: '⚜️';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+        
+        .game-title h1::before {
+            left: 0;
+        }
+        
+        .game-title h1::after {
+            right: 0;
+        }
+        
+        /* Balans kartalari - Real treasure style */
         .balance-container {
             display: flex;
             gap: 10px;
             margin-top: 8px;
             flex-wrap: nowrap;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 5px;
-        }
-        
-        .balance-container::-webkit-scrollbar {
-            display: none;
+            justify-content: center;
         }
         
         .balance-card {
             flex: 1;
-            min-width: 140px;
+            max-width: 160px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 12px 10px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 18px;
-            border: 3px solid #2D3047;
-            box-shadow: 4px 4px 0px rgba(45, 48, 71, 0.2);
+            gap: 10px;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.9), rgba(101, 67, 33, 0.9));
+            border-radius: 12px;
+            border: 2px solid #D4AF37;
+            box-shadow: 
+                inset 0 0 10px rgba(0, 0, 0, 0.3),
+                0 4px 8px rgba(0, 0, 0, 0.4);
             position: relative;
             overflow: hidden;
+        }
+        
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.1"><pattern id="wood" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M0,0 L10,10 M10,0 L0,10" stroke="%23D4AF37" stroke-width="1"/></pattern><rect width="100" height="100" fill="url(%23wood)"/></svg>');
         }
         
         .balance-card::after {
             content: '';
             position: absolute;
-            top: -8px;
-            right: -8px;
+            top: -5px;
+            right: -5px;
             width: 25px;
             height: 25px;
-            background: #FFD166;
+            background: radial-gradient(circle, #FFD700, #D4AF37);
             border-radius: 50%;
-            border: 2px solid #2D3047;
+            border: 2px solid #8B4513;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
         
-        /* O'yin maydoni */
+        /* O'yin maydoni - Treasure room */
         .game-area {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 15px 10px 0;
+            padding: 15px 10px;
             overflow: hidden;
             position: relative;
             min-height: 0;
+            background: linear-gradient(to bottom, #0a0a1a, #1a1a2e);
+            border-top: 2px solid #8B4513;
+            border-bottom: 2px solid #8B4513;
         }
         
-        .game-area::before {
-            content: '';
+        /* Treasure room background */
+        .treasure-room {
             position: absolute;
             top: 0;
-            left: 10px;
-            right: 10px;
-            height: 8px;
-            background: linear-gradient(90deg, #FF9E6D, #FFD166, #06D6A0, #118AB2, #EF476F);
-            border-radius: 4px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+            z-index: -1;
         }
         
-        /* Sandiqlar container */
-        .chests-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px;
-            margin: 0;
-            position: relative;
-            min-height: 0;
-            overflow: hidden;
-        }
-        
-        /* Zamonaviy sandiqlar grid - Mobile optimized */
-        .chests-grid {
+        /* Real Treasure Chests Grid */
+        .treasure-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 12px;
             width: 100%;
-            max-width: 400px;
-            max-height: 400px;
-            aspect-ratio: 1;
-            padding: 12px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 25px;
-            border: 4px solid #FFD166;
-            box-shadow: 
-                inset 0 0 15px rgba(255, 209, 102, 0.5),
-                0 6px 20px rgba(0, 0, 0, 0.12);
-            overflow: hidden;
-        }
-        
-        /* Zamonaviy sandiq kartasi */
-        .chest-card {
-            width: 100%;
+            max-width: 380px;
             height: 100%;
-            min-height: 70px;
-            background: linear-gradient(135deg, var(--chest-color-1), var(--chest-color-2));
-            border: 3px solid var(--chest-border);
-            border-radius: 18px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 380px;
+            margin: 0 auto;
+            padding: 15px;
+            background: rgba(20, 20, 30, 0.7);
+            border-radius: 20px;
+            border: 3px solid #8B4513;
+            box-shadow: 
+                inset 0 0 30px rgba(0, 0, 0, 0.7),
+                0 10px 25px rgba(0, 0, 0, 0.8);
             position: relative;
             overflow: hidden;
-            box-shadow: 
-                0 6px 12px rgba(0, 0, 0, 0.15),
-                inset 0 -4px 8px rgba(0, 0, 0, 0.1);
-            perspective: 800px;
-            touch-action: manipulation;
         }
         
-        .chest-card::before {
+        .treasure-grid::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 12px;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent);
-            border-radius: 18px 18px 0 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.05"><pattern id="stone" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="%238B4513"/><circle cx="10" cy="10" r="3" fill="%235A3A22"/></pattern><rect width="100" height="100" fill="url(%23stone)"/></svg>');
         }
         
-        .chest-card:active {
-            transform: scale(0.95);
+        /* REAL TREASURE CHEST STYLES */
+        .treasure-chest {
+            width: 100%;
+            height: 100%;
+            min-height: 90px;
+            position: relative;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: all 0.3s ease;
         }
         
-        /* Sandiq qopqog'i */
+        .chest-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        /* Chest base (asosiy qismi) */
+        .chest-base {
+            position: absolute;
+            width: 100%;
+            height: 60%;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--chest-metal-1), var(--chest-metal-2), var(--chest-metal-1));
+            border-radius: 8px 8px 15px 15px;
+            border: 3px solid var(--chest-border);
+            box-shadow: 
+                inset 0 -5px 10px rgba(0, 0, 0, 0.5),
+                inset 0 5px 10px rgba(255, 255, 255, 0.1),
+                0 5px 15px rgba(0, 0, 0, 0.6);
+            transform-style: preserve-3d;
+        }
+        
+        /* Chest lid (qopqog'i) */
         .chest-lid {
             position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 30%;
-            background: linear-gradient(135deg, var(--chest-color-1), var(--chest-color-2));
-            border-radius: 18px 18px 0 0;
-            border-bottom: 3px solid var(--chest-border);
-            transform-origin: top center;
-            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            height: 40%;
+            top: 0;
+            background: linear-gradient(135deg, var(--chest-metal-1), var(--chest-metal-2));
+            border-radius: 15px 15px 8px 8px;
+            border: 3px solid var(--chest-border);
+            border-bottom: none;
+            box-shadow: 
+                inset 0 5px 10px rgba(255, 255, 255, 0.1),
+                inset 0 -5px 10px rgba(0, 0, 0, 0.3),
+                0 -5px 15px rgba(0, 0, 0, 0.6);
+            transform-origin: bottom center;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-style: preserve-3d;
             z-index: 2;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
         }
         
-        .chest-lid::after {
-            content: '';
+        /* Chest lid handle */
+        .chest-handle {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 35px;
+            width: 40px;
             height: 12px;
-            background: var(--chest-border);
-            border-radius: 8px;
+            background: linear-gradient(to bottom, #D4AF37, #FFD700, #D4AF37);
+            border-radius: 6px;
+            border: 2px solid #8B4513;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
         
-        .chest-lid.open {
-            transform: rotateX(-120deg);
-        }
-        
-        /* Sandiq ichi */
-        .chest-inside {
+        .chest-handle::before {
+            content: '';
             position: absolute;
-            top: 30%;
-            left: 0;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 6px;
+            background: #8B4513;
+            border-radius: 3px;
+        }
+        
+        /* Chest lock */
+        .chest-lock {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 25px;
+            height: 15px;
+            background: linear-gradient(to bottom, #C0C0C0, #808080);
+            border-radius: 5px;
+            border: 2px solid #606060;
+            z-index: 3;
+        }
+        
+        /* Chest decorations */
+        .chest-decoration {
+            position: absolute;
             width: 100%;
-            height: 70%;
-            background: linear-gradient(to bottom, var(--chest-color-2), #4a2c00);
-            border-radius: 0 0 18px 18px;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .chest-corner {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: radial-gradient(circle, var(--chest-accent), var(--chest-border));
+            border-radius: 3px;
+            transform: rotate(45deg);
+        }
+        
+        .corner-tl { top: 5px; left: 5px; }
+        .corner-tr { top: 5px; right: 5px; }
+        .corner-bl { bottom: 5px; left: 5px; }
+        .corner-br { bottom: 5px; right: 5px; }
+        
+        /* Chest metal bands */
+        .chest-band {
+            position: absolute;
+            width: 80%;
+            height: 8px;
+            left: 10%;
+            background: linear-gradient(to right, 
+                transparent 10%, 
+                var(--chest-accent) 10%, 
+                var(--chest-accent) 90%, 
+                transparent 90%);
+            border-radius: 4px;
+        }
+        
+        .band-1 { top: 25%; }
+        .band-2 { top: 50%; }
+        .band-3 { top: 75%; }
+        
+        /* Chest when opened */
+        .chest-opened .chest-lid {
+            transform: rotateX(-110deg);
+        }
+        
+        /* Treasure inside the chest */
+        .treasure-inside {
+            position: absolute;
+            width: 100%;
+            height: 60%;
+            bottom: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             z-index: 1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
         
-        /* Sandiq ichidagi mukofot */
-        .chest-reward {
-            font-size: 22px;
+        .treasure-inside.show {
+            opacity: 1;
+        }
+        
+        .treasure-reward {
+            font-size: 24px;
             font-weight: 900;
             color: #FFD700;
             text-shadow: 
-                0 0 8px rgba(255, 215, 0, 0.8),
-                1px 1px 0 rgba(0, 0, 0, 0.3);
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 3;
-            position: relative;
+                0 0 10px rgba(255, 215, 0, 0.8),
+                2px 2px 0 #000,
+                0 0 20px rgba(255, 215, 0, 0.5);
+            transform: translateY(20px);
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
-        .chest-reward.show {
+        .treasure-reward.show {
             transform: translateY(0);
         }
         
-        .chest-icon {
-            font-size: 36px;
-            margin-bottom: 4px;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
-            position: relative;
-            z-index: 1;
+        /* Chest hover effect */
+        .treasure-chest:hover .chest-wrapper {
+            transform: translateY(-5px);
         }
         
-        /* Sandiq qiymati */
-        .chest-value {
-            font-size: 18px;
-            font-weight: 900;
-            color: #FFD700;
-            text-shadow: 
-                0 2px 8px rgba(255, 215, 0, 0.8),
-                1px 1px 0 rgba(0, 0, 0, 0.4);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            position: relative;
-            z-index: 3;
+        .treasure-chest:active .chest-wrapper {
+            transform: scale(0.95);
         }
         
-        /* Footer - Mobile optimized */
+        /* Chest types - Real metal colors */
+        .chest-gold {
+            --chest-metal-1: #FFD700;
+            --chest-metal-2: #D4AF37;
+            --chest-border: #B8860B;
+            --chest-accent: #FFEC8B;
+        }
+        
+        .chest-silver {
+            --chest-metal-1: #C0C0C0;
+            --chest-metal-2: #A0A0A0;
+            --chest-border: #808080;
+            --chest-accent: #E0E0E0;
+        }
+        
+        .chest-bronze {
+            --chest-metal-1: #CD7F32;
+            --chest-metal-2: #8B4513;
+            --chest-border: #654321;
+            --chest-accent: #DEB887;
+        }
+        
+        .chest-iron {
+            --chest-metal-1: #696969;
+            --chest-metal-2: #505050;
+            --chest-border: #303030;
+            --chest-accent: #888888;
+        }
+        
+        .chest-copper {
+            --chest-metal-1: #B87333;
+            --chest-metal-2: #8B4513;
+            --chest-border: #654321;
+            --chest-accent: #DEB887;
+        }
+        
+        .chest-platinum {
+            --chest-metal-1: #E5E4E2;
+            --chest-metal-2: #B8B8B8;
+            --chest-border: #909090;
+            --chest-accent: #F0F0F0;
+        }
+        
+        .chest-diamond {
+            --chest-metal-1: #4FACFE;
+            --chest-metal-2: #00F2FE;
+            --chest-border: #0099FF;
+            --chest-accent: #9A4DFF;
+        }
+        
+        .chest-ruby {
+            --chest-metal-1: #EF476F;
+            --chest-metal-2: #D43D63;
+            --chest-border: #B83254;
+            --chest-accent: #FF6B6B;
+        }
+        
+        .chest-emerald {
+            --chest-metal-1: #06D6A0;
+            --chest-metal-2: #0CB48A;
+            --chest-border: #048A6F;
+            --chest-accent: #4ADE80;
+        }
+        
+        /* Footer */
         .footer {
             flex-shrink: 0;
             padding: 15px 12px;
-            background: linear-gradient(135deg, #118AB2 0%, #06D6A0 100%);
-            border-top: 4px solid #073B4C;
-            border-radius: 25px 25px 0 0;
-            text-align: center;
-            box-shadow: 0 -6px 15px rgba(6, 214, 160, 0.3);
+            background: linear-gradient(to top, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.9));
+            border-top: 3px solid #8B4513;
             position: relative;
             min-height: auto;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
         }
         
-        .footer-content {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
-        .footer::before {
+        .footer::after {
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 8px;
-            background: repeating-linear-gradient(
-                90deg,
-                transparent,
-                transparent 8px,
-                rgba(255, 255, 255, 0.5) 8px,
-                rgba(255, 255, 255, 0.5) 16px
-            );
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
         }
         
-        /* Play tugmasi - Mobile optimized */
+        /* Play button - Treasure style */
         .play-button {
             width: 100%;
-            max-width: 300px;
-            padding: 16px;
-            background: linear-gradient(135deg, #EF476F 0%, #FF9E6D 100%);
-            border: 3px solid #2D3047;
-            border-radius: 22px;
-            color: white;
-            font-size: 18px;
+            max-width: 320px;
+            padding: 18px;
+            background: linear-gradient(135deg, #8B4513, #D2691E, #8B4513);
+            border: 3px solid #D4AF37;
+            border-radius: 15px;
+            color: #FFD700;
+            font-size: 20px;
             font-weight: 900;
             cursor: pointer;
             transition: all 0.2s ease;
             margin: 0 auto;
             display: block;
             box-shadow: 
-                0 8px 0 #2D3047,
-                0 12px 15px rgba(239, 71, 111, 0.3);
+                0 8px 0 #654321,
+                0 15px 25px rgba(0, 0, 0, 0.7),
+                inset 0 2px 5px rgba(255, 215, 0, 0.3);
             position: relative;
             overflow: hidden;
-            touch-action: manipulation;
+            text-shadow: 1px 1px 2px #000;
         }
         
         .play-button::before {
@@ -419,15 +540,20 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
             transition: left 0.5s;
+        }
+        
+        .play-button:hover::before {
+            left: 100%;
         }
         
         .play-button:active {
             transform: translateY(4px);
             box-shadow: 
-                0 4px 0 #2D3047,
-                0 6px 8px rgba(239, 71, 111, 0.3);
+                0 4px 0 #654321,
+                0 8px 15px rgba(0, 0, 0, 0.7),
+                inset 0 2px 5px rgba(255, 215, 0, 0.3);
         }
         
         .play-button:disabled {
@@ -435,449 +561,174 @@
             cursor: not-allowed;
             transform: none;
             box-shadow: 
-                0 4px 0 #2D3047,
-                0 6px 8px rgba(239, 71, 111, 0.3);
+                0 4px 0 #654321,
+                0 8px 15px rgba(0, 0, 0, 0.5),
+                inset 0 2px 5px rgba(255, 215, 0, 0.2);
         }
         
-        /* Xabar maydoni */
+        /* Message area */
         .message-area {
             margin-top: 12px;
             font-size: 14px;
-            font-weight: 700;
-            color: rgba(45, 48, 71, 0.95);
+            font-weight: 600;
+            color: #FFD700;
             min-height: 20px;
             text-align: center;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 14px;
-            border: 2px solid #FFD166;
-            box-shadow: 2px 2px 0px rgba(255, 209, 102, 0.3);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            padding: 10px;
+            background: rgba(139, 69, 19, 0.3);
+            border-radius: 10px;
+            border: 2px solid #D4AF37;
+            backdrop-filter: blur(5px);
+            text-shadow: 1px 1px 2px #000;
         }
         
-        /* Xatolik xabari */
+        /* Error message */
         .error-message {
-            background: rgba(239, 71, 111, 0.95);
-            border: 2px solid #2D3047;
-            color: white;
+            background: rgba(178, 34, 34, 0.8);
+            border: 2px solid #FF4444;
+            color: #FFD700;
             padding: 10px;
-            border-radius: 18px;
+            border-radius: 10px;
             margin-top: 12px;
             font-size: 14px;
-            font-weight: 700;
+            font-weight: 600;
             text-align: center;
             display: none;
-            box-shadow: 2px 2px 0px rgba(45, 48, 71, 0.3);
+            backdrop-filter: blur(5px);
+            text-shadow: 1px 1px 2px #000;
         }
         
-        /* Yuklanish overlay */
+        /* Loading overlay - Minimal */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 200, 221, 0.95);
+            background: rgba(10, 10, 20, 0.95);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
         }
         
-        /* Sandiq turlari ranglari */
-        .chest-type-gold {
-            --chest-color-1: #FFD700;
-            --chest-color-2: #FFAA00;
-            --chest-border: #FF6B35;
-        }
-        
-        .chest-type-silver {
-            --chest-color-1: #E0E0E0;
-            --chest-color-2: #C0C0C0;
-            --chest-border: #A0A0A0;
-        }
-        
-        .chest-type-crystal {
-            --chest-color-1: #4FACFE;
-            --chest-color-2: #00F2FE;
-            --chest-border: #0099FF;
-        }
-        
-        .chest-type-frost {
-            --chest-color-1: #9A4DFF;
-            --chest-color-2: #654EA3;
-            --chest-border: #7B3FE4;
-        }
-        
-        .chest-type-ice {
-            --chest-color-1: #00FFFF;
-            --chest-color-2: #4FACFE;
-            --chest-border: #00CCFF;
-        }
-        
-        .chest-type-platinum {
-            --chest-color-1: #E5E4E2;
-            --chest-color-2: #B8B8B8;
-            --chest-border: #A0A0A0;
-        }
-        
-        .chest-type-rainbow {
-            --chest-color-1: #FF6B6B;
-            --chest-color-2: #FFD166;
-            --chest-border: #EF476F;
-        }
-        
-        .chest-type-emerald {
-            --chest-color-1: #06D6A0;
-            --chest-color-2: #0CB48A;
-            --chest-border: #048A6F;
-        }
-        
-        .chest-type-ruby {
-            --chest-color-1: #EF476F;
-            --chest-color-2: #D43D63;
-            --chest-border: #B83254;
-        }
-        
-        /* Animatsiyalar */
-        @keyframes chest-selected {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        @keyframes reward-pop {
-            0% { transform: scale(0) translateY(100%); opacity: 0; }
-            70% { transform: scale(1.1) translateY(0); opacity: 1; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-        
-        @keyframes coin-bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        
-        @keyframes diamond-sparkle {
-            0%, 100% { filter: drop-shadow(0 0 4px rgba(0, 255, 255, 0.7)); }
-            50% { filter: drop-shadow(0 0 12px rgba(0, 255, 255, 1)); }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-        
-        .chest-selected {
-            animation: chest-selected 0.5s ease infinite;
-            box-shadow: 
-                0 0 20px rgba(0, 255, 255, 0.7),
-                0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-        
-        .reward-pop {
-            animation: reward-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        
-        .coin-bounce {
-            animation: coin-bounce 0.8s ease infinite;
-        }
-        
-        .diamond-sparkle {
-            animation: diamond-sparkle 1.2s ease-in-out infinite;
-        }
-        
-        .float {
-            animation: float 2.5s ease-in-out infinite;
-        }
-        
-        /* Konfetti */
-        .confetti {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            z-index: 10;
-            pointer-events: none;
-        }
-        
-        /* Audio controller - Mobile optimized */
+        /* Audio control */
         .audio-control {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 36px;
-            height: 36px;
-            background: rgba(255, 255, 255, 0.95);
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #8B4513, #D2691E);
             border-radius: 50%;
-            border: 2px solid #2D3047;
+            border: 2px solid #D4AF37;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 100;
-            box-shadow: 2px 2px 0px rgba(45, 48, 71, 0.3);
-            touch-action: manipulation;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
         }
         
-        /* Mobile orientation warning */
-        .orientation-warning {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #FFC8DD;
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
+        /* Animations */
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
         
-        /* ==================== RESPONSIVE SOZLAMALAR ==================== */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
         
-        /* Kichik ekranlar (iPhone SE kabi) */
-        @media (max-width: 320px) {
-            .header {
-                padding: 10px 12px;
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+        }
+        
+        @keyframes chestShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+        
+        .treasure-chest.selected .chest-wrapper {
+            animation: chestShake 0.3s ease infinite, glow 1.5s ease-in-out infinite;
+        }
+        
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .sparkle {
+            animation: sparkle 2s ease-in-out infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 380px) {
+            .treasure-grid {
+                gap: 10px;
+                padding: 12px;
+                max-height: 350px;
             }
             
-            .chests-grid {
-                gap: 8px;
-                padding: 10px;
-                border-width: 3px;
-            }
-            
-            .chest-card {
-                min-height: 60px;
-                border-radius: 16px;
-            }
-            
-            .chest-icon {
-                font-size: 30px;
-            }
-            
-            .chest-reward {
-                font-size: 18px;
-            }
-            
-            .chest-value {
-                font-size: 16px;
-            }
-            
-            .balance-card {
-                min-width: 130px;
-                padding: 10px 8px;
+            .treasure-chest {
+                min-height: 80px;
             }
             
             .play-button {
-                padding: 14px;
-                font-size: 16px;
-                max-width: 280px;
+                padding: 16px;
+                font-size: 18px;
+                max-width: 300px;
+            }
+            
+            .game-title h1 {
+                font-size: 20px;
             }
         }
         
-        /* Vertikal holatda baland ekranlar */
         @media (max-height: 700px) {
+            .treasure-grid {
+                max-height: 320px;
+            }
+            
+            .treasure-chest {
+                min-height: 75px;
+            }
+            
             .header {
-                padding: 10px 12px;
-            }
-            
-            .chests-grid {
-                max-height: 350px;
-                padding: 10px;
-            }
-            
-            .chest-card {
-                min-height: 65px;
-            }
-            
-            .chest-icon {
-                font-size: 32px;
+                padding: 12px 10px 10px;
             }
             
             .footer {
                 padding: 12px 10px;
             }
-            
-            .play-button {
-                padding: 14px;
-            }
         }
         
-        /* Juda baland ekranlar */
         @media (max-height: 600px) {
-            .chests-grid {
-                max-height: 320px;
-                gap: 8px;
-                padding: 8px;
-            }
-            
-            .chest-card {
-                min-height: 60px;
-            }
-            
-            .chest-icon {
-                font-size: 28px;
-            }
-            
-            .chest-reward {
-                font-size: 16px;
-            }
-            
-            .chest-value {
-                font-size: 15px;
-            }
-            
-            .header {
-                padding: 8px 10px;
-            }
-            
-            .footer {
-                padding: 10px 8px;
-            }
-        }
-        
-        /* Landscape (yotiq) holat */
-        @media (orientation: landscape) and (max-height: 500px) {
-            .app-container {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-            
-            .header {
-                width: 100%;
-                border-radius: 0 0 20px 20px;
-                padding: 8px 12px;
-            }
-            
-            .header-content {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-            
-            .balance-container {
-                margin-top: 0;
+            .treasure-grid {
+                max-height: 280px;
                 gap: 8px;
             }
             
-            .balance-card {
-                min-width: 120px;
-                padding: 8px;
+            .treasure-chest {
+                min-height: 65px;
             }
             
-            .game-area {
-                width: 60%;
-                height: calc(100% - 70px);
-                padding: 10px;
-            }
-            
-            .chests-container {
-                height: 100%;
-            }
-            
-            .chests-grid {
-                max-height: 100%;
-                max-width: 100%;
-                aspect-ratio: 1;
-            }
-            
-            .footer {
-                width: 40%;
-                height: calc(100% - 70px);
-                border-radius: 20px 0 0 0;
-                padding: 15px 10px;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-            
-            .play-button {
-                max-width: 100%;
-                margin: 10px 0;
-            }
-            
-            .message-area, .error-message {
-                margin-top: 8px;
-            }
-        }
-        
-        /* Katta ekranlar */
-        @media (min-width: 500px) and (min-height: 800px) {
-            .chests-grid {
-                max-height: 450px;
-                max-width: 450px;
-            }
-            
-            .chest-card {
-                min-height: 85px;
-            }
-            
-            .chest-icon {
-                font-size: 42px;
-            }
-            
-            .chest-reward {
-                font-size: 26px;
-            }
-            
-            .chest-value {
-                font-size: 22px;
-            }
-            
-            .play-button {
-                max-width: 350px;
-                padding: 18px;
+            .treasure-reward {
                 font-size: 20px;
             }
         }
         
-        /* Dark mode qo'llab-quvvatlash */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: linear-gradient(180deg, #1a1a2e 0%, #16213e 30%, #0f3460 60%, #1a3b5d 100%);
-                color: #ffffff;
-            }
-            
+        /* Safe areas for modern phones */
+        @supports (padding-top: env(safe-area-inset-top)) {
             .header {
-                background: linear-gradient(135deg, #FF6B35 0%, #FF9E6D 100%);
+                padding-top: calc(15px + env(safe-area-inset-top));
             }
             
             .footer {
-                background: linear-gradient(135deg, #0c7b93 0%, #06D6A0 100%);
-            }
-            
-            .balance-card {
-                background: rgba(30, 30, 46, 0.95);
-            }
-            
-            .chests-grid {
-                background: rgba(30, 30, 46, 0.8);
-            }
-            
-            .message-area {
-                background: rgba(30, 30, 46, 0.9);
-            }
-        }
-        
-        /* iPhone notch uchun maxsus sozlamalar */
-        @supports (padding-top: env(safe-area-inset-top)) {
-            body {
-                padding-top: env(safe-area-inset-top);
-                padding-bottom: env(safe-area-inset-bottom);
-                padding-left: env(safe-area-inset-left);
-                padding-right: env(safe-area-inset-right);
+                padding-bottom: calc(15px + env(safe-area-inset-bottom));
             }
         }
     </style>
@@ -888,196 +739,135 @@
         <source src="https://s35.surkhandc1.uz/399837962.mp3" type="audio/mpeg">
     </audio>
     
-    <!-- Cartoon style bulutlar -->
-    <div class="cloud cloud-1"></div>
-    <div class="cloud cloud-2"></div>
-    <div class="cloud cloud-3"></div>
+    <!-- Snow effect -->
+    <div class="snow" id="snowContainer"></div>
     
     <!-- Audio control -->
     <div class="audio-control" id="audioControl">
-        <i class="fas fa-volume-up" id="audioIcon" style="font-size: 18px; color: #EF476F;"></i>
-    </div>
-    
-    <!-- Orientation warning (faqat landscape da) -->
-    <div class="orientation-warning" id="orientationWarning">
-        <div style="padding: 20px; background: white; border-radius: 20px; border: 4px solid #FFD166; max-width: 300px;">
-            <div style="font-size: 40px; margin-bottom: 15px;">📱</div>
-            <h3 style="color: #2D3047; margin-bottom: 10px;">Iltimos, telefonni vertikal holatda ishlating</h3>
-            <p style="color: #666; font-size: 14px;">O'yin yotiq holatda to'liq ishlamaydi</p>
-        </div>
+        <i class="fas fa-volume-up" id="audioIcon" style="font-size: 18px; color: #FFD700;"></i>
     </div>
     
     <div class="app-container">
         
-        <!-- Header: O'yin nomi va balanslar -->
-        <div class="safe-area-top">
-            <div class="header">
-                <div class="header-content">
-                    <div style="text-align: center; margin-bottom: 6px;">
-                        <h1 style="font-size: 20px; font-weight: 900; color: #2D3047; text-shadow: 2px 2px 0px rgba(255, 209, 102, 0.8); letter-spacing: 0.5px;">
-                            ❄️ WINTER TREASURE ❄️
-                        </h1>
-                        <p style="font-size: 12px; color: rgba(45, 48, 71, 0.9); font-weight: 600;">
-                            Olmos ishlat, tanga yut!
-                        </p>
+        <!-- Header -->
+        <div class="header">
+            <div class="game-title">
+                <h1>WINTER TREASURE</h1>
+                <p style="font-size: 12px; color: #D4AF37; margin-top: 5px; text-shadow: 1px 1px 2px #000;">
+                    Haqiqiy sandiqlardan boylik toping!
+                </p>
+            </div>
+            
+            <div class="balance-container">
+                <!-- Diamonds balansi -->
+                <div class="balance-card">
+                    <div style="font-size: 28px;" class="sparkle">
+                        💎
                     </div>
-                    
-                    <div class="balance-container">
-                        <!-- Diamonds balansi -->
-                        <div class="balance-card">
-                            <div style="font-size: 26px;" class="diamond-sparkle">
-                                💎
-                            </div>
-                            <div>
-                                <div style="font-size: 10px; color: rgba(45, 48, 71, 0.7); font-weight: 600;">DIAMONDS</div>
-                                <div id="diamondCount" style="font-size: 20px; font-weight: 900; color: #00FFFF; text-shadow: 1px 1px 0 #2D3047;">
-                                    0
-                                </div>
-                            </div>
+                    <div>
+                        <div style="font-size: 10px; color: #FFD700; font-weight: 600;">OLMOSLAR</div>
+                        <div id="diamondCount" style="font-size: 22px; font-weight: 900; color: #00FFFF; text-shadow: 0 0 8px #00FFFF;">
+                            0
                         </div>
-                        
-                        <!-- Coins balansi -->
-                        <div class="balance-card">
-                            <div style="font-size: 26px;" class="coin-bounce">
-                                🪙
-                            </div>
-                            <div>
-                                <div style="font-size: 10px; color: rgba(45, 48, 71, 0.7); font-weight: 600;">COINS</div>
-                                <div id="coinCount" style="font-size: 20px; font-weight: 900; color: #FFD700; text-shadow: 1px 1px 0 #2D3047;">
-                                    0
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Foydalanuvchi ID -->
-                    <div id="userIdDisplay" style="font-size: 10px; color: rgba(45, 48, 71, 0.7); text-align: center; margin-top: 8px; font-weight: 600;">
-                        ID: yuklanmoqda...
                     </div>
                 </div>
+                
+                <!-- Coins balansi -->
+                <div class="balance-card">
+                    <div style="font-size: 28px;" class="sparkle">
+                        🪙
+                    </div>
+                    <div>
+                        <div style="font-size: 10px; color: #FFD700; font-weight: 600;">TANGALAR</div>
+                        <div id="coinCount" style="font-size: 22px; font-weight: 900; color: #FFD700; text-shadow: 0 0 8px #FFD700;">
+                            0
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Foydalanuvchi ID -->
+            <div id="userIdDisplay" style="font-size: 10px; color: #D4AF37; text-align: center; margin-top: 8px; font-weight: 600; text-shadow: 1px 1px 2px #000;">
+                ID: yuklanmoqda...
             </div>
         </div>
         
         <!-- Asosiy o'yin maydoni -->
         <div class="game-area">
-            <div class="chests-container">
-                <div id="chestsGrid" class="chests-grid">
-                    <!-- Sandiqlar JavaScript bilan yaratiladi -->
-                </div>
+            <div class="treasure-room"></div>
+            <div id="treasureGrid" class="treasure-grid">
+                <!-- Haqiqiy sandiqlar JavaScript bilan yaratiladi -->
             </div>
         </div>
         
-        <!-- Footer: Tugma va xabarlar -->
-        <div class="safe-area-bottom">
-            <div class="footer">
-                <div class="footer-content">
-                    <button id="playButton" class="play-button">
-                        <span id="playButtonText">🎮 PLAY (10 💎)</span>
-                    </button>
-                    
-                    <div id="messageArea" class="message-area">
-                        🎮 O'yinni boshlash uchun PLAY tugmasini bosing!
-                    </div>
-                    
-                    <div id="errorMessage" class="error-message"></div>
-                </div>
+        <!-- Footer -->
+        <div class="footer">
+            <button id="playButton" class="play-button">
+                <span id="playButtonText">🎮 O'YINNI BOSHLASH (10 💎)</span>
+            </button>
+            
+            <div id="messageArea" class="message-area">
+                🎯 Bir sandiq tanlang va boylik toping!
             </div>
+            
+            <div id="errorMessage" class="error-message"></div>
         </div>
         
     </div>
     
-    <!-- Yuklanish overlay -->
+    <!-- Minimal loading overlay -->
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
-        <div style="text-align: center; padding: 25px; background: linear-gradient(135deg, #FF9E6D 0%, #FFD166 100%); border-radius: 25px; border: 3px solid #2D3047; box-shadow: 8px 8px 0px rgba(45, 48, 71, 0.3); max-width: 90%;">
-            <div style="width: 50px; height: 50px; border: 5px solid rgba(45, 48, 71, 0.3); border-top: 5px solid #EF476F; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
-            <div id="loadingText" style="font-size: 18px; font-weight: 900; color: #2D3047;">
-                Yuklanmoqda...
+        <div style="text-align: center; padding: 20px;">
+            <div style="width: 50px; height: 50px; margin: 0 auto 15px;">
+                <div style="width: 100%; height: 100%; background: radial-gradient(circle, #FFD700, #D4AF37); border-radius: 50%; border: 3px solid #8B4513; animation: sparkle 1.5s ease-in-out infinite;"></div>
             </div>
-            <div style="margin-top: 8px; font-size: 12px; color: rgba(45, 48, 71, 0.8); font-weight: 600;">
-                Winter Treasure
+            <div id="loadingText" style="font-size: 18px; font-weight: 900; color: #FFD700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);">
+                Yuklanmoqda...
             </div>
         </div>
     </div>
 
     <script>
         // ==================== MOBILE OPTIMIZATION ====================
-        
-        // Telefon modelini aniqlash va optimizatsiya
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        const isAndroid = /Android/.test(navigator.userAgent);
         
-        // Viewport sozlamalari
-        function setViewportHeight() {
-            let vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-            
-            // Elementlarning balandligini sozlash
-            const header = document.querySelector('.header');
-            const footer = document.querySelector('.footer');
-            const gameArea = document.querySelector('.game-area');
-            
-            if (header && footer && gameArea) {
-                const headerHeight = header.offsetHeight;
-                const footerHeight = footer.offsetHeight;
-                const availableHeight = window.innerHeight - headerHeight - footerHeight;
-                
-                // Game area balandligini sozlash
-                gameArea.style.minHeight = `${availableHeight}px`;
-                
-                // Chest grid balandligini sozlash
-                const chestsGrid = document.getElementById('chestsGrid');
-                if (chestsGrid) {
-                    const gridMaxHeight = Math.min(availableHeight * 0.8, 450);
-                    chestsGrid.style.maxHeight = `${gridMaxHeight}px`;
-                    
-                    // Sandiqlar o'lchamini sozlash
-                    const chestCards = document.querySelectorAll('.chest-card');
-                    const gridHeight = chestsGrid.clientHeight;
-                    const chestSize = (gridHeight - 40) / 3; // 40px padding va gap
-                    
-                    chestCards.forEach(card => {
-                        card.style.minHeight = `${chestSize}px`;
-                    });
-                }
+        // Create snow effect
+        function createSnow() {
+            const snowContainer = document.getElementById('snowContainer');
+            for (let i = 0; i < 50; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.style.width = Math.random() * 5 + 2 + 'px';
+                snowflake.style.height = snowflake.style.width;
+                snowflake.style.left = Math.random() * 100 + '%';
+                snowflake.style.animationDelay = Math.random() * 5 + 's';
+                snowflake.style.animationDuration = Math.random() * 3 + 5 + 's';
+                snowflake.style.opacity = Math.random() * 0.5 + 0.3;
+                snowContainer.appendChild(snowflake);
             }
-        }
-        
-        // Orientation boshqaruvi
-        function checkOrientation() {
-            const orientationWarning = document.getElementById('orientationWarning');
-            if (window.innerHeight < window.innerWidth) {
-                // Landscape holat
-                if (window.innerHeight < 500) {
-                    orientationWarning.style.display = 'flex';
-                }
-            } else {
-                // Portrait holat
-                orientationWarning.style.display = 'none';
-            }
-        }
-        
-        // Touch events optimizatsiyasi
-        function setupTouchEvents() {
-            // Touch delay yo'q qilish
-            document.addEventListener('touchstart', function() {}, {passive: true});
             
-            // Double tap zoom ni oldini olish
-            let lastTouchEnd = 0;
-            document.addEventListener('touchend', function(event) {
-                const now = (new Date()).getTime();
-                if (now - lastTouchEnd <= 300) {
-                    event.preventDefault();
-                }
-                lastTouchEnd = now;
-            }, false);
-            
-            // Pull-to-refresh ni oldini olish
-            document.addEventListener('touchmove', function(event) {
-                if (event.scale !== 1) {
-                    event.preventDefault();
-                }
-            }, { passive: false });
+            // Animate snow
+            const snowflakes = document.querySelectorAll('.snowflake');
+            snowflakes.forEach((flake, index) => {
+                flake.style.animation = `fall ${Math.random() * 3 + 5}s linear infinite`;
+                flake.style.animationDelay = `${Math.random() * 5}s`;
+                
+                // Create falling animation
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes fall {
+                        0% {
+                            transform: translateY(-10px) translateX(0);
+                            opacity: ${Math.random() * 0.5 + 0.3};
+                        }
+                        100% {
+                            transform: translateY(${window.innerHeight}px) translateX(${Math.random() * 100 - 50}px);
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            });
         }
         
         // ==================== KONFIGURATSIYA ====================
@@ -1095,7 +885,7 @@
         // Telegram Web App
         const TELEGRAM_WEB_APP = window.Telegram?.WebApp;
         
-        // Audio element - Mobile optimizatsiya
+        // Audio element
         const backgroundMusic = document.getElementById('backgroundMusic');
         
         // O'yin holati
@@ -1109,47 +899,36 @@
             selectedChest: null,
             currentRewards: null,
             gameHistory: [],
-            musicEnabled: true,
-            audioInitialized: false
+            musicEnabled: true
         };
         
-        // Yangi sandiq turlari
+        // Haqiqiy sandiq turlari
         const CHEST_TYPES = [
-            'chest-type-gold',
-            'chest-type-rainbow',
-            'chest-type-crystal',
-            'chest-type-frost',
-            'chest-type-emerald',
-            'chest-type-platinum',
-            'chest-type-ruby',
-            'chest-type-silver',
-            'chest-type-ice'
+            'chest-gold',
+            'chest-silver',
+            'chest-bronze',
+            'chest-iron',
+            'chest-copper',
+            'chest-platinum',
+            'chest-diamond',
+            'chest-ruby',
+            'chest-emerald'
         ];
         
         // ==================== AUDIO FUNKTSIYALARI ====================
         function initAudio() {
-            if (gameState.audioInitialized) return;
-            
-            // Audio elementini mobile optimizatsiya
+            // Audio elementini sozlash
             backgroundMusic.volume = 0.2; // Past ovoz
             backgroundMusic.preload = 'auto';
-            backgroundMusic.muted = false;
             
-            // Mobile browserlar uchun autoplay policy
+            // App ochilganda audio boshlash
             const playAudio = () => {
-                if (gameState.musicEnabled && !backgroundMusic.paused) return;
-                
-                const playPromise = backgroundMusic.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log("Audio started successfully");
-                        gameState.audioInitialized = true;
-                    }).catch(error => {
-                        console.log("Audio play failed, will retry on user interaction:", error);
+                if (gameState.musicEnabled) {
+                    backgroundMusic.play().catch(e => {
+                        console.log("Audio autoplay failed, will retry on interaction");
                         // Foydalanuvchi interaktsiyasini kutish
                         document.addEventListener('click', () => {
-                            if (gameState.musicEnabled && !backgroundMusic.paused) {
+                            if (gameState.musicEnabled && backgroundMusic.paused) {
                                 backgroundMusic.play().catch(e => console.log("Retry failed:", e));
                             }
                         }, { once: true });
@@ -1166,30 +945,18 @@
                 if (gameState.musicEnabled) {
                     backgroundMusic.pause();
                     audioIcon.className = 'fas fa-volume-mute';
-                    audioIcon.style.color = '#2D3047';
+                    audioIcon.style.color = '#C0C0C0';
                     gameState.musicEnabled = false;
                 } else {
                     playAudio();
                     audioIcon.className = 'fas fa-volume-up';
-                    audioIcon.style.color = '#EF476F';
+                    audioIcon.style.color = '#FFD700';
                     gameState.musicEnabled = true;
                 }
             });
             
-            // App yuklanganidan keyin audio boshlash
-            setTimeout(playAudio, 1000);
-            
-            // Safari uchun maxsus audio sozlamalari
-            if (isIOS) {
-                // iOS da audio autoplay cheklovlari
-                document.addEventListener('touchstart', () => {
-                    if (gameState.musicEnabled && backgroundMusic.paused) {
-                        backgroundMusic.play().catch(e => console.log("iOS audio play error:", e));
-                    }
-                }, { once: true });
-            }
-            
-            gameState.audioInitialized = true;
+            // Audio boshlash
+            setTimeout(playAudio, 500);
         }
         
         // ==================== TELEGRAM FUNKTSIYALARI ====================
@@ -1221,18 +988,13 @@
             if (TELEGRAM_WEB_APP) {
                 TELEGRAM_WEB_APP.ready();
                 TELEGRAM_WEB_APP.expand();
-                TELEGRAM_WEB_APP.setHeaderColor('#FFC8DD');
-                TELEGRAM_WEB_APP.setBackgroundColor('#FFC8DD');
+                TELEGRAM_WEB_APP.setHeaderColor('#1a1a2e');
+                TELEGRAM_WEB_APP.setBackgroundColor('#1a1a2e');
                 TELEGRAM_WEB_APP.BackButton.hide();
-                
-                // Telegram orqali audio boshlash
-                TELEGRAM_WEB_APP.ready();
             }
         }
         
         // ==================== API FUNKTSIYALARI ====================
-        // ... API funksiyalari oldingi versiyada bor, qisqa qilish uchun olib tashlandi ...
-        
         async function getCoinBalance() {
             try {
                 const url = new URL(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_BALANCE);
@@ -1363,14 +1125,14 @@
             messageArea.textContent = text;
             
             if (type === 'error') {
-                messageArea.style.color = '#EF476F';
-                messageArea.style.borderColor = '#EF476F';
+                messageArea.style.color = '#FF6B6B';
+                messageArea.style.borderColor = '#FF4444';
             } else if (type === 'success') {
-                messageArea.style.color = '#06D6A0';
+                messageArea.style.color = '#4ADE80';
                 messageArea.style.borderColor = '#06D6A0';
             } else {
-                messageArea.style.color = '#2D3047';
-                messageArea.style.borderColor = '#FFD166';
+                messageArea.style.color = '#FFD700';
+                messageArea.style.borderColor = '#D4AF37';
             }
             
             messageArea.style.opacity = '0';
@@ -1404,52 +1166,59 @@
             if (show) loadingText.textContent = text;
         }
         
-        // ==================== SANDIQLARNI YARATISH ====================
-        function createChests() {
-            const grid = document.getElementById('chestsGrid');
+        // ==================== HAQIQIY SANDIQLARNI YARATISH ====================
+        function createTreasureChests() {
+            const grid = document.getElementById('treasureGrid');
             grid.innerHTML = '';
             
             for (let i = 0; i < 9; i++) {
-                const chest = document.createElement('div');
-                chest.className = `chest-card ${CHEST_TYPES[i]} float`;
-                chest.dataset.index = i;
-                chest.style.animationDelay = `${i * 0.1}s`;
+                const chestContainer = document.createElement('div');
+                chestContainer.className = `treasure-chest ${CHEST_TYPES[i]} float`;
+                chestContainer.dataset.index = i;
+                chestContainer.style.animationDelay = `${i * 0.1}s`;
                 
-                chest.innerHTML = `
-                    <div class="chest-lid"></div>
-                    <div class="chest-inside">
-                        <div class="chest-reward"></div>
+                chestContainer.innerHTML = `
+                    <div class="chest-wrapper">
+                        <div class="chest-base">
+                            <div class="chest-decoration">
+                                <div class="chest-corner corner-tl"></div>
+                                <div class="chest-corner corner-tr"></div>
+                                <div class="chest-corner corner-bl"></div>
+                                <div class="chest-corner corner-br"></div>
+                                <div class="chest-band band-1"></div>
+                                <div class="chest-band band-2"></div>
+                                <div class="chest-band band-3"></div>
+                            </div>
+                            <div class="chest-lock"></div>
+                        </div>
+                        <div class="chest-lid">
+                            <div class="chest-handle"></div>
+                            <div class="chest-decoration">
+                                <div class="chest-corner corner-tl"></div>
+                                <div class="chest-corner corner-tr"></div>
+                            </div>
+                        </div>
+                        <div class="treasure-inside">
+                            <div class="treasure-reward"></div>
+                        </div>
                     </div>
-                    <div class="chest-icon">🎁</div>
-                    <div class="chest-value"></div>
                 `;
                 
-                // Touch event optimizatsiyasi
-                chest.addEventListener('touchstart', (e) => {
+                // Touch events
+                chestContainer.addEventListener('touchstart', (e) => {
                     e.preventDefault();
-                    chest.style.transform = 'scale(0.98)';
+                    chestContainer.style.transform = 'scale(0.95)';
                 }, { passive: false });
                 
-                chest.addEventListener('touchend', (e) => {
+                chestContainer.addEventListener('touchend', (e) => {
                     e.preventDefault();
-                    chest.style.transform = '';
-                    selectChest(i, chest);
+                    chestContainer.style.transform = '';
+                    selectChest(i, chestContainer);
                 }, { passive: false });
                 
-                chest.addEventListener('click', () => selectChest(i, chest));
-                grid.appendChild(chest);
+                chestContainer.addEventListener('click', () => selectChest(i, chestContainer));
+                grid.appendChild(chestContainer);
             }
-            
-            // Sandiqlar o'lchamini yangilash
-            setTimeout(() => {
-                const chestCards = document.querySelectorAll('.chest-card');
-                const gridHeight = grid.clientHeight;
-                const chestSize = (gridHeight - 40) / 3;
-                
-                chestCards.forEach(card => {
-                    card.style.minHeight = `${chestSize}px`;
-                });
-            }, 100);
         }
         
         // ==================== O'YIN LOGIKASI ====================
@@ -1486,49 +1255,56 @@
             };
         }
         
-        // Konfetti animatsiyasi
-        function createConfetti(x, y) {
-            const colors = ['#EF476F', '#FFD166', '#06D6A0', '#118AB2', '#9A4DFF'];
-            
-            for (let i = 0; i < 20; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = `${x}px`;
-                confetti.style.top = `${y}px`;
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.width = `${Math.random() * 8 + 4}px`;
-                confetti.style.height = `${Math.random() * 8 + 4}px`;
-                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        // Treasure coins effect
+        function createCoinEffect(x, y, amount) {
+            for (let i = 0; i < 10; i++) {
+                const coin = document.createElement('div');
+                coin.innerHTML = '🪙';
+                coin.style.position = 'fixed';
+                coin.style.left = `${x}px`;
+                coin.style.top = `${y}px`;
+                coin.style.fontSize = '20px';
+                coin.style.zIndex = '1000';
+                coin.style.pointerEvents = 'none';
+                coin.style.opacity = '0';
+                coin.style.transform = 'scale(0)';
                 
-                document.body.appendChild(confetti);
+                document.body.appendChild(coin);
                 
+                // Animate coin
                 const angle = Math.random() * Math.PI * 2;
-                const velocity = 2 + Math.random() * 2;
-                const vx = Math.cos(angle) * velocity;
-                const vy = Math.sin(angle) * velocity;
+                const distance = 50 + Math.random() * 50;
+                const duration = 1000 + Math.random() * 500;
                 
-                let posX = x;
-                let posY = y;
-                
-                const animate = () => {
-                    posX += vx;
-                    posY += vy;
-                    vy += 0.08; // Gravity
-                    
-                    confetti.style.left = `${posX}px`;
-                    confetti.style.top = `${posY}px`;
-                    confetti.style.opacity = 1 - (posY - y) / 250;
-                    
-                    if (posY < window.innerHeight + 50) {
-                        requestAnimationFrame(animate);
-                    } else {
-                        if (confetti.parentNode) {
-                            document.body.removeChild(confetti);
-                        }
+                const keyframes = [
+                    { 
+                        opacity: 0, 
+                        transform: 'scale(0) translate(0, 0)',
+                        offset: 0 
+                    },
+                    { 
+                        opacity: 1, 
+                        transform: `scale(1) translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance - 50}px)`,
+                        offset: 0.3 
+                    },
+                    { 
+                        opacity: 0, 
+                        transform: `scale(0.5) translate(${Math.cos(angle) * distance * 2}px, ${Math.sin(angle) * distance * 2}px)`,
+                        offset: 1 
                     }
-                };
+                ];
                 
-                requestAnimationFrame(animate);
+                coin.animate(keyframes, {
+                    duration: duration,
+                    easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+                });
+                
+                // Remove coin after animation
+                setTimeout(() => {
+                    if (coin.parentNode) {
+                        document.body.removeChild(coin);
+                    }
+                }, duration);
             }
         }
         
@@ -1539,69 +1315,86 @@
             element.style.pointerEvents = 'none';
             
             // Sandiqni tanlangan holatga o'tkazish
-            element.classList.add('chest-selected');
+            element.classList.add('selected');
+            
+            // Play sound effect
+            playChestSound();
             
             setTimeout(async () => {
-                // Sandiq qopqog'ini ochish
-                const lid = element.querySelector('.chest-lid');
-                const reward = element.querySelector('.chest-reward');
-                const valueDiv = element.querySelector('.chest-value');
+                const chestWrapper = element.querySelector('.chest-wrapper');
+                const treasureInside = element.querySelector('.treasure-inside');
+                const treasureReward = element.querySelector('.treasure-reward');
                 
-                lid.classList.add('open');
+                // Sandiq qopqog'ini ochish
+                element.classList.add('chest-opened');
                 
                 const coinsWon = gameState.currentRewards.winningValue;
                 
                 // Mukofotni ko'rsatish
                 setTimeout(() => {
-                    reward.textContent = `+${coinsWon}🪙`;
-                    reward.classList.add('show', 'reward-pop');
+                    treasureInside.classList.add('show');
+                    treasureReward.textContent = `+${coinsWon}`;
+                    treasureReward.classList.add('show');
                     
-                    valueDiv.textContent = `+${coinsWon}`;
-                    valueDiv.style.opacity = '1';
-                    
-                    // Konfetti animatsiyasi
+                    // Coin effect
                     const rect = element.getBoundingClientRect();
-                    createConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                    createCoinEffect(rect.left + rect.width / 2, rect.top + rect.height / 2, coinsWon);
                     
                     // Local coins qo'shish
                     gameState.coins += coinsWon;
                     updateBalanceDisplay();
                     
                     // Boshqa sandiqlarni ochish
-                    setTimeout(() => revealOtherChests(coinsWon, index, element), 800);
-                }, 400);
-            }, 400);
+                    setTimeout(() => revealOtherChests(coinsWon, index, element), 1000);
+                }, 500);
+            }, 500);
+        }
+        
+        function playChestSound() {
+            // Simple sound effect using Web Audio API
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } catch (e) {
+                console.log("Audio context not supported");
+            }
         }
         
         function revealOtherChests(coinsWon, selectedIndex, selectedElement) {
-            const chests = document.querySelectorAll('.chest-card');
+            const chests = document.querySelectorAll('.treasure-chest');
             
             chests.forEach((chest, i) => {
                 if (i !== selectedIndex) {
                     setTimeout(() => {
-                        const lid = chest.querySelector('.chest-lid');
-                        const reward = chest.querySelector('.chest-reward');
-                        const valueDiv = chest.querySelector('.chest-value');
+                        chest.classList.add('chest-opened');
                         
-                        // Sandiq qopqog'ini ochish
-                        lid.classList.add('open');
+                        const treasureInside = chest.querySelector('.treasure-inside');
+                        const treasureReward = chest.querySelector('.treasure-reward');
                         
-                        // Mukofotni ko'rsatish
                         setTimeout(() => {
-                            const rewardValue = gameState.currentRewards.rewards[i];
-                            reward.textContent = `${rewardValue}🪙`;
-                            reward.classList.add('show');
-                            reward.style.opacity = '0.7';
-                            
-                            valueDiv.textContent = `${rewardValue}`;
-                            valueDiv.style.opacity = '0.8';
-                            valueDiv.style.color = '#B0C4DE';
-                        }, 200);
+                            treasureInside.classList.add('show');
+                            treasureReward.textContent = `${gameState.currentRewards.rewards[i]}`;
+                            treasureReward.classList.add('show');
+                            treasureReward.style.opacity = '0.7';
+                            treasureReward.style.color = '#C0C0C0';
+                        }, 300);
                         
                         chest.style.pointerEvents = 'none';
-                        chest.style.opacity = '0.8';
-                        chest.style.transform = 'scale(0.95)';
-                    }, i * 150);
+                        chest.style.opacity = '0.7';
+                    }, i * 200);
                 }
             });
             
@@ -1610,26 +1403,26 @@
                 gameState.totalPlays++;
                 
                 // Botga coins qo'shish
-                showLoading(true, 'Coins qo\'shilmoqda...');
+                showLoading(true, 'Tangalar saqlanmoqda...');
                 
                 const result = await addCoinsToBot(coinsWon);
                 
                 showLoading(false);
                 
                 if (result.success) {
-                    showMessage(`🎉 ${coinsWon} coins botga qo'shildi!`, 'success');
+                    showMessage(`🎉 ${coinsWon} tanga topdingiz!`, 'success');
                     
                     await getCoinBalance();
                     updateBalanceDisplay();
                 } else {
                     showError(`⚠️ Server xatosi: ${result.message || 'Noma\'lum xato'}`);
-                    showMessage('⚠️ Coins faqat lokal saqlandi', 'info');
+                    showMessage('⚠️ Tangalar faqat lokal saqlandi', 'info');
                 }
                 
                 // Tugmani yoqish
                 const playButton = document.getElementById('playButton');
                 playButton.disabled = false;
-                playButton.innerHTML = '<span id="playButtonText">🎮 PLAY (10 💎)</span>';
+                playButton.innerHTML = '<span id="playButtonText">🎮 O\'YINNI BOSHLASH (10 💎)</span>';
                 
                 // Birinchi o'yin tugashi
                 if (gameState.isFirstPlay) {
@@ -1643,17 +1436,17 @@
                     diamondsSpent: 10
                 });
                 
-            }, 1500);
+            }, 2000);
         }
         
         async function startGame() {
             // Diamonds tekshirish
             if (gameState.diamonds < 10) {
-                showMessage('❌ Yetarli diamonds mavjud emas! Kamida 10 💎 talab qilinadi.', 'error');
+                showMessage('❌ Yetarli olmos mavjud emas! Kamida 10 💎 talab qilinadi.', 'error');
                 return;
             }
             
-            showLoading(true, 'O\'yin boshlanmoqda...');
+            showLoading(true, 'Sandıqlar tayyorlanmoqda...');
             
             // Botdan diamonds ayirish
             const removeResult = await removeDiamondsFromBot(10);
@@ -1662,7 +1455,7 @@
                 showLoading(false);
                 
                 const errorMsg = removeResult.message || 'Noma\'lum xato';
-                showError(`❌ Diamonds ayirishda xatolik: ${errorMsg}`);
+                showError(`❌ Olmos ayirishda xatolik: ${errorMsg}`);
                 showMessage('❌ O\'yinni boshlab bo\'lmadi', 'error');
                 return;
             }
@@ -1677,31 +1470,29 @@
             gameState.currentRewards = generateRewards();
             
             // Sandiqlarni yaratish
-            createChests();
+            createTreasureChests();
             
             // Tugmani o'chirish
             const playButton = document.getElementById('playButton');
             playButton.disabled = true;
-            playButton.innerHTML = '<span id="playButtonText">⏳ O\'YIN DAVOM ETMOQDA...</span>';
+            playButton.innerHTML = '<span id="playButtonText">⏳ SANDIQ TANLANG...</span>';
             
             showLoading(false);
-            showMessage('✨ BIR SANDIQNI TANLANG!', 'info');
+            showMessage('✨ HAQIQIY SANDIQLARDAN BIRINI TANLANG!', 'info');
         }
         
         // ==================== DASTLABKI YUKLASH ====================
         async function init() {
-            // Mobile optimizatsiya
-            setViewportHeight();
-            setupTouchEvents();
-            checkOrientation();
-            
             // Yuklanishni ko'rsatish
-            showLoading(true, 'Telegram yuklanmoqda...');
+            showLoading(true, 'O\'yin yuklanmoqda...');
+            
+            // Qor effektini yaratish
+            createSnow();
             
             // Telegram Web App ni ishga tushirish
             initTelegram();
             
-            // Audioni ishga tushirish - APP OCHILGANDA BOSHLANADI
+            // Audioni ishga tushirish
             initAudio();
             
             // Foydalanuvchini olish
@@ -1711,12 +1502,9 @@
             const balancesResult = await getAllBalances();
             
             if (balancesResult.coinsSuccess && balancesResult.diamondsSuccess) {
-                showMessage(`✅ Balanslar yuklandi: ${gameState.diamonds} 💎 va ${gameState.coins} 🪙`, 'success');
+                showMessage(`✅ Balanslar yuklandi! ${gameState.diamonds} 💎 va ${gameState.coins} 🪙`, 'success');
             } else {
-                let errorMsg = '⚠️ Balanslarni yuklashda muammo: ';
-                if (!balancesResult.coinsSuccess) errorMsg += 'Tanga; ';
-                if (!balancesResult.diamondsSuccess) errorMsg += 'Olmos';
-                showMessage(errorMsg, 'info');
+                showMessage('⚠️ Oflayn rejimda ishlamoqdasiz', 'info');
                 
                 // Offline rejim uchun boshlang'ich balans
                 if (!balancesResult.coinsSuccess) gameState.coins = 100;
@@ -1726,59 +1514,30 @@
             
             // UI ni yangilash
             updateBalanceDisplay();
-            createChests();
+            createTreasureChests();
             
             // O'ynash tugmasini ulash
             const playButton = document.getElementById('playButton');
             playButton.addEventListener('click', startGame);
             
-            // Touch event qo'shish
+            // Touch events
             playButton.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 playButton.style.transform = 'translateY(4px)';
-                playButton.style.boxShadow = '0 4px 0 #2D3047, 0 6px 8px rgba(239, 71, 111, 0.3)';
             }, { passive: false });
             
             playButton.addEventListener('touchend', (e) => {
                 e.preventDefault();
                 playButton.style.transform = '';
-                playButton.style.boxShadow = '0 8px 0 #2D3047, 0 12px 15px rgba(239, 71, 111, 0.3)';
             }, { passive: false });
             
             // Yuklanishni yopish
             showLoading(false);
-            showMessage('🎮 O\'YINNI BOSHLASH UCHUN "PLAY" TUGMASINI BOSING!', 'info');
-            
-            // Resize eventlar
-            window.addEventListener('resize', () => {
-                setViewportHeight();
-                checkOrientation();
-            });
-            
-            window.addEventListener('orientationchange', () => {
-                setTimeout(() => {
-                    setViewportHeight();
-                    checkOrientation();
-                }, 300);
-            });
+            showMessage('🎮 O\'YINNI BOSHLASH UCHUN TUGMANI BOSING!', 'info');
         }
         
         // DOM yuklanganida ishga tushirish
         document.addEventListener('DOMContentLoaded', init);
-        
-        // Load event
-        window.addEventListener('load', () => {
-            setViewportHeight();
-            
-            // Audio boshlash - mini app ochilganda
-            if (gameState.musicEnabled && !gameState.audioInitialized) {
-                setTimeout(() => {
-                    backgroundMusic.play().catch(e => {
-                        console.log("Auto-play failed, waiting for user interaction");
-                    });
-                }, 500);
-            }
-        });
     </script>
 </body>
 </html>
