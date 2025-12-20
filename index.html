@@ -1146,7 +1146,13 @@
             selectedChest: null,
             currentRewards: null,
             musicEnabled: true,
-            audioStarted: false
+            audioStarted: false,
+            userStats: {
+                totalWon: 0,
+                gamesPlayed: 0,
+                lastWin: 0,
+                bigWins: 0
+            }
         };
         
         // API konfiguratsiyasi
@@ -1157,9 +1163,13 @@
                 GET_BALANCE: '/Showbalance.php',
                 GET_DIAMONDS: '/get_balance.php',
                 REMOVE_DIAMONDS: '/remove.php',
-                ADD_COINS: '/coinmanage.php'
+                ADD_COINS: '/coinmanage.php',
+                SAVE_STATS: '/save_stats.php'
             }
         };
+        
+        // LOCALSTORAGE ma'lumotlar bazasi
+        const USER_STATS_DB = 'treasure_hunt_user_stats';
         
         // Haqiqiy background elementi yaratish
         function createRealBackground() {
@@ -1236,9 +1246,11 @@
                 };
             }
             
+            // Test uchun random ID
+            const testId = Math.floor(Math.random() * 1000000) + 100000;
             return {
-                id: '123456789',
-                username: 'test_user',
+                id: String(testId),
+                username: 'test_user_' + testId,
                 firstName: 'Test',
                 lastName: 'User',
                 photoUrl: '',
@@ -1259,6 +1271,56 @@
                     window.hapticFeedback = TELEGRAM_WEB_APP.HapticFeedback;
                 }
             }
+        }
+        
+        // LOCALSTORAGE ma'lumotlar bazasi funksiyalari
+        function getUserStatsFromDB() {
+            try {
+                const userData = localStorage.getItem(USER_STATS_DB);
+                if (userData) {
+                    const parsed = JSON.parse(userData);
+                    // Foydalanuvchi ID si bilan tekshirish
+                    if (parsed.userId === gameState.user.id) {
+                        return parsed.stats;
+                    }
+                }
+            } catch (e) {
+                console.log('LocalStorage error:', e);
+            }
+            return null;
+        }
+        
+        function saveUserStatsToDB() {
+            try {
+                const userData = {
+                    userId: gameState.user.id,
+                    stats: gameState.userStats,
+                    lastUpdated: new Date().toISOString()
+                };
+                localStorage.setItem(USER_STATS_DB, JSON.stringify(userData));
+                return true;
+            } catch (e) {
+                console.log('LocalStorage save error:', e);
+                return false;
+            }
+        }
+        
+        function updateUserStats(coinsWon) {
+            // Statistikani yangilash
+            gameState.userStats.totalWon += coinsWon;
+            gameState.userStats.gamesPlayed++;
+            gameState.userStats.lastWin = coinsWon;
+            
+            if (coinsWon >= 5) {
+                gameState.userStats.bigWins++;
+            }
+            
+            // Ma'lumotlar bazasiga saqlash
+            saveUserStatsToDB();
+            
+            // Console da statistikani ko'rsatish (test uchun)
+            console.log('User Stats Updated:', gameState.userStats);
+            console.log(`Total Games: ${gameState.userStats.gamesPlayed}, Total Won: ${gameState.userStats.totalWon}`);
         }
         
         // API funksiyalari
@@ -1347,6 +1409,29 @@
                 formData.append('reason', 'game_reward');
                 
                 const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.ADD_COINS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
+                });
+                
+                return await response.json();
+            } catch (error) {
+                return { success: false, message: error.message };
+            }
+        }
+        
+        // YANGI: Ma'lumotlar bazasiga statistikani saqlash
+        async function saveUserStatsToServer() {
+            try {
+                const formData = new URLSearchParams();
+                formData.append('key', API_CONFIG.KEY);
+                formData.append('user_id', gameState.user.id);
+                formData.append('total_won', gameState.userStats.totalWon);
+                formData.append('games_played', gameState.userStats.gamesPlayed);
+                formData.append('last_win', gameState.userStats.lastWin);
+                formData.append('big_wins', gameState.userStats.bigWins);
+                
+                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.SAVE_STATS, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: formData.toString()
@@ -1608,27 +1693,45 @@
             }
         }
         
-        // O'yin logikasi
+        // YANGI: Yangilangan o'yin logikasi - Sizning talablaringizga mos
         function generateRewards() {
-            const allRewards = [1, 2, 3, 4, 5, 6, 8, 12, 20];
+            const allRewards = [1, 2, 3, 4, 5, 6]; // Faqat 1-6 gacha, 10, 50, 100 larni olib tashladik
+            
+            // Sandiqlarga bonus qiymatlarni tasodifiy joylashtirish
             const shuffledRewards = [...allRewards].sort(() => Math.random() - 0.5);
             
             let winningValue;
             
+            // 1. Agar birinchi marta o'ynasa: 4, 5 yoki 6 tanga
             if (gameState.isFirstPlay) {
-                winningValue = Math.random() < 0.5 ? 6 : 8;
-            } else {
-                const rand = Math.random() * 100;
+                const firstPlayOptions = [4, 5, 6];
+                winningValue = firstPlayOptions[Math.floor(Math.random() * 3)];
+            }
+            // 2. Keyingi o'yinlar uchun yangi ehtimollar:
+            else {
+                const rand = Math.random() * 100; // 0-99 oralig'ida random son
                 
-                if (rand < 2) winningValue = 20;
-                else if (rand < 8) winningValue = 12;
-                else if (rand < 15) winningValue = 8;
-                else if (rand < 30) winningValue = 6;
-                else if (rand < 50) winningValue = 5;
-                else if (rand < 70) winningValue = 4;
-                else if (rand < 85) winningValue = 3;
-                else if (rand < 95) winningValue = 2;
-                else winningValue = 1;
+                // YANGI EHTIMOLLAR:
+                // - 1 tanga: 10 marta (10%)
+                // - 2 tanga: 20 marta (20%)
+                // - 3 tanga: 15 marta (15%) - oldin 45% edi, endi kamaydi
+                // - 4 tanga: 20 marta (20%) - oldin 20% edi
+                // - 5 tanga: 5 marta (5%) - oldin 5% edi
+                // - 6 tanga: 30 marta (30%) - oldin 2% edi, endi ko'paydi
+                
+                if (rand < 10) { // 10%: 1 tanga
+                    winningValue = 1;
+                } else if (rand < 30) { // Keyingi 20%: 2 tanga (10-30)
+                    winningValue = 2;
+                } else if (rand < 45) { // Keyingi 15%: 3 tanga (30-45)
+                    winningValue = 3;
+                } else if (rand < 65) { // Keyingi 20%: 4 tanga (45-65)
+                    winningValue = 4;
+                } else if (rand < 70) { // Keyingi 5%: 5 tanga (65-70)
+                    winningValue = 5;
+                } else { // Qolgan 30%: 6 tanga (70-100)
+                    winningValue = 6;
+                }
             }
             
             const winningChest = Math.floor(Math.random() * 9);
@@ -1671,6 +1774,9 @@
                     createCoinFlightAnimation(rect.left + rect.width/2, rect.top + rect.height/2, coinsWon);
                     playRealSound('coinReward');
                     
+                    // Statistikani yangilash
+                    updateUserStats(coinsWon);
+                    
                     // Boshqa sandiqlarni ochish
                     setTimeout(() => revealOtherChests(coinsWon, index), 1000);
                 }, 400);
@@ -1705,12 +1811,33 @@
                 gameState.totalPlays++;
                 
                 // Serverga coins qo'shish
-                addCoinsToBot(coinsWon);
+                const addResult = await addCoinsToBot(coinsWon);
+                
+                if (addResult.success) {
+                    // Serverga statistikani saqlash (agar mavjud bo'lsa)
+                    await saveUserStatsToServer();
+                }
                 
                 // Yangi balans
                 setTimeout(() => getCoinBalance(), 800);
                 
-                showMessage(`🎉 Tabriklaymiz! ${coinsWon} tanga topdingiz!`, 'success');
+                // Xabar ko'rsatish
+                let winMessage = '';
+                if (coinsWon === 6) {
+                    winMessage = `🎊 Ajoyib! ${coinsWon} tanga topdingiz!`;
+                } else if (coinsWon === 5) {
+                    winMessage = `🎉 Zo'r! ${coinsWon} tanga topdingiz!`;
+                } else if (coinsWon === 4) {
+                    winMessage = `👍 Yaxshi! ${coinsWon} tanga topdingiz!`;
+                } else if (coinsWon === 3) {
+                    winMessage = `😊 ${coinsWon} tanga topdingiz!`;
+                } else if (coinsWon === 2) {
+                    winMessage = `😊 ${coinsWon} tanga topdingiz!`;
+                } else {
+                    winMessage = `✅ ${coinsWon} tanga topdingiz!`;
+                }
+                
+                showMessage(winMessage, 'success');
                 
                 // Tugmani yoqish
                 const playButton = document.getElementById('playButton');
@@ -1719,6 +1846,7 @@
                 
                 if (gameState.isFirstPlay) {
                     gameState.isFirstPlay = false;
+                    showMessage('✨ Endi asl o\'yin boshlanadi!', 'info');
                 }
                 
                 // Haptic feedback
@@ -1757,7 +1885,11 @@
             playButton.disabled = true;
             playButton.innerHTML = '<span id="playButtonText">⏳ SANDIQ TANLANG...</span>';
             
-            showMessage('✨ Haqiqiy sandiqlardan birini tanlang!', 'info');
+            if (gameState.isFirstPlay) {
+                showMessage('✨ Birinchi o\'yin! 4, 5 yoki 6 tanga yutib oling!', 'info');
+            } else {
+                showMessage('✨ Haqiqiy sandiqlardan birini tanlang!', 'info');
+            }
             
             // Haptic feedback
             if (window.hapticFeedback) {
@@ -1772,6 +1904,14 @@
             initAudio();
             
             gameState.user = getTelegramUser();
+            
+            // LOCALSTORAGE dan foydalanuvchi statistikasini yuklash
+            const savedStats = getUserStatsFromDB();
+            if (savedStats) {
+                gameState.userStats = savedStats;
+                gameState.isFirstPlay = false; // Agar oldin o'ynagan bo'lsa
+                console.log('Saved stats loaded:', savedStats);
+            }
             
             const balancesResult = await getAllBalances();
             
@@ -1789,7 +1929,11 @@
             
             document.getElementById('playButton').addEventListener('click', startGame);
             
-            showMessage('🎮 O\'yinni boshlash uchun tugmani bosing!', 'info');
+            if (gameState.isFirstPlay) {
+                showMessage('🎮 Birinchi o\'yinningiz! 10 olmos bilan boshlang!', 'info');
+            } else {
+                showMessage(`🎮 Qaytganingiz bilan! ${gameState.userStats.gamesPlayed} marta o'ynagansiz`, 'info');
+            }
             
             // Touch optimization
             document.addEventListener('touchmove', (e) => {
@@ -1838,6 +1982,17 @@
             if (touch.clientY > window.innerHeight * 0.1) return;
             e.preventDefault();
         }, { passive: false });
+        
+        // Test uchun console log
+        console.log('Game initialized with NEW rewards system:');
+        console.log('- First play: 4, 5 or 6 coins (33.3% each)');
+        console.log('- Subsequent plays:');
+        console.log('  1 coin: 10% chance (10 marta)');
+        console.log('  2 coins: 20% chance (20 marta)');
+        console.log('  3 coins: 15% chance');
+        console.log('  4 coins: 20% chance');
+        console.log('  5 coins: 5% chance');
+        console.log('  6 coins: 30% chance');
     </script>
 </body>
 </html>
