@@ -3,17 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Winter Treasure - Cartoon</title>
+    <title>Real Treasure Hunt - Gold Chest Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --real-gold: linear-gradient(135deg, #FFD700 0%, #DAA520 30%, #FFD700 70%, #F4C430 100%);
+            --real-wood: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%);
+            --real-metal: linear-gradient(135deg, #C0C0C0 0%, #808080 50%, #C0C0C0 100%);
+            --real-red: linear-gradient(135deg, #8B0000 0%, #B22222 50%, #8B0000 100%);
+            --shadow-heavy: 0 15px 35px rgba(0, 0, 0, 0.5);
+            --shadow-light: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
+            -webkit-font-smoothing: antialiased;
         }
         
         html, body {
@@ -22,100 +32,71 @@
             overflow: hidden;
             touch-action: manipulation;
             position: fixed;
-            background: #87CEEB;
+            font-family: 'Fredoka', sans-serif;
+            background: #1a1a2e;
         }
         
-        body {
-            font-family: 'Comic Neue', cursive;
-            background: linear-gradient(to bottom, #87CEEB 0%, #98D8E8 50%, #B0E0E6 100%);
-            color: #333;
+        /* Realistic background */
+        .real-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(218, 165, 32, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, #0c0c14 0%, #1a1a2e 50%, #0c0c14 100%);
+            z-index: -2;
         }
         
-        /* Multfilm bulutlar */
-        .cloud {
+        .gold-particle {
             position: absolute;
-            background: white;
+            width: 3px;
+            height: 3px;
+            background: #FFD700;
             border-radius: 50%;
-            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
-            z-index: 1;
-            animation: cloudFloat linear infinite;
+            filter: blur(1px);
+            animation: goldFloat linear infinite;
         }
         
-        .cloud-1 {
-            width: 80px;
-            height: 40px;
-            top: 15%;
-            left: 5%;
-            animation-duration: 40s;
-        }
-        
-        .cloud-2 {
-            width: 100px;
-            height: 50px;
-            top: 25%;
-            right: 5%;
-            animation-duration: 50s;
-        }
-        
-        /* Multfilm quyosh */
-        .sun {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: radial-gradient(circle, #FFD700, #FF8C00);
-            border-radius: 50%;
-            border: 3px solid #FFA500;
-            animation: sunSpin 20s linear infinite;
-            z-index: 1;
-            box-shadow: 0 0 30px #FFA500;
-        }
-        
-        .sun-face {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-        }
-        
+        /* Main container - optimized for mobile */
         .app-container {
             width: 100%;
             height: 100%;
-            max-width: 500px;
+            max-width: 100%;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            z-index: 2;
             position: relative;
+            z-index: 1;
+            padding: 
+                max(env(safe-area-inset-top), 0px)
+                max(env(safe-area-inset-right), 5px)
+                max(env(safe-area-inset-bottom), 0px)
+                max(env(safe-area-inset-left), 5px);
+            background: rgba(10, 10, 20, 0.8);
         }
         
-        /* Multfilm header */
+        /* Header - Realistic Design */
         .header {
             flex-shrink: 0;
-            padding: 15px 10px;
-            background: linear-gradient(to right, #FF6B6B, #FF8E53);
-            border-bottom: 5px solid #FFD166;
-            border-radius: 0 0 30px 30px;
+            padding: 12px 10px 10px;
+            background: linear-gradient(135deg, #2c2c3e 0%, #1a1a2e 100%);
+            border-bottom: 4px solid #8B4513;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
             position: relative;
-            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
-            z-index: 3;
+            z-index: 10;
         }
         
-        .header::before {
+        .header::after {
             content: '';
             position: absolute;
-            top: -10px;
-            left: 0;
-            right: 0;
-            height: 20px;
-            background: 
-                repeating-linear-gradient(90deg, 
-                    transparent, transparent 15px, 
-                    white 15px, white 25px);
-            border-radius: 10px 10px 0 0;
+            bottom: -4px;
+            left: 10%;
+            right: 10%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
         }
         
         .game-title {
@@ -124,28 +105,28 @@
         }
         
         .game-title h1 {
-            font-size: 28px;
-            font-weight: 900;
-            color: white;
+            font-size: 20px;
+            font-weight: 800;
+            color: #FFD700;
             text-shadow: 
-                3px 3px 0 #FFD166,
-                6px 6px 0 rgba(0, 0, 0, 0.2);
+                2px 2px 0 #8B4513,
+                0 0 10px rgba(255, 215, 0, 0.5);
             letter-spacing: 1px;
-            transform: rotate(-2deg);
-            display: inline-block;
+            margin-bottom: 3px;
         }
         
-        .game-title p {
-            font-size: 14px;
-            color: white;
-            text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
-            margin-top: 5px;
+        .game-subtitle {
+            font-size: 11px;
+            color: #C0C0C0;
+            font-weight: 500;
+            opacity: 0.9;
         }
         
+        /* Balance Cards - Realistic Style */
         .balance-container {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 8px;
+            margin-top: 8px;
         }
         
         .balance-card {
@@ -153,834 +134,1710 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 12px;
-            background: white;
-            border-radius: 20px;
-            border: 3px solid #333;
-            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+            padding: 10px 8px;
+            background: linear-gradient(135deg, rgba(42, 42, 62, 0.9) 0%, rgba(26, 26, 46, 0.9) 100%);
+            border-radius: 12px;
+            border: 2px solid #8B4513;
+            box-shadow: 
+                inset 0 0 15px rgba(0, 0, 0, 0.5),
+                0 4px 10px rgba(0, 0, 0, 0.6);
             position: relative;
-            transform: rotate(1deg);
-            transition: all 0.2s;
+            overflow: hidden;
+            min-height: 50px;
         }
         
-        .balance-card:nth-child(2) {
-            transform: rotate(-1deg);
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
         }
         
-        .balance-card:active {
-            transform: scale(0.95);
+        .balance-icon {
+            font-size: 24px;
+            filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.8));
+            min-width: 30px;
+            text-align: center;
         }
         
-        .balance-card .icon {
-            font-size: 30px;
-            animation: bounce 2s infinite ease-in-out;
-        }
-        
-        .balance-card .info {
+        .balance-info {
             flex: 1;
+            min-width: 0;
         }
         
-        .balance-card .label {
-            font-size: 11px;
+        .balance-label {
+            font-size: 10px;
+            color: #C0C0C0;
             font-weight: 600;
-            color: #666;
-            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
-        .balance-card .value {
-            font-size: 22px;
+        .balance-value {
+            font-size: 18px;
             font-weight: 900;
+            color: #FFD700;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
             line-height: 1;
-        }
-        
-        #diamondCount {
-            color: #06D6A0;
-        }
-        
-        #coinCount {
-            color: #FFD166;
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .user-id {
             text-align: center;
-            font-size: 12px;
-            color: rgba(255,255,255,0.9);
             margin-top: 8px;
-            text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+            font-size: 9px;
+            color: #888;
+            font-weight: 500;
         }
         
-        /* Game area */
+        /* Game Area - Treasure Room */
         .game-area {
             flex: 1;
-            padding: 15px 10px;
+            padding: 12px 10px;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             position: relative;
-            background: linear-gradient(to bottom, #A2D2FF, #BDE0FE);
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(218, 165, 32, 0.2) 0%, transparent 40%),
+                linear-gradient(to bottom, #0f0f1a 0%, #1a1a2e 100%);
+            border-top: 2px solid rgba(139, 69, 19, 0.3);
+            border-bottom: 2px solid rgba(139, 69, 19, 0.3);
         }
         
-        /* Multfilm grid */
-        .treasure-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            width: 100%;
-            max-width: 340px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 25px;
-            border: 5px solid #FF6B6B;
-            box-shadow: 
-                inset 0 0 20px rgba(255, 107, 107, 0.2),
-                0 10px 30px rgba(0, 0, 0, 0.2);
-            position: relative;
+        .game-area::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            right: 10px;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                #8B0000, 
+                #8B4513, 
+                #DAA520, 
+                #8B4513, 
+                #8B0000);
+            border-radius: 2px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
             z-index: 2;
         }
         
-        /* Multfilm sandiqlar */
-        .cartoon-chest {
-            aspect-ratio: 1;
-            background: linear-gradient(135deg, #FFD166, #FFC154);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-            border: 4px solid #FF9E6D;
-            box-shadow: 
-                inset 0 -8px 15px rgba(0, 0, 0, 0.2),
-                0 8px 20px rgba(0, 0, 0, 0.3);
-            transform: rotate(1deg);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: float 3s infinite ease-in-out;
-        }
-        
-        .cartoon-chest:nth-child(even) {
-            transform: rotate(-1deg);
-            animation-delay: 0.5s;
-        }
-        
-        .cartoon-chest:active {
-            transform: scale(0.95) !important;
-        }
-        
-        /* Sandiq yuzi */
-        .chest-face {
-            width: 80%;
-            height: 80%;
-            background: linear-gradient(135deg, #FFAA00, #FF9500);
-            border-radius: 15px;
-            border: 3px solid #FF6B35;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-        
-        /* Qulf */
-        .chest-lock {
-            width: 30px;
-            height: 12px;
-            background: linear-gradient(to bottom, #C0C0C0, #808080);
-            border-radius: 6px;
-            border: 2px solid #606060;
-            position: relative;
-        }
-        
-        .chest-lock::before {
-            content: '';
-            position: absolute;
-            top: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 16px;
-            height: 4px;
-            background: #606060;
-            border-radius: 2px;
-        }
-        
-        /* Sandiq burchaklari */
-        .chest-corner {
-            position: absolute;
-            width: 15px;
-            height: 15px;
-            background: #FFEC8B;
-            border-radius: 4px;
-            border: 2px solid #FF6B35;
-        }
-        
-        .corner-tl { top: 5px; left: 5px; }
-        .corner-tr { top: 5px; right: 5px; }
-        .corner-bl { bottom: 5px; left: 5px; }
-        .corner-br { bottom: 5px; right: 5px; }
-        
-        /* Sandiq ichi */
-        .treasure-content {
-            position: absolute;
+        /* Treasure Grid - Realistic Layout */
+        .treasure-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #FF9E6D, #FF8E53);
-            border-radius: 20px;
+            margin: 0 auto;
+            padding: 12px;
+            background: 
+                radial-gradient(circle at center, rgba(26, 26, 46, 0.9) 0%, rgba(10, 10, 20, 0.95) 100%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><path d="M0,0 L100,100" stroke="%238B4513" stroke-width="0.5" stroke-opacity="0.1"/><path d="M100,0 L0,100" stroke="%238B4513" stroke-width="0.5" stroke-opacity="0.1"/></svg>');
+            border-radius: 15px;
+            border: 3px solid #8B4513;
+            box-shadow: 
+                inset 0 0 30px rgba(0, 0, 0, 0.8),
+                0 10px 25px rgba(0, 0, 0, 0.7),
+                inset 0 0 0 2px rgba(255, 215, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .treasure-grid::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+            z-index: 1;
+        }
+        
+        /* Realistic Treasure Chest */
+        .treasure-chest {
+            width: 100%;
+            height: 100%;
+            min-height: 85px;
+            position: relative;
+            cursor: pointer;
+            perspective: 1000px;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .chest-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Chest Base - Ultra Realistic */
+        .chest-base {
+            position: absolute;
+            width: 100%;
+            height: 65%;
+            bottom: 0;
+            background: 
+                /* Wood texture */
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 69, 19, 0.3) 2px,
+                    rgba(139, 69, 19, 0.3) 4px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 69, 19, 0.2) 2px,
+                    rgba(139, 69, 19, 0.2) 4px
+                ),
+                /* Gold overlay */
+                radial-gradient(
+                    ellipse at 30% 70%,
+                    rgba(255, 215, 0, 0.4) 0%,
+                    rgba(255, 215, 0, 0.1) 30%,
+                    transparent 60%
+                ),
+                radial-gradient(
+                    ellipse at 70% 30%,
+                    rgba(255, 215, 0, 0.3) 0%,
+                    rgba(255, 215, 0, 0.05) 25%,
+                    transparent 50%
+                ),
+                /* Main gradient */
+                linear-gradient(
+                    145deg,
+                    #8B4513 0%,
+                    #A0522D 25%,
+                    #8B4513 50%,
+                    #A0522D 75%,
+                    #8B4513 100%
+                );
+            border-radius: 10px 10px 12px 12px;
+            border: 3px solid #5D4037;
+            box-shadow: 
+                inset 0 -8px 20px rgba(0, 0, 0, 0.8),
+                inset 0 8px 20px rgba(255, 255, 255, 0.1),
+                0 8px 20px rgba(0, 0, 0, 0.9),
+                0 0 0 2px rgba(255, 215, 0, 0.05);
+            z-index: 1;
+            transform-style: preserve-3d;
+        }
+        
+        /* Chest Lid - Ultra Realistic */
+        .chest-lid {
+            position: absolute;
+            width: 100%;
+            height: 35%;
+            top: 0;
+            background: 
+                /* Wood grain */
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 3px,
+                    rgba(139, 69, 19, 0.4) 3px,
+                    rgba(139, 69, 19, 0.4) 6px
+                ),
+                /* Gold highlights */
+                radial-gradient(
+                    ellipse at 50% 20%,
+                    rgba(255, 215, 0, 0.6) 0%,
+                    rgba(255, 215, 0, 0.2) 20%,
+                    transparent 40%
+                ),
+                /* Main lid gradient */
+                linear-gradient(
+                    145deg,
+                    #8B4513 0%,
+                    #A0522D 30%,
+                    #8B4513 60%,
+                    #A0522D 90%,
+                    #8B4513 100%
+                );
+            border-radius: 12px 12px 10px 10px;
+            border: 3px solid #5D4037;
+            border-bottom: none;
+            box-shadow: 
+                inset 0 8px 20px rgba(255, 255, 255, 0.15),
+                inset 0 -8px 20px rgba(0, 0, 0, 0.6),
+                0 -8px 20px rgba(0, 0, 0, 0.9),
+                0 0 0 2px rgba(255, 215, 0, 0.05);
+            transform-origin: bottom center;
+            transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 2.55);
+            z-index: 3;
+            transform-style: preserve-3d;
+        }
+        
+        /* Realistic Metal Handle */
+        .chest-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 12px;
+            background: 
+                radial-gradient(ellipse at center, 
+                    #FFD700 0%,
+                    #DAA520 30%,
+                    #B8860B 70%,
+                    #8B4513 100%);
+            border-radius: 6px;
+            border: 2px solid #5D4037;
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.8),
+                inset 0 1px 3px rgba(255, 255, 255, 0.3),
+                0 0 5px rgba(255, 215, 0, 0.5);
+            z-index: 4;
+        }
+        
+        .chest-handle::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 5px;
+            background: #5D4037;
+            border-radius: 3px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+        }
+        
+        /* Realistic Lock */
+        .chest-lock {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 28px;
+            height: 16px;
+            background: linear-gradient(135deg, 
+                #C0C0C0 0%,
+                #808080 30%,
+                #606060 70%,
+                #404040 100%);
+            border-radius: 8px;
+            border: 2px solid #404040;
+            z-index: 4;
+            box-shadow: 
+                0 4px 10px rgba(0, 0, 0, 0.7),
+                inset 0 1px 3px rgba(255, 255, 255, 0.2);
+        }
+        
+        .chest-lock::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            background: #8B0000;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #8B0000;
+        }
+        
+        /* Metal Reinforcements */
+        .chest-corner {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: linear-gradient(135deg, 
+                #C0C0C0 0%,
+                #808080 50%,
+                #606060 100%);
+            border-radius: 4px;
+            border: 2px solid #404040;
+            box-shadow: 
+                0 2px 6px rgba(0, 0, 0, 0.7),
+                inset 0 1px 3px rgba(255, 255, 255, 0.2);
+            transform: rotate(45deg);
+        }
+        
+        .corner-tl { top: 4px; left: 4px; }
+        .corner-tr { top: 4px; right: 4px; }
+        .corner-bl { bottom: 4px; left: 4px; }
+        .corner-br { bottom: 4px; right: 4px; }
+        
+        /* Metal Bands */
+        .chest-band {
+            position: absolute;
+            width: 86%;
+            height: 8px;
+            left: 7%;
+            background: linear-gradient(to right, 
+                transparent 5%,
+                #C0C0C0 5%,
+                #808080 50%,
+                #C0C0C0 95%,
+                transparent 95%);
+            border-radius: 4px;
+            border: 1px solid #404040;
+            box-shadow: 
+                inset 0 1px 3px rgba(0, 0, 0, 0.8),
+                0 1px 3px rgba(255, 255, 255, 0.1);
+        }
+        
+        .band-1 { top: 20%; }
+        .band-2 { top: 45%; }
+        .band-3 { top: 70%; }
+        
+        /* Treasure Inside */
+        .treasure-inside {
+            position: absolute;
+            width: 100%;
+            height: 65%;
+            bottom: 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            z-index: 2;
             opacity: 0;
-            transform: scale(0.8);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 4px solid #FFD166;
-            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.3);
+            transition: opacity 0.6s ease;
+            background: radial-gradient(circle at center, 
+                rgba(255, 215, 0, 0.3) 0%,
+                rgba(255, 215, 0, 0.1) 30%,
+                transparent 70%);
         }
         
-        /* Mukofot */
         .treasure-reward {
-            font-size: 32px;
+            font-size: 22px;
             font-weight: 900;
             color: #FFD700;
             text-shadow: 
-                3px 3px 0 #000,
-                0 0 20px #FFD700;
-            animation: rewardGlow 1s infinite alternate;
+                2px 2px 0 #000,
+                0 0 15px rgba(255, 215, 0, 0.9),
+                0 0 30px rgba(255, 215, 0, 0.6);
+            transform: translateY(25px) scale(0.8);
+            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 1;
         }
         
-        /* Sandiq ochilganda */
-        .cartoon-chest.opened .chest-face {
-            opacity: 0;
-            transform: scale(0);
+        /* Chest States */
+        .chest-opened .chest-lid {
+            transform: rotateX(-115deg);
         }
         
-        .cartoon-chest.opened .treasure-content {
+        .treasure-inside.show {
             opacity: 1;
-            transform: scale(1);
         }
         
-        /* Tanlangan sandiq */
-        .cartoon-chest.selected {
-            animation: chestBounce 0.5s infinite alternate !important;
+        .treasure-reward.show {
+            transform: translateY(0) scale(1);
+        }
+        
+        /* Chest Interactions */
+        .treasure-chest:active .chest-container {
+            transform: scale(0.95);
+            transition: transform 0.1s;
+        }
+        
+        .treasure-chest.selected {
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7));
         }
         
         /* Footer */
         .footer {
             flex-shrink: 0;
-            padding: 15px 10px;
-            background: linear-gradient(to right, #4ECDC4, #06D6A0);
-            border-top: 5px solid #118AB2;
-            border-radius: 30px 30px 0 0;
+            padding: 12px 10px;
+            background: linear-gradient(135deg, #2c2c3e 0%, #1a1a2e 100%);
+            border-top: 4px solid #8B4513;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.8);
             position: relative;
-            box-shadow: 0 -5px 20px rgba(6, 214, 160, 0.4);
-            z-index: 3;
+            z-index: 10;
         }
         
         .footer::before {
             content: '';
             position: absolute;
-            bottom: -10px;
-            left: 0;
-            right: 0;
-            height: 20px;
-            background: 
-                repeating-linear-gradient(90deg, 
-                    transparent, transparent 15px, 
-                    white 15px, white 25px);
-            border-radius: 0 0 10px 10px;
+            top: -4px;
+            left: 10%;
+            right: 10%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
         }
         
-        /* Multfilm button */
-        .cartoon-button {
+        /* Real Play Button */
+        .play-button {
             width: 100%;
-            padding: 18px;
-            background: linear-gradient(to right, #FF6B6B, #FF8E53);
-            border: none;
-            border-radius: 25px;
-            color: white;
-            font-size: 18px;
-            font-weight: 900;
+            padding: 16px;
+            background: 
+                linear-gradient(135deg, 
+                    #8B4513 0%,
+                    #A0522D 30%,
+                    #8B4513 70%,
+                    #5D4037 100%);
+            border: 3px solid #5D4037;
+            border-radius: 15px;
+            color: #FFD700;
+            font-size: 16px;
+            font-weight: 800;
             cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 0 auto;
+            display: block;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            box-shadow: 
+                0 8px 0 #5D4037,
+                0 12px 20px rgba(0, 0, 0, 0.6),
+                inset 0 2px 8px rgba(255, 255, 255, 0.1);
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 
-                0 10px 0 #FFD166,
-                0 15px 25px rgba(255, 107, 107, 0.4);
-            transform: rotate(-1deg);
-            transition: all 0.2s;
-            z-index: 2;
+            overflow: hidden;
+            letter-spacing: 0.5px;
         }
         
-        .cartoon-button:active {
-            transform: translateY(5px) rotate(-1deg);
-            box-shadow: 
-                0 5px 0 #FFD166,
-                0 8px 15px rgba(255, 107, 107, 0.4);
+        .play-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 215, 0, 0.2), 
+                transparent);
+            transition: left 0.6s;
         }
         
-        .cartoon-button:disabled {
-            opacity: 0.7;
+        .play-button:hover::before {
+            left: 100%;
+        }
+        
+        .play-button:active {
+            transform: translateY(4px);
+            box-shadow: 
+                0 4px 0 #5D4037,
+                0 6px 10px rgba(0, 0, 0, 0.6),
+                inset 0 2px 8px rgba(255, 255, 255, 0.1);
+        }
+        
+        .play-button:disabled {
+            opacity: 0.5;
             cursor: not-allowed;
             transform: none;
+            box-shadow: 
+                0 4px 0 #5D4037,
+                0 6px 10px rgba(0, 0, 0, 0.6);
         }
         
-        .button-cost {
-            background: rgba(255, 255, 255, 0.3);
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 14px;
-            margin-left: 5px;
-        }
-        
-        /* Message area */
+        /* Message Area */
         .message-area {
-            margin-top: 12px;
-            font-size: 14px;
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #FFD700;
             text-align: center;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            border: 3px solid #FFD166;
+            padding: 10px;
+            background: linear-gradient(135deg, 
+                rgba(42, 42, 62, 0.9) 0%, 
+                rgba(26, 26, 46, 0.9) 100%);
+            border-radius: 10px;
+            border: 2px solid #8B4513;
+            box-shadow: 
+                inset 0 0 10px rgba(0, 0, 0, 0.5),
+                0 3px 8px rgba(0, 0, 0, 0.6);
             min-height: 45px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transform: rotate(1deg);
-            box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+            position: relative;
         }
         
-        /* Audio control */
+        /* Error Message */
+        .error-message {
+            background: linear-gradient(135deg, 
+                #8B0000 0%,
+                #B22222 100%);
+            border: 2px solid #5D4037;
+            color: #FFD700;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+            box-shadow: 
+                inset 0 0 10px rgba(0, 0, 0, 0.6),
+                0 3px 8px rgba(0, 0, 0, 0.7);
+            animation: shake 0.5s ease;
+        }
+        
+        /* Audio Control */
         .audio-control {
             position: absolute;
-            top: 15px;
-            left: 15px;
-            width: 45px;
-            height: 45px;
-            background: white;
+            top: 10px;
+            right: 10px;
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, 
+                #2c2c3e 0%,
+                #1a1a2e 100%);
             border-radius: 50%;
-            border: 3px solid #FF6B6B;
+            border: 2px solid #8B4513;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 100;
-            box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
-            transition: all 0.2s;
+            box-shadow: 
+                0 3px 8px rgba(0, 0, 0, 0.6),
+                inset 0 0 5px rgba(255, 255, 255, 0.1);
         }
         
-        .audio-control:active {
-            transform: scale(0.9);
+        .audio-icon {
+            font-size: 16px;
+            color: #FFD700;
         }
         
-        /* Tanga animatsiyasi */
+        /* Coin Animation */
         .coin {
             position: fixed;
-            font-size: 24px;
+            font-size: 20px;
             z-index: 1000;
             pointer-events: none;
             opacity: 0;
-            filter: drop-shadow(0 0 3px gold);
+            filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.8));
         }
         
-        /* Animatsiyalar */
-        @keyframes cloudFloat {
-            0% { transform: translateX(-100px); }
-            100% { transform: translateX(calc(100vw + 100px)); }
+        /* Animations */
+        @keyframes goldFloat {
+            from { transform: translateY(-100px) rotate(0deg); }
+            to { transform: translateY(100vh) rotate(360deg); }
         }
         
-        @keyframes sunSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes chestSelect {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
         }
         
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(1deg); }
-            50% { transform: translateY(-10px) rotate(1deg); }
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        @keyframes chestBounce {
-            0% { transform: translateY(0) scale(1); }
-            100% { transform: translateY(-10px) scale(1.05); }
-        }
-        
-        @keyframes rewardGlow {
-            0% { 
-                text-shadow: 
-                    3px 3px 0 #000,
-                    0 0 10px #FFD700;
-            }
-            100% { 
-                text-shadow: 
-                    3px 3px 0 #000,
-                    0 0 30px #FFD700;
-            }
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5)); }
+            50% { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)); }
         }
         
         @keyframes coinFly {
             0% {
                 opacity: 1;
-                transform: translate(0, 0) scale(1);
+                transform: translate(0, 0) scale(1) rotate(0deg);
             }
+            70% { opacity: 1; }
             100% {
                 opacity: 0;
-                transform: translate(var(--tx), var(--ty)) scale(0.3);
+                transform: translate(var(--tx), var(--ty)) scale(0.2) rotate(360deg);
             }
         }
         
-        /* Loading */
-        .loading {
-            display: flex;
-            gap: 5px;
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
         
-        .loading-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: white;
-            animation: loadingBounce 1.4s infinite ease-in-out both;
+        /* Apply animations */
+        .glow {
+            animation: glow 2s infinite alternate;
         }
         
-        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
-        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
-        .loading-dot:nth-child(3) { animation-delay: 0s; }
-        
-        @keyframes loadingBounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
-        
-        /* Responsive */
-        @media (max-width: 380px) {
-            .game-title h1 {
-                font-size: 22px;
-            }
-            
-            .balance-card {
-                padding: 10px;
-                gap: 6px;
-            }
-            
-            .balance-card .icon {
-                font-size: 24px;
-            }
-            
-            .balance-card .value {
-                font-size: 20px;
-            }
-            
+        /* Responsive Design for All Phones */
+        @media (max-width: 480px) {
             .treasure-grid {
-                max-width: 300px;
-                gap: 10px;
-                padding: 12px;
+                gap: 8px;
+                padding: 10px;
+            }
+            
+            .treasure-chest {
+                min-height: 75px;
+            }
+            
+            .chest-handle {
+                width: 35px;
+                height: 10px;
+            }
+            
+            .chest-lock {
+                width: 25px;
+                height: 14px;
             }
             
             .treasure-reward {
-                font-size: 28px;
+                font-size: 20px;
             }
             
-            .cartoon-button {
-                padding: 16px;
+            .play-button {
+                padding: 14px;
+                font-size: 15px;
+            }
+            
+            .game-title h1 {
+                font-size: 18px;
+            }
+            
+            .balance-card {
+                padding: 8px 6px;
+                min-height: 45px;
+            }
+            
+            .balance-icon {
+                font-size: 22px;
+            }
+            
+            .balance-value {
+                font-size: 17px;
+            }
+            
+            .message-area {
+                font-size: 12px;
+                padding: 8px;
+                min-height: 40px;
+            }
+        }
+        
+        @media (max-width: 380px) {
+            .treasure-grid {
+                gap: 6px;
+                padding: 8px;
+            }
+            
+            .treasure-chest {
+                min-height: 65px;
+            }
+            
+            .chest-handle {
+                width: 30px;
+                height: 9px;
+            }
+            
+            .chest-handle::before {
+                width: 18px;
+                height: 4px;
+                top: -5px;
+            }
+            
+            .chest-lock {
+                width: 22px;
+                height: 12px;
+            }
+            
+            .chest-corner {
+                width: 12px;
+                height: 12px;
+            }
+            
+            .treasure-reward {
+                font-size: 18px;
+            }
+            
+            .play-button {
+                padding: 12px;
+                font-size: 14px;
+            }
+            
+            .game-title h1 {
                 font-size: 16px;
+            }
+            
+            .balance-container {
+                gap: 6px;
+            }
+            
+            .balance-card {
+                padding: 6px 5px;
+                min-height: 40px;
+            }
+            
+            .balance-icon {
+                font-size: 20px;
+                min-width: 25px;
+            }
+            
+            .balance-value {
+                font-size: 16px;
+            }
+            
+            .game-area {
+                padding: 10px 8px;
+            }
+            
+            .header, .footer {
+                padding: 10px 8px;
             }
         }
         
         @media (max-height: 700px) {
+            .treasure-chest {
+                min-height: 60px;
+            }
+            
             .header {
-                padding: 12px 8px;
+                padding: 10px 8px 8px;
             }
             
             .footer {
-                padding: 12px 8px;
+                padding: 10px 8px;
+            }
+            
+            .game-area {
+                padding: 10px 8px;
+            }
+        }
+        
+        @media (max-height: 600px) {
+            .treasure-chest {
+                min-height: 55px;
+            }
+            
+            .treasure-reward {
+                font-size: 16px;
+            }
+            
+            .play-button {
+                padding: 10px;
+                font-size: 13px;
+            }
+            
+            .balance-card {
+                padding: 5px 4px;
+                min-height: 35px;
+            }
+            
+            .balance-icon {
+                font-size: 18px;
+            }
+            
+            .balance-value {
+                font-size: 15px;
+            }
+        }
+        
+        /* Landscape orientation */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .app-container {
+                flex-direction: row;
+            }
+            
+            .header {
+                width: 150px;
+                border-radius: 0 15px 15px 0;
+                border-right: 4px solid #8B4513;
+                padding: 10px 8px;
+            }
+            
+            .game-area {
+                flex: 1;
+                border: none;
+                border-left: 2px solid rgba(139, 69, 19, 0.3);
+                border-right: 2px solid rgba(139, 69, 19, 0.3);
+            }
+            
+            .footer {
+                width: 150px;
+                border-radius: 15px 0 0 15px;
+                border-left: 4px solid #8B4513;
+                padding: 10px 8px;
+            }
+            
+            .balance-container {
+                flex-direction: column;
+                gap: 5px;
             }
             
             .treasure-grid {
-                max-width: 300px;
-                padding: 10px;
+                grid-template-columns: repeat(3, 1fr);
+                padding: 8px;
             }
             
-            .cartoon-button {
-                padding: 14px;
+            .game-title h1 {
+                font-size: 14px;
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                margin: 5px auto;
             }
+            
+            .game-subtitle {
+                display: none;
+            }
+            
+            .play-button {
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                padding: 20px 10px;
+                font-size: 12px;
+            }
+        }
+        
+        /* Tablet support */
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 500px;
+                margin: 0 auto;
+                border-left: 2px solid #8B4513;
+                border-right: 2px solid #8B4513;
+            }
+            
+            .treasure-chest {
+                min-height: 110px;
+            }
+            
+            .game-title h1 {
+                font-size: 24px;
+            }
+            
+            .play-button {
+                font-size: 18px;
+            }
+        }
+        
+        /* Dark mode optimization */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #0a0a14;
+            }
+            
+            .treasure-grid {
+                background: 
+                    radial-gradient(circle at center, 
+                        rgba(15, 15, 25, 0.95) 0%,
+                        rgba(5, 5, 10, 0.98) 100%);
+            }
+        }
+        
+        /* High contrast mode */
+        @media (prefers-contrast: high) {
+            .balance-card {
+                border: 3px solid #FFD700;
+            }
+            
+            .treasure-grid {
+                border: 3px solid #FFD700;
+            }
+            
+            .play-button {
+                border: 3px solid #FFD700;
+            }
+        }
+        
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Touch optimization */
+        .treasure-chest {
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
+        }
+        
+        /* Prevent text selection on mobile */
+        .no-select {
+            -webkit-user-select: none;
+            user-select: none;
         }
     </style>
 </head>
 <body>
-    <div class="cloud cloud-1"></div>
-    <div class="cloud cloud-2"></div>
-    <div class="sun">
-        <div class="sun-face">☀️</div>
-    </div>
+    <!-- Realistic background -->
+    <div class="real-bg" id="realBg"></div>
+    
+    <audio id="backgroundMusic" loop preload="auto">
+        <source src="https://s35.surkhandc1.uz/399837962.mp3" type="audio/mpeg">
+    </audio>
     
     <div class="audio-control" id="audioControl">
-        <i class="fas fa-volume-up" id="audioIcon" style="font-size: 20px; color: #FF6B6B;"></i>
+        <i class="fas fa-volume-up audio-icon" id="audioIcon"></i>
     </div>
     
     <div class="app-container">
         <div class="header">
             <div class="game-title">
-                <h1>🎪 QIMMATLI SANDIQLAR 🎪</h1>
-                <p>Multfilm olamidan boylik toping!</p>
+                <h1>💰 REAL TREASURE HUNT 💰</h1>
+                <div class="game-subtitle">
+                    Haqiqiy sandiqlardan boylik toping!
+                </div>
             </div>
             
             <div class="balance-container">
                 <div class="balance-card">
-                    <div class="icon">💎</div>
-                    <div class="info">
-                        <div class="label">OLMOSLAR</div>
-                        <div id="diamondCount" class="value">50</div>
+                    <div class="balance-icon">
+                        💎
+                    </div>
+                    <div class="balance-info">
+                        <div class="balance-label">OLMOSLAR</div>
+                        <div id="diamondCount" class="balance-value">
+                            0
+                        </div>
                     </div>
                 </div>
                 
                 <div class="balance-card">
-                    <div class="icon">🪙</div>
-                    <div class="info">
-                        <div class="label">TANGALAR</div>
-                        <div id="coinCount" class="value">100</div>
+                    <div class="balance-icon">
+                        🪙
+                    </div>
+                    <div class="balance-info">
+                        <div class="balance-label">TANGALAR</div>
+                        <div id="coinCount" class="balance-value">
+                            0
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="user-id" id="userIdDisplay">
-                ID: 123456789
+            <div id="userIdDisplay" class="user-id">
+                ID: yuklanmoqda...
             </div>
         </div>
         
         <div class="game-area">
             <div id="treasureGrid" class="treasure-grid">
-                <!-- Sandiqlar bu yerda yuklanadi -->
+                <!-- Real sandiqlar bu yerda yaratiladi -->
             </div>
         </div>
         
         <div class="footer">
-            <button id="playButton" class="cartoon-button">
-                <i class="fas fa-play"></i>
-                <span id="playButtonText">O'YINNI BOSHLASH</span>
-                <span class="button-cost">10 💎</span>
+            <button id="playButton" class="play-button">
+                <span id="playButtonText">🎮 O'YINNI BOSHLASH (10 💎)</span>
             </button>
             
             <div id="messageArea" class="message-area">
-                🎮 Boshlash uchun tugmani bosing!
+                🎯 Haqiqiy sandiq tanlang!
             </div>
+            
+            <div id="errorMessage" class="error-message"></div>
         </div>
     </div>
 
     <script>
-        // Game state
+        // Telegram Web App
+        const TELEGRAM_WEB_APP = window.Telegram?.WebApp;
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        
+        // O'yin holati
         let gameState = {
             user: null,
-            diamonds: 50,
-            coins: 100,
+            diamonds: 0,
+            coins: 0,
+            totalPlays: 0,
+            isFirstPlay: true,
             isPlaying: false,
             selectedChest: null,
             currentRewards: null,
-            musicEnabled: true
+            musicEnabled: true,
+            audioStarted: false
         };
-
-        // Initialize game
-        function init() {
-            console.log("Dastur yuklanmoqda...");
+        
+        // API konfiguratsiyasi
+        const API_CONFIG = {
+            KEY: '4564123:hkjhfadfhieapkdnga',
+            BASE_URL: 'https://68ed1ab05ca4e.myxvest1.ru',
+            ENDPOINTS: {
+                GET_BALANCE: '/Showbalance.php',
+                GET_DIAMONDS: '/get_balance.php',
+                REMOVE_DIAMONDS: '/remove.php',
+                ADD_COINS: '/coinmanage.php'
+            }
+        };
+        
+        // Haqiqiy background elementi yaratish
+        function createRealBackground() {
+            const bg = document.getElementById('realBg');
             
-            // Set user
-            gameState.user = {
-                id: '123456789',
-                username: 'multfilm_foydalanuvchi'
-            };
-            
-            // Update display
-            updateBalanceDisplay();
-            
-            // Create chests
-            createChests();
-            
-            // Setup button
-            document.getElementById('playButton').addEventListener('click', startGame);
-            
-            // Setup audio control
-            document.getElementById('audioControl').addEventListener('click', toggleAudio);
-            
-            showMessage('🎮 O\'yinni boshlash uchun tugmani bosing!');
-            
-            console.log("Dastur muvaffaqiyatli yuklandi!");
+            // Gold particles
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'gold-particle';
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.width = `${Math.random() * 2 + 2}px`;
+                particle.style.height = particle.style.width;
+                particle.style.opacity = Math.random() * 0.3 + 0.1;
+                particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                bg.appendChild(particle);
+            }
         }
-
-        // Create cartoon chests
-        function createChests() {
-            console.log("Sandiqlar yaratilmoqda...");
+        
+        // Audio Tizimi
+        function initAudio() {
+            backgroundMusic.volume = 0.3;
+            
+            const audioControl = document.getElementById('audioControl');
+            const audioIcon = document.getElementById('audioIcon');
+            
+            audioControl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (gameState.musicEnabled) {
+                    backgroundMusic.pause();
+                    audioIcon.className = 'fas fa-volume-mute audio-icon';
+                    audioIcon.style.color = '#888';
+                    gameState.musicEnabled = false;
+                } else {
+                    startBackgroundMusic();
+                    audioIcon.className = 'fas fa-volume-up audio-icon';
+                    audioIcon.style.color = '#FFD700';
+                    gameState.musicEnabled = true;
+                }
+            });
+            
+            setTimeout(() => {
+                startBackgroundMusic();
+            }, 1000);
+        }
+        
+        function startBackgroundMusic() {
+            if (gameState.musicEnabled && !gameState.audioStarted) {
+                backgroundMusic.play().then(() => {
+                    gameState.audioStarted = true;
+                }).catch(() => {
+                    document.addEventListener('click', () => {
+                        if (gameState.musicEnabled && !gameState.audioStarted) {
+                            backgroundMusic.play().then(() => {
+                                gameState.audioStarted = true;
+                            });
+                        }
+                    }, { once: true });
+                });
+            }
+        }
+        
+        // Telegram funksiyalari
+        function getTelegramUser() {
+            if (TELEGRAM_WEB_APP?.initDataUnsafe?.user) {
+                const tgUser = TELEGRAM_WEB_APP.initDataUnsafe.user;
+                return {
+                    id: String(tgUser.id),
+                    username: tgUser.username || `user_${tgUser.id}`,
+                    firstName: tgUser.first_name || 'Foydalanuvchi',
+                    lastName: tgUser.last_name || '',
+                    photoUrl: tgUser.photo_url || '',
+                    languageCode: tgUser.language_code || 'uz'
+                };
+            }
+            
+            return {
+                id: '123456789',
+                username: 'test_user',
+                firstName: 'Test',
+                lastName: 'User',
+                photoUrl: '',
+                languageCode: 'uz'
+            };
+        }
+        
+        function initTelegram() {
+            if (TELEGRAM_WEB_APP) {
+                TELEGRAM_WEB_APP.ready();
+                TELEGRAM_WEB_APP.expand();
+                TELEGRAM_WEB_APP.setHeaderColor('#1a1a2e');
+                TELEGRAM_WEB_APP.setBackgroundColor('#1a1a2e');
+                TELEGRAM_WEB_APP.BackButton.hide();
+                
+                // Haptic feedback yoqish
+                if (TELEGRAM_WEB_APP.HapticFeedback) {
+                    window.hapticFeedback = TELEGRAM_WEB_APP.HapticFeedback;
+                }
+            }
+        }
+        
+        // API funksiyalari
+        async function getCoinBalance() {
+            try {
+                const url = new URL(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_BALANCE);
+                url.searchParams.append('key', API_CONFIG.KEY);
+                url.searchParams.append('user_id', gameState.user.id);
+                
+                const response = await fetch(url.toString());
+                const data = await response.json();
+                
+                if (data.success) {
+                    const coins = parseInt(data.coins) || parseInt(data.balance) || 0;
+                    gameState.coins = coins;
+                    updateBalanceDisplay();
+                    return { success: true, coins: coins };
+                }
+                return { success: false, message: data.message };
+            } catch (error) {
+                return { success: false, message: error.message };
+            }
+        }
+        
+        async function getDiamondBalance() {
+            try {
+                const url = new URL(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_DIAMONDS);
+                url.searchParams.append('key', API_CONFIG.KEY);
+                url.searchParams.append('user_id', gameState.user.id);
+                
+                const response = await fetch(url.toString());
+                const data = await response.json();
+                
+                if (data.success) {
+                    const diamonds = parseInt(data.diamonds) || parseInt(data.balance) || 0;
+                    gameState.diamonds = diamonds;
+                    updateBalanceDisplay();
+                    return { success: true, diamonds: diamonds };
+                }
+                return { success: false, message: data.message };
+            } catch (error) {
+                return { success: false, message: error.message };
+            }
+        }
+        
+        async function getAllBalances() {
+            const [coinsResult, diamondsResult] = await Promise.all([
+                getCoinBalance(),
+                getDiamondBalance()
+            ]);
+            
+            return {
+                coinsSuccess: coinsResult.success,
+                diamondsSuccess: diamondsResult.success,
+                coins: gameState.coins,
+                diamonds: gameState.diamonds
+            };
+        }
+        
+        async function removeDiamondsFromBot(amount) {
+            try {
+                const formData = new URLSearchParams();
+                formData.append('key', API_CONFIG.KEY);
+                formData.append('user_id', gameState.user.id);
+                formData.append('amount', amount);
+                
+                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.REMOVE_DIAMONDS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
+                });
+                
+                return await response.json();
+            } catch (error) {
+                return { success: false, message: error.message };
+            }
+        }
+        
+        async function addCoinsToBot(amount) {
+            try {
+                const formData = new URLSearchParams();
+                formData.append('key', API_CONFIG.KEY);
+                formData.append('user_id', gameState.user.id);
+                formData.append('amount', amount);
+                formData.append('type', 'coins');
+                formData.append('reason', 'game_reward');
+                
+                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.ADD_COINS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
+                });
+                
+                return await response.json();
+            } catch (error) {
+                return { success: false, message: error.message };
+            }
+        }
+        
+        // UI funksiyalari
+        function updateBalanceDisplay() {
+            document.getElementById('diamondCount').textContent = gameState.diamonds;
+            document.getElementById('coinCount').textContent = gameState.coins;
+            
+            if (gameState.user) {
+                document.getElementById('userIdDisplay').textContent = `ID: ${gameState.user.id}`;
+            }
+        }
+        
+        function showMessage(text, type = 'info') {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.textContent = text;
+            
+            if (type === 'error') {
+                messageArea.style.color = '#FF6B6B';
+                messageArea.style.borderColor = '#8B0000';
+            } else if (type === 'success') {
+                messageArea.style.color = '#00FF7F';
+                messageArea.style.borderColor = '#00B894';
+            } else {
+                messageArea.style.color = '#FFD700';
+                messageArea.style.borderColor = '#8B4513';
+            }
+        }
+        
+        function showError(errorText) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = errorText;
+            errorElement.style.display = 'block';
+            
+            // Haptic feedback
+            if (window.hapticFeedback) {
+                window.hapticFeedback.impactOccurred('heavy');
+            }
+            
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 4000);
+        }
+        
+        // Haqiqiy sandiqlarni yaratish
+        function createTreasureChests() {
             const grid = document.getElementById('treasureGrid');
             grid.innerHTML = '';
             
-            // Sandiq ranglari
-            const colors = [
-                '#FF6B6B', '#4ECDC4', '#FFD166', 
-                '#06D6A0', '#FF9E6D', '#118AB2',
-                '#EF476F', '#FF8E53', '#83C5BE'
+            // Har xil yog'och ranglari
+            const woodColors = [
+                { base: '#8B4513', light: '#A0522D' }, // Classic oak
+                { base: '#654321', light: '#8B4513' }, // Dark walnut
+                { base: '#D2691E', light: '#CD853F' }, // Light oak
+                { base: '#5D4037', light: '#795548' }, // Dark wood
+                { base: '#A0522D', light: '#D2691E' }, // Redwood
+                { base: '#8B4513', light: '#A0522D' },
+                { base: '#654321', light: '#8B4513' },
+                { base: '#D2691E', light: '#CD853F' },
+                { base: '#5D4037', light: '#795548' }
             ];
             
             for (let i = 0; i < 9; i++) {
                 const chest = document.createElement('div');
-                chest.className = 'cartoon-chest';
+                chest.className = 'treasure-chest';
                 chest.dataset.index = i;
-                chest.style.animationDelay = `${i * 0.2}s`;
+                
+                const woodColor = woodColors[i];
                 
                 chest.innerHTML = `
-                    <div class="chest-face">
-                        <div class="chest-lock"></div>
-                        <div class="chest-corner corner-tl"></div>
-                        <div class="chest-corner corner-tr"></div>
-                        <div class="chest-corner corner-bl"></div>
-                        <div class="chest-corner corner-br"></div>
-                    </div>
-                    <div class="treasure-content">
-                        <div class="treasure-reward"></div>
+                    <div class="chest-container">
+                        <div class="chest-base" style="
+                            background: 
+                                repeating-linear-gradient(90deg, transparent, transparent 2px, ${woodColor.base}99 2px, ${woodColor.base}99 4px),
+                                repeating-linear-gradient(0deg, transparent, transparent 2px, ${woodColor.base}66 2px, ${woodColor.base}66 4px),
+                                radial-gradient(ellipse at 30% 70%, #FFD70066 0%, #FFD70022 30%, transparent 60%),
+                                radial-gradient(ellipse at 70% 30%, #FFD70044 0%, #FFD70011 25%, transparent 50%),
+                                linear-gradient(145deg, ${woodColor.base} 0%, ${woodColor.light} 25%, ${woodColor.base} 50%, ${woodColor.light} 75%, ${woodColor.base} 100%);
+                            border-color: ${woodColor.base};
+                        ">
+                            <div class="chest-corner corner-tl"></div>
+                            <div class="chest-corner corner-tr"></div>
+                            <div class="chest-corner corner-bl"></div>
+                            <div class="chest-corner corner-br"></div>
+                            <div class="chest-band band-1"></div>
+                            <div class="chest-band band-2"></div>
+                            <div class="chest-band band-3"></div>
+                            <div class="chest-lock"></div>
+                        </div>
+                        <div class="chest-lid" style="
+                            background: 
+                                repeating-linear-gradient(45deg, transparent, transparent 3px, ${woodColor.base}66 3px, ${woodColor.base}66 6px),
+                                radial-gradient(ellipse at 50% 20%, #FFD70088 0%, #FFD70033 20%, transparent 40%),
+                                linear-gradient(145deg, ${woodColor.base} 0%, ${woodColor.light} 30%, ${woodColor.base} 60%, ${woodColor.light} 90%, ${woodColor.base} 100%);
+                            border-color: ${woodColor.base};
+                        ">
+                            <div class="chest-handle"></div>
+                            <div class="chest-corner corner-tl"></div>
+                            <div class="chest-corner corner-tr"></div>
+                        </div>
+                        <div class="treasure-inside">
+                            <div class="treasure-reward"></div>
+                        </div>
                     </div>
                 `;
                 
-                // Rang berish
-                const chestFace = chest.querySelector('.chest-face');
-                chestFace.style.background = `linear-gradient(135deg, ${colors[i]}, ${colors[(i+1)%9]})`;
+                // Touch events for mobile
+                chest.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    chest.style.transform = 'scale(0.98)';
+                }, { passive: false });
+                
+                chest.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    chest.style.transform = '';
+                    if (gameState.isPlaying && gameState.selectedChest === null) {
+                        selectChest(i, chest);
+                    }
+                }, { passive: false });
                 
                 chest.addEventListener('click', () => {
-                    console.log("Sandiq tanlandi:", i);
-                    selectChest(i, chest);
+                    if (gameState.isPlaying && gameState.selectedChest === null) {
+                        selectChest(i, chest);
+                    }
                 });
                 
                 grid.appendChild(chest);
             }
-            
-            console.log("9 ta sandiq muvaffaqiyatli yaratildi!");
         }
-
-        // Update balance display
-        function updateBalanceDisplay() {
-            document.getElementById('diamondCount').textContent = gameState.diamonds;
-            document.getElementById('coinCount').textContent = gameState.coins;
-            document.getElementById('userIdDisplay').textContent = `ID: ${gameState.user.id}`;
-        }
-
-        // Show message
-        function showMessage(text) {
-            document.getElementById('messageArea').textContent = text;
-        }
-
-        // Generate rewards
-        function generateRewards() {
-            const rewards = [1, 2, 3, 4, 5, 6, 10, 50, 100];
-            const shuffled = [...rewards].sort(() => Math.random() - 0.5);
-            
-            const rand = Math.random() * 100;
-            let winningValue;
-            
-            if (rand < 5) winningValue = 5;
-            else if (rand < 25) winningValue = 4;
-            else if (rand < 60) winningValue = 3;
-            else if (rand < 90) winningValue = 2;
-            else winningValue = 1;
-            
-            const winningChest = Math.floor(Math.random() * 9);
-            
-            return {
-                rewards: shuffled,
-                winningChest: winningChest,
-                winningValue: winningValue
-            };
-        }
-
-        // Start game
-        function startGame() {
-            console.log("O'yin boshlanmoqda...");
-            
-            if (gameState.diamonds < 10) {
-                showMessage('❌ Yetarli olmos mavjud emas!');
-                return;
-            }
-
-            // Deduct diamonds
-            gameState.diamonds -= 10;
-            updateBalanceDisplay();
-
-            // Start game
-            gameState.isPlaying = true;
-            gameState.selectedChest = null;
-            gameState.currentRewards = generateRewards();
-
-            // Reset chests
-            createChests();
-
-            // Disable button
-            const button = document.getElementById('playButton');
-            button.disabled = true;
-            button.innerHTML = '<div class="loading"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>';
-
-            showMessage('✨ Multfilm sandiqlardan birini tanlang!');
-            console.log("O'yin boshlangan! Sandiqlar tayyor.");
-        }
-
-        // Select chest
-        function selectChest(index, element) {
-            if (!gameState.isPlaying || gameState.selectedChest !== null) {
-                console.log("O'yin boshlanmagan yoki sandiq tanlangan");
-                return;
-            }
-
-            console.log("Sandiq ochilmoqda:", index);
-            gameState.selectedChest = index;
-            element.classList.add('selected');
-            
-            // Play sound
-            playCartoonSound();
-            
-            // Open chest
-            setTimeout(() => {
-                element.classList.add('opened');
-                
-                const coinsWon = gameState.currentRewards.winningValue;
-                const rewardEl = element.querySelector('.treasure-reward');
-                rewardEl.textContent = `+${coinsWon}`;
-                
-                console.log("Mukofot:", coinsWon, "tanga");
-                
-                // Create coin animation
-                createCoinAnimation(element, coinsWon);
-                
-                // Reveal other chests
-                setTimeout(() => revealOtherChests(coinsWon, index), 500);
-            }, 300);
-        }
-
-        // Reveal other chests
-        function revealOtherChests(coinsWon, selectedIndex) {
-            console.log("Boshqa sandiqlar ochilmoqda...");
-            const chests = document.querySelectorAll('.cartoon-chest');
-            
-            chests.forEach((chest, i) => {
-                if (i !== selectedIndex) {
-                    setTimeout(() => {
-                        chest.classList.add('opened');
-                        
-                        const rewardEl = chest.querySelector('.treasure-reward');
-                        rewardEl.textContent = `${gameState.currentRewards.rewards[i]}`;
-                        rewardEl.style.color = '#888';
-                        rewardEl.style.textShadow = '1px 1px 0 #000';
-                    }, i * 100);
-                }
-            });
-
-            // Finish game
-            setTimeout(() => {
-                gameState.isPlaying = false;
-                gameState.coins += coinsWon;
-                updateBalanceDisplay();
-                
-                showMessage(`🎉 Tabriklaymiz! ${coinsWon} tanga yutdingiz!`);
-                
-                // Enable button
-                const button = document.getElementById('playButton');
-                button.disabled = false;
-                button.innerHTML = '<i class="fas fa-play"></i><span id="playButtonText">O\'YINNI BOSHLASH</span><span class="button-cost">10 💎</span>';
-                
-                console.log("O'yin tugadi. Qo'shilgan tangalar:", coinsWon);
-            }, 1500);
-        }
-
-        // Create coin animation
-        function createCoinAnimation(element, amount) {
-            const startX = element.getBoundingClientRect().left + element.offsetWidth / 2;
-            const startY = element.getBoundingClientRect().top + element.offsetHeight / 2;
-            const target = document.getElementById('coinCount');
-            const targetRect = target.getBoundingClientRect();
+        
+        // Haqiqiy tanga animatsiyasi
+        function createCoinFlightAnimation(startX, startY, amount) {
+            const coinTarget = document.getElementById('coinCount');
+            const targetRect = coinTarget.getBoundingClientRect();
             const targetX = targetRect.left + targetRect.width / 2;
             const targetY = targetRect.top + targetRect.height / 2;
-
-            console.log("Tanga animatsiyasi boshlanmoqda...");
+            
+            const coinTypes = ['🪙', '💰', '💵', '💸'];
             
             for (let i = 0; i < Math.min(amount, 8); i++) {
                 setTimeout(() => {
                     const coin = document.createElement('div');
                     coin.className = 'coin';
-                    coin.innerHTML = '🪙';
+                    coin.innerHTML = coinTypes[Math.floor(Math.random() * coinTypes.length)];
                     coin.style.left = `${startX}px`;
                     coin.style.top = `${startY}px`;
-                    coin.style.fontSize = `${20 + Math.random() * 10}px`;
+                    coin.style.fontSize = `${Math.random() * 6 + 16}px`;
                     
-                    document.body.appendChild(coin);
-                    
-                    // Animate
-                    const tx = targetX + (Math.random() - 0.5) * 60;
-                    const ty = targetY + (Math.random() - 0.5) * 60;
+                    const tx = (targetX - startX) + (Math.random() - 0.5) * 40;
+                    const ty = (targetY - startY) + (Math.random() - 0.5) * 40;
                     
                     coin.style.setProperty('--tx', `${tx}px`);
                     coin.style.setProperty('--ty', `${ty}px`);
                     
                     coin.animate([
-                        {
-                            left: `${startX}px`,
-                            top: `${startY}px`,
-                            opacity: 1,
-                            transform: 'scale(1) rotate(0deg)'
-                        },
-                        {
-                            left: `${tx}px`,
-                            top: `${ty}px`,
-                            opacity: 0,
-                            transform: 'scale(0.3) rotate(180deg)'
-                        }
+                        { opacity: 1, transform: 'translate(0, 0) scale(1) rotate(0deg)' },
+                        { opacity: 0, transform: 'translate(var(--tx), var(--ty)) scale(0.2) rotate(360deg)' }
                     ], {
-                        duration: 800 + Math.random() * 400,
-                        easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)'
+                        duration: 700 + Math.random() * 300,
+                        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
                     });
                     
-                    setTimeout(() => coin.remove(), 1200);
-                }, i * 80);
+                    document.body.appendChild(coin);
+                    setTimeout(() => coin.remove(), 1000);
+                }, i * 60);
             }
+            
+            // Balansni yangilash
+            setTimeout(() => {
+                const current = parseInt(coinTarget.textContent) || 0;
+                const newTotal = current + amount;
+                
+                let step = 0;
+                const steps = 12;
+                const interval = setInterval(() => {
+                    step++;
+                    const value = Math.floor(current + (amount * step / steps));
+                    coinTarget.textContent = value;
+                    coinTarget.style.transform = `scale(${1 + step * 0.02})`;
+                    
+                    if (step >= steps) {
+                        clearInterval(interval);
+                        coinTarget.textContent = newTotal;
+                        coinTarget.style.transform = 'scale(1)';
+                        gameState.coins = newTotal;
+                        
+                        // Haptic feedback
+                        if (window.hapticFeedback) {
+                            window.hapticFeedback.notificationOccurred('success');
+                        }
+                    }
+                }, 40);
+            }, 500);
         }
-
-        // Play cartoon sound
-        function playCartoonSound() {
+        
+        // Real sound effects
+        function playRealSound(type) {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
                 
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.1);
-                
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.2);
+                if (type === 'chestOpen') {
+                    // Wood creak + metal sound
+                    const oscillator1 = audioContext.createOscillator(); // Wood creak
+                    const oscillator2 = audioContext.createOscillator(); // Metal clink
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator1.connect(gainNode);
+                    oscillator2.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator1.type = 'sine';
+                    oscillator2.type = 'square';
+                    
+                    oscillator1.frequency.setValueAtTime(150, audioContext.currentTime);
+                    oscillator1.frequency.exponentialRampToValueAtTime(80, audioContext.currentTime + 0.8);
+                    
+                    oscillator2.frequency.setValueAtTime(400, audioContext.currentTime);
+                    oscillator2.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.3);
+                    
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                    
+                    oscillator1.start();
+                    oscillator2.start();
+                    oscillator1.stop(audioContext.currentTime + 1);
+                    oscillator2.stop(audioContext.currentTime + 0.5);
+                    
+                } else if (type === 'coinReward') {
+                    // Coin jingle
+                    const frequencies = [523.25, 659.25, 783.99]; // C, E, G
+                    frequencies.forEach((freq, index) => {
+                        setTimeout(() => {
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+                            
+                            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                            
+                            gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                            
+                            oscillator.start();
+                            oscillator.stop(audioContext.currentTime + 0.3);
+                        }, index * 100);
+                    });
+                }
             } catch (e) {
-                console.log("Audio not supported");
+                // Audio context not supported
             }
         }
-
-        // Toggle audio
-        function toggleAudio() {
-            const icon = document.getElementById('audioIcon');
-            gameState.musicEnabled = !gameState.musicEnabled;
+        
+        // O'yin logikasi
+        function generateRewards() {
+            const allRewards = [1, 2, 3, 4, 5, 6, 8, 12, 20];
+            const shuffledRewards = [...allRewards].sort(() => Math.random() - 0.5);
             
-            if (gameState.musicEnabled) {
-                icon.className = 'fas fa-volume-up';
-                icon.style.color = '#FF6B6B';
+            let winningValue;
+            
+            if (gameState.isFirstPlay) {
+                winningValue = Math.random() < 0.5 ? 6 : 8;
             } else {
-                icon.className = 'fas fa-volume-mute';
-                icon.style.color = '#888';
+                const rand = Math.random() * 100;
+                
+                if (rand < 2) winningValue = 20;
+                else if (rand < 8) winningValue = 12;
+                else if (rand < 15) winningValue = 8;
+                else if (rand < 30) winningValue = 6;
+                else if (rand < 50) winningValue = 5;
+                else if (rand < 70) winningValue = 4;
+                else if (rand < 85) winningValue = 3;
+                else if (rand < 95) winningValue = 2;
+                else winningValue = 1;
+            }
+            
+            const winningChest = Math.floor(Math.random() * 9);
+            
+            return {
+                rewards: shuffledRewards,
+                winningChest: winningChest,
+                winningValue: winningValue
+            };
+        }
+        
+        async function selectChest(index, element) {
+            if (!gameState.isPlaying || gameState.selectedChest !== null) return;
+            
+            gameState.selectedChest = index;
+            element.classList.add('selected');
+            
+            // Haptic feedback
+            if (window.hapticFeedback) {
+                window.hapticFeedback.impactOccurred('medium');
+            }
+            
+            playRealSound('chestOpen');
+            
+            setTimeout(() => {
+                element.classList.add('chest-opened');
+                
+                const coinsWon = gameState.currentRewards.winningValue;
+                
+                setTimeout(() => {
+                    const treasureInside = element.querySelector('.treasure-inside');
+                    const treasureReward = element.querySelector('.treasure-reward');
+                    
+                    treasureInside.classList.add('show');
+                    treasureReward.textContent = `+${coinsWon}`;
+                    treasureReward.classList.add('show');
+                    
+                    // Tanga animatsiyasi
+                    const rect = element.getBoundingClientRect();
+                    createCoinFlightAnimation(rect.left + rect.width/2, rect.top + rect.height/2, coinsWon);
+                    playRealSound('coinReward');
+                    
+                    // Boshqa sandiqlarni ochish
+                    setTimeout(() => revealOtherChests(coinsWon, index), 1000);
+                }, 400);
+            }, 400);
+        }
+        
+        function revealOtherChests(coinsWon, selectedIndex) {
+            const chests = document.querySelectorAll('.treasure-chest');
+            
+            chests.forEach((chest, i) => {
+                if (i !== selectedIndex) {
+                    setTimeout(() => {
+                        chest.classList.add('chest-opened');
+                        
+                        const treasureInside = chest.querySelector('.treasure-inside');
+                        const treasureReward = chest.querySelector('.treasure-reward');
+                        
+                        setTimeout(() => {
+                            treasureInside.classList.add('show');
+                            treasureReward.textContent = `${gameState.currentRewards.rewards[i]}`;
+                            treasureReward.classList.add('show');
+                            treasureReward.style.opacity = '0.6';
+                            treasureReward.style.color = '#888';
+                            treasureReward.style.textShadow = '1px 1px 0 #000';
+                        }, 300);
+                    }, i * 150);
+                }
+            });
+            
+            setTimeout(async () => {
+                gameState.isPlaying = false;
+                gameState.totalPlays++;
+                
+                // Serverga coins qo'shish
+                addCoinsToBot(coinsWon);
+                
+                // Yangi balans
+                setTimeout(() => getCoinBalance(), 800);
+                
+                showMessage(`🎉 Tabriklaymiz! ${coinsWon} tanga topdingiz!`, 'success');
+                
+                // Tugmani yoqish
+                const playButton = document.getElementById('playButton');
+                playButton.disabled = false;
+                playButton.innerHTML = '<span id="playButtonText">🎮 YANA O\'YNA (10 💎)</span>';
+                
+                if (gameState.isFirstPlay) {
+                    gameState.isFirstPlay = false;
+                }
+                
+                // Haptic feedback
+                if (window.hapticFeedback) {
+                    window.hapticFeedback.notificationOccurred('success');
+                }
+            }, 1500);
+        }
+        
+        async function startGame() {
+            if (gameState.diamonds < 10) {
+                showMessage('❌ Yetarli olmos mavjud emas!', 'error');
+                if (window.hapticFeedback) {
+                    window.hapticFeedback.impactOccurred('heavy');
+                }
+                return;
+            }
+            
+            const removeResult = await removeDiamondsFromBot(10);
+            
+            if (!removeResult.success) {
+                showError(`❌ Xato: ${removeResult.message || 'Noma\'lum xato'}`);
+                return;
+            }
+            
+            gameState.diamonds -= 10;
+            updateBalanceDisplay();
+            
+            gameState.isPlaying = true;
+            gameState.selectedChest = null;
+            gameState.currentRewards = generateRewards();
+            
+            createTreasureChests();
+            
+            const playButton = document.getElementById('playButton');
+            playButton.disabled = true;
+            playButton.innerHTML = '<span id="playButtonText">⏳ SANDIQ TANLANG...</span>';
+            
+            showMessage('✨ Haqiqiy sandiqlardan birini tanlang!', 'info');
+            
+            // Haptic feedback
+            if (window.hapticFeedback) {
+                window.hapticFeedback.impactOccurred('light');
             }
         }
-
-        // Initialize on load
+        
+        // Dasturni ishga tushirish
+        async function init() {
+            createRealBackground();
+            initTelegram();
+            initAudio();
+            
+            gameState.user = getTelegramUser();
+            
+            const balancesResult = await getAllBalances();
+            
+            if (balancesResult.coinsSuccess && balancesResult.diamondsSuccess) {
+                showMessage(`✅ Balanslar yuklandi!`, 'success');
+            } else {
+                showMessage('⚠️ Oflayn rejimda ishlamoqdasiz', 'info');
+                if (!balancesResult.coinsSuccess) gameState.coins = 100;
+                if (!balancesResult.diamondsSuccess) gameState.diamonds = 50;
+                updateBalanceDisplay();
+            }
+            
+            updateBalanceDisplay();
+            createTreasureChests();
+            
+            document.getElementById('playButton').addEventListener('click', startGame);
+            
+            showMessage('🎮 O\'yinni boshlash uchun tugmani bosing!', 'info');
+            
+            // Touch optimization
+            document.addEventListener('touchmove', (e) => {
+                if (e.scale !== 1) e.preventDefault();
+            }, { passive: false });
+            
+            // Prevent zoom on double-tap
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', (e) => {
+                const now = Date.now();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, { passive: false });
+        }
+        
         document.addEventListener('DOMContentLoaded', init);
+        
+        // Orientation change handler
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+                document.body.style.height = window.innerHeight + 'px';
+            }, 100);
+        });
+        
+        // Resize handler
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                document.body.style.height = window.innerHeight + 'px';
+            }, 250);
+        });
+        
+        // Prevent context menu on mobile
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+        
+        // Prevent pull-to-refresh
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length !== 1) return;
+            const touch = e.touches[0];
+            if (touch.clientY > window.innerHeight * 0.1) return;
+            e.preventDefault();
+        }, { passive: false });
     </script>
 </body>
 </html>
