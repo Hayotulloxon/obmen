@@ -1,22 +1,19 @@
 <!doctype html>
-<html lang="uz" class="h-full">
+<html lang="uz">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
-    <title>Winter Treasure - Olmos O'yini</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Winter Treasure</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        /* ==================== MOBILE OPTIMIZED STYLES ==================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
-            -webkit-text-size-adjust: 100%;
         }
         
         html, body {
@@ -29,231 +26,87 @@
         
         body {
             font-family: 'Fredoka', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #0c1e3a 0%, #1a3b5d 50%, #2d4b7a 100%);
             color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            overflow: hidden;
         }
         
-        /* Snow effect */
-        .snow {
-            position: absolute;
-            top: -10px;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .snowflake {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.8;
-            filter: blur(0.5px);
-        }
-        
-        /* Asosiy container */
         .app-container {
             width: 100%;
             height: 100%;
-            max-width: 100%;
+            max-width: 500px;
             margin: 0 auto;
-            position: relative;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            z-index: 2;
         }
         
-        /* Header - Realistic design */
+        /* Header - Telefon uchun optimal */
         .header {
             flex-shrink: 0;
-            padding: 15px 12px 12px;
-            background: linear-gradient(to bottom, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.9));
-            border-bottom: 3px solid #8B4513;
-            position: relative;
-            min-height: auto;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
+            padding: 12px 10px 8px;
+            background: rgba(20, 40, 80, 0.95);
+            border-bottom: 2px solid #4facfe;
         }
         
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
-        }
-        
-        /* Game title with treasure theme */
         .game-title {
             text-align: center;
-            margin-bottom: 12px;
-            position: relative;
+            margin-bottom: 10px;
         }
         
         .game-title h1 {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 900;
-            color: #FFD700;
-            text-shadow: 
-                0 0 10px rgba(255, 215, 0, 0.8),
-                2px 2px 0 #000,
-                0 0 20px rgba(255, 215, 0, 0.4);
-            letter-spacing: 1px;
-            position: relative;
-            display: inline-block;
-            padding: 0 15px;
+            color: #00FFFF;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
         }
         
-        .game-title h1::before,
-        .game-title h1::after {
-            content: '⚜️';
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 16px;
-        }
-        
-        .game-title h1::before {
-            left: 0;
-        }
-        
-        .game-title h1::after {
-            right: 0;
-        }
-        
-        /* Balans kartalari - Real treasure style */
         .balance-container {
             display: flex;
-            gap: 10px;
-            margin-top: 8px;
-            flex-wrap: nowrap;
-            justify-content: center;
+            gap: 8px;
+            padding: 0 5px;
         }
         
         .balance-card {
             flex: 1;
-            max-width: 160px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px;
-            background: linear-gradient(135deg, rgba(139, 69, 19, 0.9), rgba(101, 67, 33, 0.9));
-            border-radius: 12px;
-            border: 2px solid #D4AF37;
-            box-shadow: 
-                inset 0 0 10px rgba(0, 0, 0, 0.3),
-                0 4px 8px rgba(0, 0, 0, 0.4);
-            position: relative;
-            overflow: hidden;
+            gap: 8px;
+            padding: 10px 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 2px solid rgba(79, 172, 254, 0.3);
         }
         
-        .balance-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.1"><pattern id="wood" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M0,0 L10,10 M10,0 L0,10" stroke="%23D4AF37" stroke-width="1"/></pattern><rect width="100" height="100" fill="url(%23wood)"/></svg>');
-        }
-        
-        .balance-card::after {
-            content: '';
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 25px;
-            height: 25px;
-            background: radial-gradient(circle, #FFD700, #D4AF37);
-            border-radius: 50%;
-            border: 2px solid #8B4513;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-        }
-        
-        /* Coins count element for animation target */
-        .coin-target {
-            position: relative;
-            display: inline-block;
-        }
-        
-        /* O'yin maydoni - Treasure room */
+        /* Game area - Telefon uchun katta sandiqlar */
         .game-area {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 15px 10px;
+            padding: 10px;
             overflow: hidden;
-            position: relative;
-            min-height: 0;
-            background: linear-gradient(to bottom, #0a0a1a, #1a1a2e);
-            border-top: 2px solid #8B4513;
-            border-bottom: 2px solid #8B4513;
+            background: linear-gradient(to bottom, rgba(12, 30, 58, 0.9), rgba(26, 59, 93, 0.8));
         }
         
-        /* Treasure room background */
-        .treasure-room {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
-            z-index: -1;
-        }
-        
-        /* Real Treasure Chests Grid */
         .treasure-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             width: 100%;
-            max-width: 380px;
             height: 100%;
-            max-height: 380px;
-            margin: 0 auto;
             padding: 15px;
-            background: rgba(20, 20, 30, 0.7);
+            background: rgba(20, 40, 80, 0.6);
             border-radius: 20px;
-            border: 3px solid #8B4513;
-            box-shadow: 
-                inset 0 0 30px rgba(0, 0, 0, 0.7),
-                0 10px 25px rgba(0, 0, 0, 0.8);
-            position: relative;
-            overflow: hidden;
+            border: 3px solid rgba(79, 172, 254, 0.4);
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
         }
         
-        .treasure-grid::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.05"><pattern id="stone" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="%238B4513"/><circle cx="10" cy="10" r="3" fill="%235A3A22"/></pattern><rect width="100" height="100" fill="url(%23stone)"/></svg>');
-        }
-        
-        /* REAL TREASURE CHEST STYLES */
+        /* Telefon uchun optimal sandiq o'lchamlari */
         .treasure-chest {
             width: 100%;
             height: 100%;
-            min-height: 90px;
+            min-height: 100px;
             position: relative;
             cursor: pointer;
             transform-style: preserve-3d;
-            perspective: 1000px;
-            transition: all 0.3s ease;
+            perspective: 800px;
         }
         
         .chest-wrapper {
@@ -261,46 +114,40 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
         
-        /* Chest base (asosiy qismi) */
         .chest-base {
             position: absolute;
             width: 100%;
-            height: 60%;
+            height: 65%;
             bottom: 0;
-            background: linear-gradient(135deg, var(--chest-metal-1), var(--chest-metal-2), var(--chest-metal-1));
-            border-radius: 8px 8px 15px 15px;
-            border: 3px solid var(--chest-border);
+            background: linear-gradient(135deg, #FFD700, #FFAA00, #FFD700);
+            border-radius: 12px 12px 16px 16px;
+            border: 3px solid #FF6B35;
             box-shadow: 
-                inset 0 -5px 10px rgba(0, 0, 0, 0.5),
-                inset 0 5px 10px rgba(255, 255, 255, 0.1),
-                0 5px 15px rgba(0, 0, 0, 0.6);
-            transform-style: preserve-3d;
+                inset 0 -8px 15px rgba(0, 0, 0, 0.6),
+                inset 0 8px 15px rgba(255, 255, 255, 0.15),
+                0 6px 20px rgba(0, 0, 0, 0.8);
         }
         
-        /* Chest lid (qopqog'i) */
         .chest-lid {
             position: absolute;
             width: 100%;
-            height: 40%;
+            height: 35%;
             top: 0;
-            background: linear-gradient(135deg, var(--chest-metal-1), var(--chest-metal-2));
-            border-radius: 15px 15px 8px 8px;
-            border: 3px solid var(--chest-border);
+            background: linear-gradient(135deg, #FFD700, #FFAA00);
+            border-radius: 16px 16px 12px 12px;
+            border: 3px solid #FF6B35;
             border-bottom: none;
             box-shadow: 
-                inset 0 5px 10px rgba(255, 255, 255, 0.1),
-                inset 0 -5px 10px rgba(0, 0, 0, 0.3),
-                0 -5px 15px rgba(0, 0, 0, 0.6);
+                inset 0 8px 15px rgba(255, 255, 255, 0.15),
+                inset 0 -8px 15px rgba(0, 0, 0, 0.4),
+                0 -6px 20px rgba(0, 0, 0, 0.8);
             transform-origin: bottom center;
-            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 2;
         }
         
-        /* Chest lid handle */
         .chest-handle {
             position: absolute;
             top: 50%;
@@ -311,85 +158,56 @@
             background: linear-gradient(to bottom, #D4AF37, #FFD700, #D4AF37);
             border-radius: 6px;
             border: 2px solid #8B4513;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
         
-        .chest-handle::before {
-            content: '';
-            position: absolute;
-            top: -6px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 6px;
-            background: #8B4513;
-            border-radius: 3px;
-        }
-        
-        /* Chest lock */
         .chest-lock {
             position: absolute;
-            bottom: -10px;
+            bottom: -12px;
             left: 50%;
             transform: translateX(-50%);
-            width: 25px;
-            height: 15px;
+            width: 28px;
+            height: 16px;
             background: linear-gradient(to bottom, #C0C0C0, #808080);
-            border-radius: 5px;
+            border-radius: 6px;
             border: 2px solid #606060;
             z-index: 3;
         }
         
-        /* Chest decorations */
-        .chest-decoration {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-        
         .chest-corner {
             position: absolute;
-            width: 15px;
-            height: 15px;
-            background: radial-gradient(circle, var(--chest-accent), var(--chest-border));
-            border-radius: 3px;
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle, #FFEC8B, #FF6B35);
+            border-radius: 4px;
             transform: rotate(45deg);
         }
         
-        .corner-tl { top: 5px; left: 5px; }
-        .corner-tr { top: 5px; right: 5px; }
-        .corner-bl { bottom: 5px; left: 5px; }
-        .corner-br { bottom: 5px; right: 5px; }
+        .corner-tl { top: 6px; left: 6px; }
+        .corner-tr { top: 6px; right: 6px; }
+        .corner-bl { bottom: 6px; left: 6px; }
+        .corner-br { bottom: 6px; right: 6px; }
         
-        /* Chest metal bands */
         .chest-band {
             position: absolute;
-            width: 80%;
-            height: 8px;
-            left: 10%;
-            background: linear-gradient(to right, 
-                transparent 10%, 
-                var(--chest-accent) 10%, 
-                var(--chest-accent) 90%, 
-                transparent 90%);
-            border-radius: 4px;
+            width: 85%;
+            height: 10px;
+            left: 7.5%;
+            background: linear-gradient(to right, transparent 10%, #FFEC8B 10%, #FFEC8B 90%, transparent 90%);
+            border-radius: 5px;
         }
         
-        .band-1 { top: 25%; }
-        .band-2 { top: 50%; }
-        .band,3 { top: 75%; }
+        .band-1 { top: 20%; }
+        .band-2 { top: 45%; }
+        .band-3 { top: 70%; }
         
-        /* Chest when opened */
         .chest-opened .chest-lid {
             transform: rotateX(-110deg);
         }
         
-        /* Treasure inside the chest */
         .treasure-inside {
             position: absolute;
             width: 100%;
-            height: 60%;
+            height: 65%;
             bottom: 0;
             display: flex;
             align-items: center;
@@ -397,7 +215,7 @@
             overflow: hidden;
             z-index: 1;
             opacity: 0;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s ease;
         }
         
         .treasure-inside.show {
@@ -408,270 +226,89 @@
             font-size: 24px;
             font-weight: 900;
             color: #FFD700;
-            text-shadow: 
-                0 0 10px rgba(255, 215, 0, 0.8),
-                2px 2px 0 #000,
-                0 0 20px rgba(255, 215, 0, 0.5);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.9), 2px 2px 0 #000;
             transform: translateY(20px);
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
         .treasure-reward.show {
             transform: translateY(0);
         }
         
-        /* Chest hover effect */
-        .treasure-chest:hover .chest-wrapper {
-            transform: translateY(-5px);
-        }
-        
-        .treasure-chest:active .chest-wrapper {
-            transform: scale(0.95);
-        }
-        
-        /* Chest types - Real metal colors */
-        .chest-gold {
-            --chest-metal-1: #FFD700;
-            --chest-metal-2: #D4AF37;
-            --chest-border: #B8860B;
-            --chest-accent: #FFEC8B;
-        }
-        
-        .chest-silver {
-            --chest-metal-1: #C0C0C0;
-            --chest-metal-2: #A0A0A0;
-            --chest-border: #808080;
-            --chest-accent: #E0E0E0;
-        }
-        
-        .chest-bronze {
-            --chest-metal-1: #CD7F32;
-            --chest-metal-2: #8B4513;
-            --chest-border: #654321;
-            --chest-accent: #DEB887;
-        }
-        
-        .chest-iron {
-            --chest-metal-1: #696969;
-            --chest-metal-2: #505050;
-            --chest-border: #303030;
-            --chest-accent: #888888;
-        }
-        
-        .chest-copper {
-            --chest-metal-1: #B87333;
-            --chest-metal-2: #8B4513;
-            --chest-border: #654321;
-            --chest-accent: #DEB887;
-        }
-        
-        .chest-platinum {
-            --chest-metal-1: #E5E4E2;
-            --chest-metal-2: #B8B8B8;
-            --chest-border: #909090;
-            --chest-accent: #F0F0F0;
-        }
-        
-        .chest-diamond {
-            --chest-metal-1: #4FACFE;
-            --chest-metal-2: #00F2FE;
-            --chest-border: #0099FF;
-            --chest-accent: #9A4DFF;
-        }
-        
-        .chest-ruby {
-            --chest-metal-1: #EF476F;
-            --chest-metal-2: #D43D63;
-            --chest-border: #B83254;
-            --chest-accent: #FF6B6B;
-        }
-        
-        .chest-emerald {
-            --chest-metal-1: #06D6A0;
-            --chest-metal-2: #0CB48A;
-            --chest-border: #048A6F;
-            --chest-accent: #4ADE80;
-        }
-        
-        /* Footer */
+        /* Footer - Telefon uchun optimal */
         .footer {
             flex-shrink: 0;
-            padding: 15px 12px;
-            background: linear-gradient(to top, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.9));
-            border-top: 3px solid #8B4513;
-            position: relative;
-            min-height: auto;
-            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
+            padding: 12px 10px;
+            background: rgba(20, 40, 80, 0.95);
+            border-top: 2px solid #4facfe;
         }
         
-        .footer::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
-        }
-        
-        /* Play button - Treasure style */
         .play-button {
             width: 100%;
-            max-width: 320px;
-            padding: 18px;
-            background: linear-gradient(135deg, #8B4513, #D2691E, #8B4513);
-            border: 3px solid #D4AF37;
-            border-radius: 15px;
-            color: #FFD700;
-            font-size: 20px;
+            padding: 16px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            color: white;
+            font-size: 18px;
             font-weight: 900;
             cursor: pointer;
             transition: all 0.2s ease;
-            margin: 0 auto;
-            display: block;
-            box-shadow: 
-                0 8px 0 #654321,
-                0 15px 25px rgba(0, 0, 0, 0.7),
-                inset 0 2px 5px rgba(255, 215, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-            text-shadow: 1px 1px 2px #000;
-        }
-        
-        .play-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .play-button:hover::before {
-            left: 100%;
+            box-shadow: 0 6px 0 rgba(0, 0, 0, 0.3);
         }
         
         .play-button:active {
             transform: translateY(4px);
-            box-shadow: 
-                0 4px 0 #654321,
-                0 8px 15px rgba(0, 0, 0, 0.7),
-                inset 0 2px 5px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
         }
         
         .play-button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
-            box-shadow: 
-                0 4px 0 #654321,
-                0 8px 15px rgba(0, 0, 0, 0.5),
-                inset 0 2px 5px rgba(255, 215, 0, 0.2);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
         }
         
-        /* Message area */
         .message-area {
-            margin-top: 12px;
+            margin-top: 10px;
             font-size: 14px;
             font-weight: 600;
-            color: #FFD700;
-            min-height: 20px;
+            color: #00FFFF;
             text-align: center;
-            padding: 10px;
-            background: rgba(139, 69, 19, 0.3);
-            border-radius: 10px;
-            border: 2px solid #D4AF37;
-            backdrop-filter: blur(5px);
-            text-shadow: 1px 1px 2px #000;
+            padding: 8px;
+            background: rgba(79, 172, 254, 0.15);
+            border-radius: 8px;
+            border: 2px solid rgba(0, 242, 254, 0.3);
         }
         
-        /* Error message */
         .error-message {
-            background: rgba(178, 34, 34, 0.8);
-            border: 2px solid #FF4444;
-            color: #FFD700;
+            background: rgba(239, 71, 111, 0.8);
+            border: 2px solid #EF476F;
+            color: white;
             padding: 10px;
-            border-radius: 10px;
-            margin-top: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
             font-size: 14px;
-            font-weight: 600;
             text-align: center;
             display: none;
-            backdrop-filter: blur(5px);
-            text-shadow: 1px 1px 2px #000;
         }
         
-        /* Audio control */
         .audio-control {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #8B4513, #D2691E);
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            background: rgba(79, 172, 254, 0.9);
             border-radius: 50%;
-            border: 2px solid #D4AF37;
+            border: 2px solid #00FFFF;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 100;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
         }
         
-        /* Animations */
-        @keyframes sparkle {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
-            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
-        }
-        
-        @keyframes chestShake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-2px); }
-            75% { transform: translateX(2px); }
-        }
-        
-        /* Coin flight animation */
-        @keyframes coinFly {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) scale(1) rotate(0deg);
-            }
-            70% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                transform: translate(var(--target-x), var(--target-y)) scale(0.3) rotate(180deg);
-            }
-        }
-        
-        .treasure-chest.selected .chest-wrapper {
-            animation: chestShake 0.3s ease infinite, glow 1.5s ease-in-out infinite;
-        }
-        
-        .float {
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        .sparkle {
-            animation: sparkle 2s ease-in-out infinite;
-        }
-        
-        /* Coin element for flight animation */
         .coin {
             position: fixed;
             font-size: 20px;
@@ -680,292 +317,202 @@
             opacity: 0;
         }
         
-        /* Responsive */
+        /* Responsive - Telefonlar uchun */
         @media (max-width: 380px) {
             .treasure-grid {
                 gap: 10px;
                 padding: 12px;
-                max-height: 350px;
             }
             
             .treasure-chest {
-                min-height: 80px;
+                min-height: 90px;
+            }
+            
+            .treasure-reward {
+                font-size: 20px;
             }
             
             .play-button {
-                padding: 16px;
-                font-size: 18px;
-                max-width: 300px;
+                padding: 14px;
+                font-size: 16px;
             }
             
             .game-title h1 {
-                font-size: 20px;
+                font-size: 18px;
             }
         }
         
         @media (max-height: 700px) {
+            .header {
+                padding: 10px 8px 6px;
+            }
+            
+            .treasure-chest {
+                min-height: 85px;
+            }
+            
+            .footer {
+                padding: 10px 8px;
+            }
+            
+            .play-button {
+                padding: 14px;
+            }
+        }
+        
+        @media (max-height: 600px) {
             .treasure-grid {
-                max-height: 320px;
+                gap: 8px;
+                padding: 10px;
             }
             
             .treasure-chest {
                 min-height: 75px;
             }
             
-            .header {
-                padding: 12px 10px 10px;
-            }
-            
-            .footer {
-                padding: 12px 10px;
-            }
-        }
-        
-        @media (max-height: 600px) {
-            .treasure-grid {
-                max-height: 280px;
-                gap: 8px;
-            }
-            
-            .treasure-chest {
-                min-height: 65px;
-            }
-            
             .treasure-reward {
-                font-size: 20px;
+                font-size: 18px;
+            }
+            
+            .chest-handle {
+                width: 35px;
+                height: 10px;
             }
         }
         
-        /* Safe areas for modern phones */
-        @supports (padding-top: env(safe-area-inset-top)) {
+        @media (orientation: landscape) and (max-height: 500px) {
+            .app-container {
+                flex-direction: row;
+            }
+            
             .header {
-                padding-top: calc(15px + env(safe-area-inset-top));
+                width: 40%;
+                height: 100%;
+                border-right: 2px solid #4facfe;
+                border-bottom: none;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            
+            .game-area {
+                width: 60%;
+                height: 100%;
             }
             
             .footer {
-                padding-bottom: calc(15px + env(safe-area-inset-bottom));
+                display: none;
             }
+            
+            .treasure-grid {
+                height: 100%;
+            }
+        }
+        
+        /* iPhone notch va round corners uchun */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .app-container {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+            }
+        }
+        
+        /* Animatsiyalar */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(0, 255, 255, 0.6); }
+            50% { box-shadow: 0 0 25px rgba(0, 255, 255, 1); }
+        }
+        
+        @keyframes coinFly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0.3);
+            }
+        }
+        
+        .treasure-chest.selected {
+            animation: glow 1.5s ease-in-out infinite;
+        }
+        
+        .float {
+            animation: float 3s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
-    <!-- Background music -->
     <audio id="backgroundMusic" loop preload="auto">
         <source src="https://s35.surkhandc1.uz/399837962.mp3" type="audio/mpeg">
     </audio>
     
-    <!-- Snow effect -->
-    <div class="snow" id="snowContainer"></div>
-    
-    <!-- Audio control -->
     <div class="audio-control" id="audioControl">
-        <i class="fas fa-volume-up" id="audioIcon" style="font-size: 18px; color: #FFD700;"></i>
+        <i class="fas fa-volume-up" id="audioIcon" style="font-size: 16px; color: white;"></i>
     </div>
     
     <div class="app-container">
-        
-        <!-- Header -->
         <div class="header">
             <div class="game-title">
-                <h1>WINTER TREASURE</h1>
-                <p style="font-size: 12px; color: #D4AF37; margin-top: 5px; text-shadow: 1px 1px 2px #000;">
-                    Haqiqiy sandiqlardan boylik toping!
+                <h1>❄️ WINTER TREASURE ❄️</h1>
+                <p style="font-size: 11px; color: #00FFFF; opacity: 0.8; margin-top: 3px;">
+                    Sandiqlardan boylik toping!
                 </p>
             </div>
             
             <div class="balance-container">
-                <!-- Diamonds balansi -->
                 <div class="balance-card">
-                    <div style="font-size: 28px;" class="sparkle">
-                        💎
-                    </div>
+                    <div style="font-size: 24px;">💎</div>
                     <div>
-                        <div style="font-size: 10px; color: #FFD700; font-weight: 600;">OLMOSLAR</div>
-                        <div id="diamondCount" style="font-size: 22px; font-weight: 900; color: #00FFFF; text-shadow: 0 0 8px #00FFFF;">
-                            0
-                        </div>
+                        <div style="font-size: 9px; color: #00FFFF; opacity: 0.8;">OLMOS</div>
+                        <div id="diamondCount" style="font-size: 20px; font-weight: 900; color: #00FFFF;">0</div>
                     </div>
                 </div>
                 
-                <!-- Coins balansi - TANGA ANIMATSIYASI UCHUN TARGET -->
                 <div class="balance-card">
-                    <div style="font-size: 28px;" class="sparkle">
-                        🪙
-                    </div>
+                    <div style="font-size: 24px;">🪙</div>
                     <div>
-                        <div style="font-size: 10px; color: #FFD700; font-weight: 600;">TANGALAR</div>
-                        <div id="coinCount" class="coin-target" style="font-size: 22px; font-weight: 900; color: #FFD700; text-shadow: 0 0 8px #FFD700;">
-                            0
-                        </div>
+                        <div style="font-size: 9px; color: #FFD700; opacity: 0.8;">TANGA</div>
+                        <div id="coinCount" style="font-size: 20px; font-weight: 900; color: #FFD700;">0</div>
                     </div>
                 </div>
             </div>
             
-            <!-- Foydalanuvchi ID -->
-            <div id="userIdDisplay" style="font-size: 10px; color: #D4AF37; text-align: center; margin-top: 8px; font-weight: 600; text-shadow: 1px 1px 2px #000;">
+            <div id="userIdDisplay" style="font-size: 9px; color: rgba(0, 255, 255, 0.7); text-align: center; margin-top: 8px;">
                 ID: yuklanmoqda...
             </div>
         </div>
         
-        <!-- Asosiy o'yin maydoni -->
         <div class="game-area">
-            <div class="treasure-room"></div>
             <div id="treasureGrid" class="treasure-grid">
-                <!-- Haqiqiy sandiqlar JavaScript bilan yaratiladi -->
+                <!-- Sandiqlar JavaScript bilan -->
             </div>
         </div>
         
-        <!-- Footer -->
         <div class="footer">
             <button id="playButton" class="play-button">
                 <span id="playButtonText">🎮 O'YINNI BOSHLASH (10 💎)</span>
             </button>
             
             <div id="messageArea" class="message-area">
-                🎯 Bir sandiq tanlang va boylik toping!
+                🎯 Sandiq tanlang va boylik toping!
             </div>
             
             <div id="errorMessage" class="error-message"></div>
         </div>
-        
     </div>
 
     <script>
-        // ==================== MOBILE OPTIMIZATION ====================
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
-        // Create snow effect
-        function createSnow() {
-            const snowContainer = document.getElementById('snowContainer');
-            for (let i = 0; i < 50; i++) {
-                const snowflake = document.createElement('div');
-                snowflake.className = 'snowflake';
-                snowflake.style.width = Math.random() * 5 + 2 + 'px';
-                snowflake.style.height = snowflake.style.width;
-                snowflake.style.left = Math.random() * 100 + '%';
-                snowflake.style.opacity = Math.random() * 0.5 + 0.3;
-                snowContainer.appendChild(snowflake);
-            }
-            
-            // Animate snow
-            const snowflakes = document.querySelectorAll('.snowflake');
-            snowflakes.forEach((flake, index) => {
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes fall${index} {
-                        0% {
-                            transform: translateY(-10px) translateX(0);
-                            opacity: ${Math.random() * 0.5 + 0.3};
-                        }
-                        100% {
-                            transform: translateY(${window.innerHeight}px) translateX(${Math.random() * 100 - 50}px);
-                            opacity: 0;
-                        }
-                    }
-                `;
-                document.head.appendChild(style);
-                
-                flake.style.animation = `fall${index} ${Math.random() * 3 + 5}s linear infinite`;
-                flake.style.animationDelay = `${Math.random() * 5}s`;
-            });
-        }
-        
-        // ==================== TANGA ANIMATSIYA FUNKTSIYALARI ====================
-        function createCoinFlightAnimation(startX, startY, amount) {
-            const coinTarget = document.querySelector('.coin-target');
-            const targetRect = coinTarget.getBoundingClientRect();
-            const targetX = targetRect.left + targetRect.width / 2;
-            const targetY = targetRect.top + targetRect.height / 2;
-            
-            // Har bir tanga uchun animatsiya
-            for (let i = 0; i < Math.min(amount, 15); i++) {
-                setTimeout(() => {
-                    const coin = document.createElement('div');
-                    coin.className = 'coin';
-                    coin.innerHTML = '🪙';
-                    coin.style.left = `${startX}px`;
-                    coin.style.top = `${startY}px`;
-                    coin.style.fontSize = `${Math.random() * 10 + 20}px`;
-                    
-                    // CSS custom properties orqali target koordinatalarini o'tkazish
-                    coin.style.setProperty('--target-x', `${targetX - startX}px`);
-                    coin.style.setProperty('--target-y', `${targetY - startY}px`);
-                    
-                    document.body.appendChild(coin);
-                    
-                    // Animatsiyani boshlash
-                    coin.animate([
-                        {
-                            opacity: 1,
-                            transform: 'translate(0, 0) scale(1) rotate(0deg)'
-                        },
-                        {
-                            opacity: 1,
-                            offset: 0.7
-                        },
-                        {
-                            opacity: 0,
-                            transform: `translate(${targetX - startX}px, ${targetY - startY}px) scale(0.3) rotate(180deg)`
-                        }
-                    ], {
-                        duration: 1000 + Math.random() * 500,
-                        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
-                    });
-                    
-                    // Tangani olib tashlash
-                    setTimeout(() => {
-                        if (coin.parentNode) {
-                            document.body.removeChild(coin);
-                        }
-                    }, 1500);
-                }, i * 50);
-            }
-            
-            // Balansni yangilash (animatsiya davomida)
-            setTimeout(() => {
-                updateBalanceWithAnimation(amount);
-            }, 800);
-        }
-        
-        function updateBalanceWithAnimation(amount) {
-            const coinElement = document.getElementById('coinCount');
-            const currentCoins = parseInt(coinElement.textContent);
-            const newCoins = currentCoins + amount;
-            
-            // Balansni asta-sekin oshirish animatsiyasi
-            let step = 0;
-            const steps = 20;
-            const increment = amount / steps;
-            
-            const interval = setInterval(() => {
-                step++;
-                const displayCoins = Math.floor(currentCoins + (increment * step));
-                coinElement.textContent = displayCoins;
-                
-                if (step >= steps) {
-                    clearInterval(interval);
-                    coinElement.textContent = newCoins;
-                    gameState.coins = newCoins;
-                }
-            }, 30);
-        }
-        
-        // ==================== KONFIGURATSIYA ====================
-        const API_CONFIG = {
-            KEY: '4564123:hkjhfadfhieapkdnga',
-            BASE_URL: 'https://68ed1ab05ca4e.myxvest1.ru',
-            ENDPOINTS: {
-                GET_BALANCE: '/Showbalance.php',
-                GET_DIAMONDS: '/get_balance.php',
-                REMOVE_DIAMONDS: '/remove.php',
-                ADD_COINS: '/coinmanage.php'
-            }
-        };
-        
         // Telegram Web App
         const TELEGRAM_WEB_APP = window.Telegram?.WebApp;
-        
-        // Audio element
         const backgroundMusic = document.getElementById('backgroundMusic');
         
         // O'yin holati
@@ -978,45 +525,26 @@
             isPlaying: false,
             selectedChest: null,
             currentRewards: null,
-            gameHistory: [],
-            musicEnabled: true
+            musicEnabled: true,
+            audioStarted: false
         };
         
-        // Haqiqiy sandiq turlari
-        const CHEST_TYPES = [
-            'chest-gold',
-            'chest-silver',
-            'chest-bronze',
-            'chest-iron',
-            'chest-copper',
-            'chest-platinum',
-            'chest-diamond',
-            'chest-ruby',
-            'chest-emerald'
-        ];
+        // API konfiguratsiyasi
+        const API_CONFIG = {
+            KEY: '4564123:hkjhfadfhieapkdnga',
+            BASE_URL: 'https://68ed1ab05ca4e.myxvest1.ru',
+            ENDPOINTS: {
+                GET_BALANCE: '/Showbalance.php',
+                GET_DIAMONDS: '/get_balance.php',
+                REMOVE_DIAMONDS: '/remove.php',
+                ADD_COINS: '/coinmanage.php'
+            }
+        };
         
-        // ==================== AUDIO FUNKTSIYALARI ====================
+        // Audio boshqaruvi
         function initAudio() {
-            // Audio elementini sozlash
-            backgroundMusic.volume = 0.2; // Past ovoz
-            backgroundMusic.preload = 'auto';
+            backgroundMusic.volume = 0.5;
             
-            // App ochilganda audio boshlash
-            const playAudio = () => {
-                if (gameState.musicEnabled) {
-                    backgroundMusic.play().catch(e => {
-                        console.log("Audio autoplay failed, will retry on interaction");
-                        // Foydalanuvchi interaktsiyasini kutish
-                        document.addEventListener('click', () => {
-                            if (gameState.musicEnabled && backgroundMusic.paused) {
-                                backgroundMusic.play().catch(e => console.log("Retry failed:", e));
-                            }
-                        }, { once: true });
-                    });
-                }
-            };
-            
-            // Audio control
             const audioControl = document.getElementById('audioControl');
             const audioIcon = document.getElementById('audioIcon');
             
@@ -1025,21 +553,38 @@
                 if (gameState.musicEnabled) {
                     backgroundMusic.pause();
                     audioIcon.className = 'fas fa-volume-mute';
-                    audioIcon.style.color = '#C0C0C0';
+                    audioIcon.style.color = '#FF6B6B';
                     gameState.musicEnabled = false;
                 } else {
-                    playAudio();
+                    startBackgroundMusic();
                     audioIcon.className = 'fas fa-volume-up';
-                    audioIcon.style.color = '#FFD700';
+                    audioIcon.style.color = 'white';
                     gameState.musicEnabled = true;
                 }
             });
             
-            // Audio boshlash
-            setTimeout(playAudio, 500);
+            setTimeout(() => {
+                startBackgroundMusic();
+            }, 1000);
         }
         
-        // ==================== TELEGRAM FUNKTSIYALARI ====================
+        function startBackgroundMusic() {
+            if (gameState.musicEnabled && !gameState.audioStarted) {
+                backgroundMusic.play().then(() => {
+                    gameState.audioStarted = true;
+                }).catch(() => {
+                    document.addEventListener('click', () => {
+                        if (gameState.musicEnabled && !gameState.audioStarted) {
+                            backgroundMusic.play().then(() => {
+                                gameState.audioStarted = true;
+                            });
+                        }
+                    }, { once: true });
+                });
+            }
+        }
+        
+        // Telegram funksiyalari
         function getTelegramUser() {
             if (TELEGRAM_WEB_APP?.initDataUnsafe?.user) {
                 const tgUser = TELEGRAM_WEB_APP.initDataUnsafe.user;
@@ -1053,7 +598,6 @@
                 };
             }
             
-            // Test rejimi uchun
             return {
                 id: '123456789',
                 username: 'test_user',
@@ -1068,26 +612,20 @@
             if (TELEGRAM_WEB_APP) {
                 TELEGRAM_WEB_APP.ready();
                 TELEGRAM_WEB_APP.expand();
-                TELEGRAM_WEB_APP.setHeaderColor('#1a1a2e');
-                TELEGRAM_WEB_APP.setBackgroundColor('#1a1a2e');
+                TELEGRAM_WEB_APP.setHeaderColor('#0c1e3a');
+                TELEGRAM_WEB_APP.setBackgroundColor('#0c1e3a');
                 TELEGRAM_WEB_APP.BackButton.hide();
             }
         }
         
-        // ==================== API FUNKTSIYALARI ====================
+        // API funksiyalari
         async function getCoinBalance() {
             try {
                 const url = new URL(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_BALANCE);
                 url.searchParams.append('key', API_CONFIG.KEY);
                 url.searchParams.append('user_id', gameState.user.id);
                 
-                const response = await fetch(url.toString(), {
-                    method: 'GET',
-                    headers: { 'Accept': 'application/json' }
-                });
-                
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                
+                const response = await fetch(url.toString());
                 const data = await response.json();
                 
                 if (data.success) {
@@ -1095,9 +633,8 @@
                     gameState.coins = coins;
                     updateBalanceDisplay();
                     return { success: true, coins: coins };
-                } else {
-                    return { success: false, message: data.message };
                 }
+                return { success: false, message: data.message };
             } catch (error) {
                 return { success: false, message: error.message };
             }
@@ -1109,13 +646,7 @@
                 url.searchParams.append('key', API_CONFIG.KEY);
                 url.searchParams.append('user_id', gameState.user.id);
                 
-                const response = await fetch(url.toString(), {
-                    method: 'GET',
-                    headers: { 'Accept': 'application/json' }
-                });
-                
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                
+                const response = await fetch(url.toString());
                 const data = await response.json();
                 
                 if (data.success) {
@@ -1123,9 +654,8 @@
                     gameState.diamonds = diamonds;
                     updateBalanceDisplay();
                     return { success: true, diamonds: diamonds };
-                } else {
-                    return { success: false, message: data.message };
                 }
+                return { success: false, message: data.message };
             } catch (error) {
                 return { success: false, message: error.message };
             }
@@ -1158,7 +688,6 @@
                     body: formData.toString()
                 });
                 
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 return await response.json();
             } catch (error) {
                 return { success: false, message: error.message };
@@ -1180,14 +709,13 @@
                     body: formData.toString()
                 });
                 
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 return await response.json();
             } catch (error) {
                 return { success: false, message: error.message };
             }
         }
         
-        // ==================== UI FUNKTSIYALARI ====================
+        // UI funksiyalari
         function updateBalanceDisplay() {
             document.getElementById('diamondCount').textContent = gameState.diamonds;
             document.getElementById('coinCount').textContent = gameState.coins;
@@ -1203,22 +731,11 @@
             
             if (type === 'error') {
                 messageArea.style.color = '#FF6B6B';
-                messageArea.style.borderColor = '#FF4444';
+                messageArea.style.borderColor = '#EF476F';
             } else if (type === 'success') {
                 messageArea.style.color = '#4ADE80';
                 messageArea.style.borderColor = '#06D6A0';
-            } else {
-                messageArea.style.color = '#FFD700';
-                messageArea.style.borderColor = '#D4AF37';
             }
-            
-            messageArea.style.opacity = '0';
-            setTimeout(() => {
-                messageArea.style.transition = 'opacity 0.3s';
-                messageArea.style.opacity = '1';
-            }, 10);
-            
-            hideError();
         }
         
         function showError(errorText) {
@@ -1228,43 +745,36 @@
             
             setTimeout(() => {
                 errorElement.style.display = 'none';
-            }, 5000);
+            }, 4000);
         }
         
-        function hideError() {
-            document.getElementById('errorMessage').style.display = 'none';
-        }
-        
-        // ==================== HAQIQIY SANDIQLARNI YARATISH ====================
+        // Sandiqlarni yaratish
         function createTreasureChests() {
             const grid = document.getElementById('treasureGrid');
             grid.innerHTML = '';
             
             for (let i = 0; i < 9; i++) {
-                const chestContainer = document.createElement('div');
-                chestContainer.className = `treasure-chest ${CHEST_TYPES[i]} float`;
-                chestContainer.dataset.index = i;
-                chestContainer.style.animationDelay = `${i * 0.1}s`;
+                const chest = document.createElement('div');
+                chest.className = 'treasure-chest float';
+                chest.dataset.index = i;
+                chest.style.animationDelay = `${i * 0.1}s`;
                 
-                chestContainer.innerHTML = `
+                chest.innerHTML = `
                     <div class="chest-wrapper">
                         <div class="chest-base">
-                            <div class="chest-decoration">
-                                <div class="chest-corner corner-tl"></div>
-                                <div class="chest-corner corner-tr"></div>
-                                <div class="chest-corner corner-bl"></div>
-                                <div class="chest-corner corner-br"></div>
-                                <div class="chest-band band-1"></div>
-                                <div class="chest-band band-2"></div>
-                            </div>
+                            <div class="chest-corner corner-tl"></div>
+                            <div class="chest-corner corner-tr"></div>
+                            <div class="chest-corner corner-bl"></div>
+                            <div class="chest-corner corner-br"></div>
+                            <div class="chest-band band-1"></div>
+                            <div class="chest-band band-2"></div>
+                            <div class="chest-band band-3"></div>
                             <div class="chest-lock"></div>
                         </div>
                         <div class="chest-lid">
                             <div class="chest-handle"></div>
-                            <div class="chest-decoration">
-                                <div class="chest-corner corner-tl"></div>
-                                <div class="chest-corner corner-tr"></div>
-                            </div>
+                            <div class="chest-corner corner-tl"></div>
+                            <div class="chest-corner corner-tr"></div>
                         </div>
                         <div class="treasure-inside">
                             <div class="treasure-reward"></div>
@@ -1272,24 +782,66 @@
                     </div>
                 `;
                 
-                // Touch events
-                chestContainer.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    chestContainer.style.transform = 'scale(0.95)';
-                }, { passive: false });
-                
-                chestContainer.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    chestContainer.style.transform = '';
-                    selectChest(i, chestContainer);
-                }, { passive: false });
-                
-                chestContainer.addEventListener('click', () => selectChest(i, chestContainer));
-                grid.appendChild(chestContainer);
+                chest.addEventListener('click', () => selectChest(i, chest));
+                grid.appendChild(chest);
             }
         }
         
-        // ==================== O'YIN LOGIKASI ====================
+        // Tanga animatsiyasi
+        function createCoinFlightAnimation(startX, startY, amount) {
+            const coinTarget = document.getElementById('coinCount');
+            const targetRect = coinTarget.getBoundingClientRect();
+            const targetX = targetRect.left + targetRect.width / 2;
+            const targetY = targetRect.top + targetRect.height / 2;
+            
+            for (let i = 0; i < Math.min(amount, 12); i++) {
+                setTimeout(() => {
+                    const coin = document.createElement('div');
+                    coin.className = 'coin';
+                    coin.innerHTML = '🪙';
+                    coin.style.left = `${startX}px`;
+                    coin.style.top = `${startY}px`;
+                    
+                    const tx = (targetX - startX) + (Math.random() - 0.5) * 60;
+                    const ty = (targetY - startY) + (Math.random() - 0.5) * 60;
+                    
+                    coin.style.setProperty('--tx', `${tx}px`);
+                    coin.style.setProperty('--ty', `${ty}px`);
+                    
+                    coin.animate([
+                        { opacity: 1, transform: 'translate(0, 0) scale(1)' },
+                        { opacity: 0, transform: 'translate(var(--tx), var(--ty)) scale(0.3)' }
+                    ], {
+                        duration: 800 + Math.random() * 400,
+                        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+                    });
+                    
+                    document.body.appendChild(coin);
+                    setTimeout(() => coin.remove(), 1200);
+                }, i * 40);
+            }
+            
+            // Balansni yangilash
+            setTimeout(() => {
+                const current = parseInt(coinTarget.textContent) || 0;
+                const newTotal = current + amount;
+                
+                let step = 0;
+                const steps = 15;
+                const interval = setInterval(() => {
+                    step++;
+                    coinTarget.textContent = Math.floor(current + (amount * step / steps));
+                    
+                    if (step >= steps) {
+                        clearInterval(interval);
+                        coinTarget.textContent = newTotal;
+                        gameState.coins = newTotal;
+                    }
+                }, 30);
+            }, 600);
+        }
+        
+        // O'yin logikasi
         function generateRewards() {
             const allRewards = [1, 2, 3, 4, 5, 6, 10, 50, 100];
             const shuffledRewards = [...allRewards].sort(() => Math.random() - 0.5);
@@ -1301,17 +853,11 @@
             } else {
                 const rand = Math.random() * 100;
                 
-                if (rand < 5) {
-                    winningValue = 5;
-                } else if (rand < 25) {
-                    winningValue = 4;
-                } else if (rand < 60) {
-                    winningValue = 3;
-                } else if (rand < 90) {
-                    winningValue = 2;
-                } else {
-                    winningValue = 1;
-                }
+                if (rand < 5) winningValue = 5;
+                else if (rand < 25) winningValue = 4;
+                else if (rand < 60) winningValue = 3;
+                else if (rand < 90) winningValue = 2;
+                else winningValue = 1;
             }
             
             const winningChest = Math.floor(Math.random() * 9);
@@ -1323,77 +869,36 @@
             };
         }
         
-        function playChestSound() {
-            // Simple sound effect using Web Audio API
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
-                
-                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.3);
-            } catch (e) {
-                console.log("Audio context not supported");
-            }
-        }
-        
         async function selectChest(index, element) {
             if (!gameState.isPlaying || gameState.selectedChest !== null) return;
             
             gameState.selectedChest = index;
-            element.style.pointerEvents = 'none';
-            
-            // Sandiqni tanlangan holatga o'tkazish
             element.classList.add('selected');
             
-            // Play sound effect
-            playChestSound();
-            
-            setTimeout(async () => {
-                const chestWrapper = element.querySelector('.chest-wrapper');
-                const treasureInside = element.querySelector('.treasure-inside');
-                const treasureReward = element.querySelector('.treasure-reward');
-                
-                // Sandiq qopqog'ini ochish
+            setTimeout(() => {
                 element.classList.add('chest-opened');
                 
                 const coinsWon = gameState.currentRewards.winningValue;
                 
-                // Mukofotni ko'rsatish
                 setTimeout(() => {
+                    const treasureInside = element.querySelector('.treasure-inside');
+                    const treasureReward = element.querySelector('.treasure-reward');
+                    
                     treasureInside.classList.add('show');
                     treasureReward.textContent = `+${coinsWon}`;
                     treasureReward.classList.add('show');
                     
-                    // Tanga animatsiyasi - sandiqdan balansga uchib boradi
+                    // Tanga animatsiyasi
                     const rect = element.getBoundingClientRect();
-                    const startX = rect.left + rect.width / 2;
-                    const startY = rect.top + rect.height / 2;
-                    
-                    // Tangalar uchib ketadi
-                    createCoinFlightAnimation(startX, startY, coinsWon);
-                    
-                    // Local coins qo'shish (animatsiya bilan)
-                    setTimeout(() => {
-                        gameState.coins += coinsWon;
-                    }, 800);
+                    createCoinFlightAnimation(rect.left + rect.width/2, rect.top + rect.height/2, coinsWon);
                     
                     // Boshqa sandiqlarni ochish
-                    setTimeout(() => revealOtherChests(coinsWon, index, element), 1500);
+                    setTimeout(() => revealOtherChests(coinsWon, index), 1200);
                 }, 500);
             }, 500);
         }
         
-        function revealOtherChests(coinsWon, selectedIndex, selectedElement) {
+        function revealOtherChests(coinsWon, selectedIndex) {
             const chests = document.querySelectorAll('.treasure-chest');
             
             chests.forEach((chest, i) => {
@@ -1409,11 +914,7 @@
                             treasureReward.textContent = `${gameState.currentRewards.rewards[i]}`;
                             treasureReward.classList.add('show');
                             treasureReward.style.opacity = '0.7';
-                            treasureReward.style.color = '#C0C0C0';
                         }, 300);
-                        
-                        chest.style.pointerEvents = 'none';
-                        chest.style.opacity = '0.7';
                     }, i * 200);
                 }
             });
@@ -1422,17 +923,11 @@
                 gameState.isPlaying = false;
                 gameState.totalPlays++;
                 
-                // Botga coins qo'shish (silent, foydalanuvchiga ko'rinmas)
-                addCoinsToBot(coinsWon).then(result => {
-                    if (!result.success) {
-                        console.log("Server error:", result.message);
-                    }
-                });
+                // Serverga coins qo'shish
+                addCoinsToBot(coinsWon);
                 
-                // Yangi tanga balansini olish
-                setTimeout(() => {
-                    getCoinBalance();
-                }, 1000);
+                // Yangi balans
+                setTimeout(() => getCoinBalance(), 1000);
                 
                 showMessage(`🎉 ${coinsWon} tanga topdingiz!`, 'success');
                 
@@ -1441,109 +936,67 @@
                 playButton.disabled = false;
                 playButton.innerHTML = '<span id="playButtonText">🎮 O\'YINNI BOSHLASH (10 💎)</span>';
                 
-                // Birinchi o'yin tugashi
                 if (gameState.isFirstPlay) {
                     gameState.isFirstPlay = false;
                 }
-                
-                // Tarixga yozish
-                gameState.gameHistory.push({
-                    timestamp: new Date().toISOString(),
-                    coinsWon: coinsWon,
-                    diamondsSpent: 10
-                });
-                
             }, 2000);
         }
         
         async function startGame() {
-            // Diamonds tekshirish
             if (gameState.diamonds < 10) {
-                showMessage('❌ Yetarli olmos mavjud emas! Kamida 10 💎 talab qilinadi.', 'error');
+                showMessage('❌ Yetarli olmos mavjud emas!', 'error');
                 return;
             }
             
-            // Botdan diamonds ayirish
             const removeResult = await removeDiamondsFromBot(10);
             
             if (!removeResult.success) {
-                const errorMsg = removeResult.message || 'Noma\'lum xato';
-                showError(`❌ Olmos ayirishda xatolik: ${errorMsg}`);
-                showMessage('❌ O\'yinni boshlab bo\'lmadi', 'error');
+                showError(`❌ Xato: ${removeResult.message || 'Noma\'lum xato'}`);
                 return;
             }
             
-            // Local diamonds yangilash
             gameState.diamonds -= 10;
             updateBalanceDisplay();
             
-            // O'yin holatini sozlash
             gameState.isPlaying = true;
             gameState.selectedChest = null;
             gameState.currentRewards = generateRewards();
             
-            // Sandiqlarni yaratish
             createTreasureChests();
             
-            // Tugmani o'chirish
             const playButton = document.getElementById('playButton');
             playButton.disabled = true;
             playButton.innerHTML = '<span id="playButtonText">⏳ SANDIQ TANLANG...</span>';
             
-            showMessage('✨ HAQIQIY SANDIQLARDAN BIRINI TANLANG!', 'info');
+            showMessage('✨ Sandiqlardan birini tanlang!', 'info');
         }
         
-        // ==================== DASTLABKI YUKLASH ====================
+        // Dasturni ishga tushirish
         async function init() {
-            // Qor effektini yaratish
-            createSnow();
-            
-            // Telegram Web App ni ishga tushirish
             initTelegram();
-            
-            // Audioni ishga tushirish
             initAudio();
             
-            // Foydalanuvchini olish
             gameState.user = getTelegramUser();
             
-            // Ikkala balansni olish
             const balancesResult = await getAllBalances();
             
             if (balancesResult.coinsSuccess && balancesResult.diamondsSuccess) {
-                showMessage(`✅ Balanslar yuklandi! ${gameState.diamonds} 💎 va ${gameState.coins} 🪙`, 'success');
+                showMessage(`✅ Balanslar yuklandi!`, 'success');
             } else {
-                showMessage('⚠️ Oflayn rejimda ishlamoqdasiz', 'info');
-                
-                // Offline rejim uchun boshlang'ich balans
+                showMessage('⚠️ Oflayn rejim', 'info');
                 if (!balancesResult.coinsSuccess) gameState.coins = 100;
                 if (!balancesResult.diamondsSuccess) gameState.diamonds = 50;
                 updateBalanceDisplay();
             }
             
-            // UI ni yangilash
             updateBalanceDisplay();
             createTreasureChests();
             
-            // O'ynash tugmasini ulash
-            const playButton = document.getElementById('playButton');
-            playButton.addEventListener('click', startGame);
+            document.getElementById('playButton').addEventListener('click', startGame);
             
-            // Touch events
-            playButton.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                playButton.style.transform = 'translateY(4px)';
-            }, { passive: false });
-            
-            playButton.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                playButton.style.transform = '';
-            }, { passive: false });
-            
-            showMessage('🎮 O\'YINNI BOSHLASH UCHUN TUGMANI BOSING!', 'info');
+            showMessage('🎮 O\'yinni boshlash uchun tugmani bosing!', 'info');
         }
         
-        // DOM yuklanganida ishga tushirish
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
