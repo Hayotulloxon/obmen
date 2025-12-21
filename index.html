@@ -235,11 +235,11 @@
         .treasure-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 10px;
             width: 100%;
             height: 100%;
             margin: 0 auto;
-            padding: 15px;
+            padding: 12px;
             background: 
                 radial-gradient(circle at center, rgba(26, 26, 46, 0.9) 0%, rgba(10, 10, 20, 0.95) 100%),
                 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><path d="M0,0 L100,100" stroke="%238B4513" stroke-width="0.5" stroke-opacity="0.1"/><path d="M100,0 L0,100" stroke="%238B4513" stroke-width="0.5" stroke-opacity="0.1"/></svg>');
@@ -264,143 +264,177 @@
             z-index: 1;
         }
         
-        /* Treasure Chest - Siz bergan dizayn */
-        .chest {
-            --gold: #FFD700;
-            --beige: #f4e2c8;
-            --black: #101010;
-            --blackLight: #2c2c3e;
-            --blackAlpha: rgba(0, 0, 0, 0.2);
-
+        /* Realistic Treasure Chest - Yangi dizayn */
+        .treasure-chest {
+            width: 100%;
+            height: 100%;
+            min-height: 85px;
             position: relative;
-            width: 100%;
-            height: 100%;
-            min-height: 80px;
-            border: none;
-            border-radius: 0.25rem;
-            display: flex;
-            background: var(--blackLight);
-            justify-content: center;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: pointer;
-            transform-style: preserve-3d;
             perspective: 1000px;
-            overflow: hidden;
-        }
-        
-        .chest * {
+            transition: all 0.3s ease;
             transform-style: preserve-3d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
-        .chest .insert {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .chest-container {
+            width: 100%;
             height: 100%;
-            width: 100%;
-            border: 0.8rem solid rgba(254, 178, 47, 0.15);
-            border-radius: 30px;
-            z-index: 1;
-            pointer-events: none;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
-        .chest .top {
-            height: 40%;
+        /* Chest Base - Yangi dizayn */
+        .chest-base {
+            position: absolute;
             width: 100%;
+            height: 65%;
+            bottom: 0;
             background: 
-                linear-gradient(145deg, #8B4513 0%, #A0522D 30%, #8B4513 60%, #A0522D 90%, #8B4513 100%),
-                radial-gradient(ellipse at 50% 20%, rgba(255, 215, 0, 0.6) 0%, rgba(255, 215, 0, 0.2) 25%, transparent 50%);
-            border: solid var(--gold);
-            border-width: 0 0.8rem 0.4rem;
-            border-radius: 0.25rem 0.25rem 0 0;
-            transform: rotateX(0);
-            transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 2.55);
-            transform-origin: bottom center;
-            z-index: 3;
+                linear-gradient(145deg, 
+                    #8B4513 0%, 
+                    #A0522D 30%, 
+                    #8B4513 60%,
+                    #A0522D 90%,
+                    #8B4513 100%
+                ),
+                radial-gradient(
+                    ellipse at 30% 70%,
+                    rgba(255, 215, 0, 0.3) 0%,
+                    rgba(255, 215, 0, 0.1) 20%,
+                    transparent 40%
+                ),
+                radial-gradient(
+                    ellipse at 70% 30%,
+                    rgba(255, 215, 0, 0.2) 0%,
+                    rgba(255, 215, 0, 0.05) 15%,
+                    transparent 30%
+                );
+            border: 0.5rem solid #FFD700;
+            border-width: 0 0.5rem 0.5rem;
+            border-radius: 0.25rem;
+            z-index: 1;
+            transform-style: preserve-3d;
             box-shadow: 
+                inset 0 -8px 20px rgba(0, 0, 0, 0.8),
                 inset 0 8px 20px rgba(255, 255, 255, 0.1),
-                inset 0 -8px 20px rgba(0, 0, 0, 0.6),
-                0 -4px 10px rgba(0, 0, 0, 0.7);
+                0 8px 20px rgba(0, 0, 0, 0.9);
         }
         
-        .chest .chest_keyholeBG {
-            z-index: 4;
+        /* Chest Lid - Yangi dizayn */
+        .chest-lid {
+            position: absolute;
+            width: 100%;
+            height: 35%;
+            top: 0;
+            background: 
+                linear-gradient(145deg, 
+                    #8B4513 0%, 
+                    #A0522D 25%, 
+                    #8B4513 50%,
+                    #A0522D 75%,
+                    #8B4513 100%
+                ),
+                radial-gradient(
+                    ellipse at 50% 20%,
+                    rgba(255, 215, 0, 0.6) 0%,
+                    rgba(255, 215, 0, 0.3) 25%,
+                    transparent 50%
+                );
+            border: 0.5rem solid #FFD700;
+            border-width: 0.5rem 0.5rem 0;
+            border-radius: 0.25rem 0.25rem 0 0;
+            transform-origin: bottom center;
+            transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 2.55);
+            z-index: 3;
+            transform-style: preserve-3d;
+            box-shadow: 
+                inset 0 8px 20px rgba(255, 255, 255, 0.2),
+                inset 0 -8px 20px rgba(0, 0, 0, 0.6),
+                0 -8px 20px rgba(0, 0, 0, 0.9);
+        }
+        
+        /* Realistic Keyhole - Yangi dizayn */
+        .chest-keyhole {
             position: absolute;
             top: 0;
             left: 50%;
-            width: 35%;
+            width: 40px;
             transform: translateX(-50%);
-            height: 25%;
+            height: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: var(--gold);
+            background-color: #FFD700;
             border-radius: 0 0 50% 50% / 0 0 100% 100%;
+            z-index: 4;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
         
-        .chest .chest_keyhole {
+        .chest-keyhole-inner {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
         
-        .chest .chest_keyhole::before {
+        .chest-keyhole-inner::before {
             content: "";
             display: block;
-            width: 25%;
-            height: 25%;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background-color: #8B0000;
             box-shadow: 0 0 8px rgba(139, 0, 0, 0.7);
         }
         
-        .chest .chest_keyhole::after {
+        .chest-keyhole-inner::after {
             content: "";
             display: block;
-            width: 8%;
-            height: 25%;
-            margin-top: -8%;
+            width: 4px;
+            height: 10px;
+            margin-top: -2px;
             background-color: #8B0000;
         }
         
-        .chest .bottom {
-            height: 60%;
-            width: 100%;
-            background: 
-                linear-gradient(145deg, #8B4513 0%, #A0522D 25%, #8B4513 50%, #A0522D 75%, #8B4513 100%),
-                radial-gradient(ellipse at 30% 70%, rgba(255, 215, 0, 0.3) 0%, rgba(255, 215, 0, 0.1) 20%, transparent 40%);
-            border: solid var(--gold);
-            border-width: 0.4rem 0.8rem 0;
-            border-radius: 0 0 0.25rem 0.25rem;
+        /* Metal corners - simplified */
+        .chest-corner {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: linear-gradient(135deg, 
+                #FFD700 0%,
+                #DAA520 50%,
+                #B8860B 100%);
+            border: 2px solid #8B4513;
+            transform: rotate(45deg);
             z-index: 2;
-            box-shadow: 
-                inset 0 -8px 20px rgba(0, 0, 0, 0.7),
-                inset 0 8px 20px rgba(255, 255, 255, 0.05),
-                0 4px 10px rgba(0, 0, 0, 0.7);
         }
+        
+        .corner-tl { top: 5px; left: 5px; }
+        .corner-tr { top: 5px; right: 5px; }
+        .corner-bl { bottom: 5px; left: 5px; }
+        .corner-br { bottom: 5px; right: 5px; }
         
         /* Treasure Inside */
         .treasure-inside {
             position: absolute;
             width: 100%;
-            height: 60%;
+            height: 65%;
             bottom: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            z-index: 1;
+            z-index: 2;
             opacity: 0;
             transition: opacity 0.6s ease;
             background: radial-gradient(circle at center, 
                 rgba(255, 215, 0, 0.3) 0%,
                 rgba(255, 215, 0, 0.1) 30%,
                 transparent 70%);
-            border-radius: 0 0 0.25rem 0.25rem;
         }
         
         .treasure-reward {
@@ -411,19 +445,15 @@
                 2px 2px 0 #000,
                 0 0 15px rgba(255, 215, 0, 0.9),
                 0 0 30px rgba(255, 215, 0, 0.6);
-            transform: translateY(20px) scale(0.8);
+            transform: translateY(25px) scale(0.8);
             transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             z-index: 1;
         }
         
         /* Chest States */
-        .chest-opened .top {
-            transform: rotateX(48deg) translateY(-15%);
-        }
-        
-        .chest-opened .chest {
-            transform: translateY(-5px);
+        .chest-opened .chest-lid {
+            transform: rotateX(48deg) translateY(-10px);
         }
         
         .treasure-inside.show {
@@ -435,21 +465,22 @@
         }
         
         /* Chest Interactions */
-        .chest:hover {
+        .treasure-chest:hover {
             transform: translateY(-5px);
         }
         
-        .chest:active {
+        .treasure-chest:active .chest-container {
             transform: scale(0.95);
             transition: transform 0.1s;
         }
         
-        .chest.selected {
+        .treasure-chest.selected {
             filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7));
         }
         
-        .chest:hover .top {
-            transform: rotateX(10deg);
+        /* Chest container hover effect */
+        .treasure-chest:hover .chest-container {
+            transform: translateY(-10px);
         }
         
         /* Footer */
@@ -659,16 +690,26 @@
         /* Responsive Design for All Phones */
         @media (max-width: 480px) {
             .treasure-grid {
-                gap: 10px;
+                gap: 8px;
                 padding: 10px;
             }
             
-            .chest {
-                min-height: 70px;
+            .treasure-chest {
+                min-height: 75px;
+            }
+            
+            .chest-keyhole {
+                width: 35px;
+                height: 18px;
+            }
+            
+            .chest-corner {
+                width: 12px;
+                height: 12px;
             }
             
             .treasure-reward {
-                font-size: 18px;
+                font-size: 20px;
             }
             
             .play-button {
@@ -702,28 +743,26 @@
         
         @media (max-width: 380px) {
             .treasure-grid {
-                gap: 8px;
+                gap: 6px;
                 padding: 8px;
             }
             
-            .chest {
-                min-height: 60px;
+            .treasure-chest {
+                min-height: 65px;
             }
             
-            .chest .insert {
-                border-width: 0.6rem;
+            .chest-keyhole {
+                width: 30px;
+                height: 15px;
             }
             
-            .chest .top {
-                border-width: 0 0.6rem 0.3rem;
-            }
-            
-            .chest .bottom {
-                border-width: 0.3rem 0.6rem 0;
+            .chest-corner {
+                width: 10px;
+                height: 10px;
             }
             
             .treasure-reward {
-                font-size: 16px;
+                font-size: 18px;
             }
             
             .play-button {
@@ -763,8 +802,8 @@
         }
         
         @media (max-height: 700px) {
-            .chest {
-                min-height: 55px;
+            .treasure-chest {
+                min-height: 60px;
             }
             
             .header {
@@ -781,12 +820,12 @@
         }
         
         @media (max-height: 600px) {
-            .chest {
-                min-height: 50px;
+            .treasure-chest {
+                min-height: 55px;
             }
             
             .treasure-reward {
-                font-size: 14px;
+                font-size: 16px;
             }
             
             .play-button {
@@ -873,8 +912,8 @@
                 border-right: 2px solid #8B4513;
             }
             
-            .chest {
-                min-height: 100px;
+            .treasure-chest {
+                min-height: 110px;
             }
             
             .game-title h1 {
@@ -925,7 +964,7 @@
         }
         
         /* Touch optimization */
-        .chest {
+        .treasure-chest {
             -webkit-touch-callout: none;
             touch-action: manipulation;
         }
@@ -1362,7 +1401,7 @@
             }, 4000);
         }
         
-        // Haqiqiy sandiqlarni yaratish - Siz bergan dizayn bilan
+        // Haqiqiy sandiqlarni yaratish - Yangi dizayn bilan
         function createTreasureChests() {
             const grid = document.getElementById('treasureGrid');
             grid.innerHTML = '';
@@ -1382,28 +1421,67 @@
             
             for (let i = 0; i < 9; i++) {
                 const chest = document.createElement('div');
-                chest.className = 'chest';
+                chest.className = 'treasure-chest';
                 chest.dataset.index = i;
                 
                 const woodColor = woodColors[i];
                 
                 chest.innerHTML = `
-                    <div class="insert"></div>
-                    <div class="top" style="
-                        background: 
-                            linear-gradient(145deg, ${woodColor.base} 0%, ${woodColor.highlight} 30%, ${woodColor.base} 60%, ${woodColor.highlight} 90%, ${woodColor.base} 100%),
-                            radial-gradient(ellipse at 50% 20%, rgba(255, 215, 0, 0.6) 0%, rgba(255, 215, 0, 0.2) 25%, transparent 50%);
-                    "></div>
-                    <div class="chest_keyholeBG">
-                        <div class="chest_keyhole"></div>
-                    </div>
-                    <div class="bottom" style="
-                        background: 
-                            linear-gradient(145deg, ${woodColor.base} 0%, ${woodColor.highlight} 25%, ${woodColor.base} 50%, ${woodColor.highlight} 75%, ${woodColor.base} 100%),
-                            radial-gradient(ellipse at 30% 70%, rgba(255, 215, 0, 0.3) 0%, rgba(255, 215, 0, 0.1) 20%, transparent 40%);
-                    "></div>
-                    <div class="treasure-inside">
-                        <div class="treasure-reward"></div>
+                    <div class="chest-container">
+                        <div class="chest-base" style="
+                            background: 
+                                linear-gradient(145deg, 
+                                    ${woodColor.base} 0%, 
+                                    ${woodColor.highlight} 30%, 
+                                    ${woodColor.base} 60%,
+                                    ${woodColor.highlight} 90%,
+                                    ${woodColor.base} 100%
+                                ),
+                                radial-gradient(
+                                    ellipse at 30% 70%,
+                                    rgba(255, 215, 0, 0.3) 0%,
+                                    rgba(255, 215, 0, 0.1) 20%,
+                                    transparent 40%
+                                ),
+                                radial-gradient(
+                                    ellipse at 70% 30%,
+                                    rgba(255, 215, 0, 0.2) 0%,
+                                    rgba(255, 215, 0, 0.05) 15%,
+                                    transparent 30%
+                                );
+                            border-color: #FFD700;
+                        ">
+                            <div class="chest-corner corner-tl"></div>
+                            <div class="chest-corner corner-tr"></div>
+                            <div class="chest-corner corner-bl"></div>
+                            <div class="chest-corner corner-br"></div>
+                        </div>
+                        <div class="chest-lid" style="
+                            background: 
+                                linear-gradient(145deg, 
+                                    ${woodColor.base} 0%, 
+                                    ${woodColor.highlight} 25%, 
+                                    ${woodColor.base} 50%,
+                                    ${woodColor.highlight} 75%,
+                                    ${woodColor.base} 100%
+                                ),
+                                radial-gradient(
+                                    ellipse at 50% 20%,
+                                    rgba(255, 215, 0, 0.6) 0%,
+                                    rgba(255, 215, 0, 0.3) 25%,
+                                    transparent 50%
+                                );
+                            border-color: #FFD700;
+                        ">
+                            <div class="chest-keyhole">
+                                <div class="chest-keyhole-inner"></div>
+                            </div>
+                            <div class="chest-corner corner-tl"></div>
+                            <div class="chest-corner corner-tr"></div>
+                        </div>
+                        <div class="treasure-inside">
+                            <div class="treasure-reward"></div>
+                        </div>
                     </div>
                 `;
                 
@@ -1646,7 +1724,7 @@
         }
         
         function revealOtherChests(coinsWon, selectedIndex) {
-            const chests = document.querySelectorAll('.chest');
+            const chests = document.querySelectorAll('.treasure-chest');
             
             chests.forEach((chest, i) => {
                 if (i !== selectedIndex) {
