@@ -15,11 +15,6 @@
             --real-red: linear-gradient(135deg, #8B0000 0%, #B22222 50%, #8B0000 100%);
             --shadow-heavy: 0 15px 35px rgba(0, 0, 0, 0.5);
             --shadow-light: 0 8px 20px rgba(0, 0, 0, 0.3);
-            --chest-gold: #FFD700;
-            --chest-beige: #f4e2c8;
-            --chest-black: #101010;
-            --chest-blackLight: #707696;
-            --chest-blackAlpha: rgba(0, 0, 0, 0.2);
         }
         
         * {
@@ -269,154 +264,140 @@
             z-index: 1;
         }
         
-        /* YANGI MINIMALIST SANDIQ DIZAYNI */
-        .treasure-chest {
+        /* Treasure Chest - Siz bergan dizayn */
+        .chest {
             --gold: #FFD700;
             --beige: #f4e2c8;
             --black: #101010;
-            --blackLight: #707696;
+            --blackLight: #2c2c3e;
             --blackAlpha: rgba(0, 0, 0, 0.2);
 
             position: relative;
             width: 100%;
             height: 100%;
-            min-height: 85px;
+            min-height: 80px;
             border: none;
-            border-radius: 8px;
+            border-radius: 0.25rem;
             display: flex;
             background: var(--blackLight);
             justify-content: center;
             flex-direction: column;
-            justify-content: space-between;
             align-items: center;
-            transition: all 0.3s ease;
+            transition: all 0.8s ease;
             cursor: pointer;
-            perspective: 1000px;
             transform-style: preserve-3d;
+            perspective: 1000px;
             overflow: hidden;
         }
-
-        .chest-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
+        
+        .chest * {
             transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
-        .chest-insert {
+        
+        .chest .insert {
             position: absolute;
             top: 0;
             left: 0;
             height: 100%;
             width: 100%;
-            border: 10px solid rgba(254, 178, 47, 0.25);
+            border: 1rem solid rgba(254, 178, 47, 0.25);
             border-radius: 50px;
             z-index: 1;
+            pointer-events: none;
         }
-
-        .chest-top {
-            position: absolute;
-            top: 0;
-            width: 100%;
+        
+        .chest .top {
             height: 35%;
-            background: linear-gradient(145deg, #8B4513 0%, #A0522D 30%, #8B4513 70%);
+            width: 100%;
+            background: #8B4513;
             border: solid var(--gold);
-            border-width: 0 12px 6px;
-            border-radius: 8px 8px 0 0;
+            border-width: 0 1rem 0.5rem;
+            border-radius: 0.25rem 0.25rem 0 0;
             transform: rotateX(0);
-            transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 2.55);
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 2.55);
             transform-origin: bottom center;
             z-index: 3;
+            box-shadow: 
+                inset 0 8px 20px rgba(255, 255, 255, 0.15),
+                inset 0 -8px 20px rgba(0, 0, 0, 0.6),
+                0 -4px 10px rgba(0, 0, 0, 0.7);
         }
-
-        .chest-bottom {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 65%;
-            background: linear-gradient(145deg, #8B4513 0%, #A0522D 25%, #8B4513 50%);
-            border: solid var(--gold);
-            border-width: 6px 12px 0;
-            border-radius: 0 0 8px 8px;
-            z-index: 2;
-        }
-
-        .chest-keyholeBG {
+        
+        .chest .chest_keyholeBG {
             z-index: 4;
             position: absolute;
             top: 0;
             left: 50%;
-            width: 40px;
+            width: 40%;
             transform: translateX(-50%);
-            height: 20px;
+            height: 20%;
             display: flex;
             justify-content: center;
             align-items: center;
             background-color: var(--gold);
             border-radius: 0 0 50% 50% / 0 0 100% 100%;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
-
-        .chest-keyhole {
+        
+        .chest .chest_keyhole {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-
-        .chest-keyhole::before {
+        
+        .chest .chest_keyhole::before {
             content: "";
             display: block;
-            width: 8px;
-            height: 8px;
+            width: 0.75rem;
+            height: 0.75rem;
             border-radius: 50%;
             background-color: var(--black);
-            box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
         }
-
-        .chest-keyhole::after {
+        
+        .chest .chest_keyhole::after {
             content: "";
             display: block;
-            width: 3px;
-            height: 10px;
-            margin-top: -2px;
+            width: 0.25rem;
+            height: 0.75rem;
+            margin-top: -0.25rem;
             background-color: var(--black);
-            border-radius: 1px;
         }
-
-        /* Metal bands */
-        .chest-band {
-            position: absolute;
-            width: 86%;
-            height: 6px;
-            left: 7%;
-            background: linear-gradient(to right, 
-                transparent 5%,
-                #C0C0C0 5%,
-                #808080 50%,
-                #C0C0C0 95%,
-                transparent 95%);
-            border-radius: 3px;
-            border: 1px solid #404040;
-            box-shadow: 
-                inset 0 1px 3px rgba(0, 0, 0, 0.8),
-                0 1px 3px rgba(255, 255, 255, 0.1);
+        
+        .chest .bottom {
+            height: 65%;
+            width: 100%;
+            background: #8B4513;
+            border: solid var(--gold);
+            border-width: 0.5rem 1rem 0;
+            border-radius: 0 0 0.25rem 0.25rem;
             z-index: 2;
+            box-shadow: 
+                inset 0 -8px 20px rgba(0, 0, 0, 0.8),
+                inset 0 8px 20px rgba(255, 255, 255, 0.1),
+                0 4px 10px rgba(0, 0, 0, 0.7);
         }
-
-        .chest-band.top {
-            top: 25%;
+        
+        /* Chest hover effects - aynan siz bergan */
+        .chest:hover {
+            height: calc(100% + 10px);
+            transform: translateY(-5px);
+            background-color: rgba(254, 178, 31, 0.27);
         }
-
-        .chest-band.middle {
-            top: 50%;
-            transform: translateY(-50%);
+        
+        .chest:hover .top {
+            transform: rotateX(48deg) translateY(-10px);
         }
-
-        .chest-band.bottom {
-            bottom: 25%;
+        
+        /* Chest opened state */
+        .chest-opened {
+            transform: translateY(-5px);
+            background-color: rgba(254, 178, 31, 0.27);
         }
-
+        
+        .chest-opened .top {
+            transform: rotateX(48deg) translateY(-10px);
+        }
+        
         /* Treasure Inside */
         .treasure-inside {
             position: absolute;
@@ -434,6 +415,7 @@
                 rgba(255, 215, 0, 0.3) 0%,
                 rgba(255, 215, 0, 0.1) 30%,
                 transparent 70%);
+            border-radius: 0 0 0.25rem 0.25rem;
         }
         
         .treasure-reward {
@@ -444,17 +426,13 @@
                 2px 2px 0 #000,
                 0 0 15px rgba(255, 215, 0, 0.9),
                 0 0 30px rgba(255, 215, 0, 0.6);
-            transform: translateY(25px) scale(0.8);
+            transform: translateY(20px) scale(0.8);
             transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             z-index: 1;
         }
         
         /* Chest States */
-        .chest-opened .chest-top {
-            transform: rotateX(-115deg) translateY(-20px);
-        }
-        
         .treasure-inside.show {
             opacity: 1;
         }
@@ -463,18 +441,14 @@
             transform: translateY(0) scale(1);
         }
         
-        /* Chest Interactions */
-        .treasure-chest:active .chest-container {
-            transform: scale(0.95);
-            transition: transform 0.1s;
-        }
-        
-        .treasure-chest.selected {
+        /* Chest selected */
+        .chest.selected {
             filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7));
         }
         
-        .treasure-chest:hover {
-            background-color: rgba(254, 178, 47, 0.2);
+        .chest:active {
+            transform: scale(0.98);
+            transition: transform 0.1s;
         }
         
         /* Footer */
@@ -688,12 +662,40 @@
                 padding: 10px;
             }
             
-            .treasure-chest {
-                min-height: 75px;
+            .chest {
+                min-height: 70px;
+            }
+            
+            .chest .insert {
+                border-width: 0.8rem;
+            }
+            
+            .chest .top {
+                border-width: 0 0.8rem 0.4rem;
+            }
+            
+            .chest .bottom {
+                border-width: 0.4rem 0.8rem 0;
+            }
+            
+            .chest .chest_keyholeBG {
+                width: 35%;
+                height: 18%;
+            }
+            
+            .chest .chest_keyhole::before {
+                width: 0.6rem;
+                height: 0.6rem;
+            }
+            
+            .chest .chest_keyhole::after {
+                width: 0.2rem;
+                height: 0.6rem;
+                margin-top: -0.2rem;
             }
             
             .treasure-reward {
-                font-size: 20px;
+                font-size: 18px;
             }
             
             .play-button {
@@ -731,27 +733,42 @@
                 padding: 8px;
             }
             
-            .treasure-chest {
-                min-height: 65px;
+            .chest {
+                min-height: 60px;
             }
             
-            .chest-keyholeBG {
-                width: 35px;
-                height: 18px;
+            .chest .insert {
+                border-width: 0.6rem;
             }
             
-            .chest-keyhole::before {
-                width: 7px;
-                height: 7px;
+            .chest .top {
+                border-width: 0 0.6rem 0.3rem;
+                height: 32%;
             }
             
-            .chest-keyhole::after {
-                width: 2px;
-                height: 8px;
+            .chest .bottom {
+                border-width: 0.3rem 0.6rem 0;
+                height: 68%;
+            }
+            
+            .chest .chest_keyholeBG {
+                width: 30%;
+                height: 16%;
+            }
+            
+            .chest .chest_keyhole::before {
+                width: 0.5rem;
+                height: 0.5rem;
+            }
+            
+            .chest .chest_keyhole::after {
+                width: 0.15rem;
+                height: 0.5rem;
+                margin-top: -0.15rem;
             }
             
             .treasure-reward {
-                font-size: 18px;
+                font-size: 16px;
             }
             
             .play-button {
@@ -791,8 +808,8 @@
         }
         
         @media (max-height: 700px) {
-            .treasure-chest {
-                min-height: 60px;
+            .chest {
+                min-height: 55px;
             }
             
             .header {
@@ -809,12 +826,12 @@
         }
         
         @media (max-height: 600px) {
-            .treasure-chest {
-                min-height: 55px;
+            .chest {
+                min-height: 50px;
             }
             
             .treasure-reward {
-                font-size: 16px;
+                font-size: 14px;
             }
             
             .play-button {
@@ -901,8 +918,8 @@
                 border-right: 2px solid #8B4513;
             }
             
-            .treasure-chest {
-                min-height: 110px;
+            .chest {
+                min-height: 100px;
             }
             
             .game-title h1 {
@@ -953,7 +970,7 @@
         }
         
         /* Touch optimization */
-        .treasure-chest {
+        .chest {
             -webkit-touch-callout: none;
             touch-action: manipulation;
         }
@@ -1019,7 +1036,114 @@
         
         <div class="game-area">
             <div id="treasureGrid" class="treasure-grid">
-                <!-- Real sandiqlar bu yerda yaratiladi -->
+                <!-- 9 ta sandiq yaratiladi -->
+                <div class="chest" data-index="0">
+                    <div class="insert"></div>
+                    <div class="top" style="background: #8B4513;"></div>
+                    <div class="chest_keyholeBG">
+                        <div class="chest_keyhole"></div>
+                    </div>
+                    <div class="bottom" style="background: #8B4513;"></div>
+                    <div class="treasure-inside">
+                        <div class="treasure-reward"></div>
+                    </div>
+                </div>
+                
+                <div class="chest" data-index="1">
+                    <div class="insert"></div>
+                    <div class="top" style="background: #654321;"></div>
+                    <div class="chest_keyholeBG">
+                        <div class="chest_keyhole"></div>
+                    </div>
+                    <div class="bottom" style="background: #654321;"></div>
+                    <div class="treasure-inside">
+                        <div class="treasure-reward"></div>
+                    </div>
+                </div>
+                
+                <div class="chest" data-index="2">
+                    <div class="insert"></div>
+                    <div class="top" style="background: #D2691E;"></div>
+                    <div class="chest_keyholeBG">
+                        <div class="chest_keyhole"></div>
+                    </div>
+                    <div class="bottom" style="background: #D2691E;"></div>
+                    <div class="treasure-inside">
+                        <div class="treasure-reward"></div>
+                    </div>
+                </div>
+                
+                <div class="chest" data-index="3">
+                    <div class="insert"></div>
+                    <div class="top" style="background: #5D4037;"></div>
+                    <div class="chest_keyholeBG">
+                        <div class="chest_keyhole"></div>
+                    </div>
+                    <div class="bottom" style="background: #5D4037;"></div>
+                    <div class="treasure-inside">
+                        <div class="treasure-reward"></div>
+                    </div>
+                </div>
+                
+                <div class="chest" data-index="4">
+                    <div class="insert"></div>
+                    <div class="top" style="background: #A0522D;"></div>
+                    <div class="chest_keyholeBG">
+                        <div class="chest_keyhole"></div>
+                    </div>
+                    <div class="bottom" style="background: #A0522D;"></div>
+                    <div class="treasure-inside">
+                        <div class="treasure-reward"></div>
+                    </div>
+                </div>
+                
+                <div class="chest" data-index="5">
+                    <div class="insert"></div>
+                    <div class="top" style="background: #8B4513;"></div>
+                    <div class="chest_keyholeBG">
+                        <div class="chest_keyhole"></div>
+                    </div>
+                    <div class="bottom" style="background: #8B4513;"></div>
+                    <div class="treasure-inside">
+                        <div class="treasure-reward"></div>
+                    </div>
+                </div>
+                
+                <div class="chest" data-index="6">
+                    <div class="insert"></div>
+                    <div class="top" style="background: #654321;"></div>
+                    <div class="chest_keyholeBG">
+                        <div class="chest_keyhole"></div>
+                    </div>
+                    <div class="bottom" style="background: #654321;"></div>
+                    <div class="treasure-inside">
+                        <div class="treasure-reward"></div>
+                    </div>
+                </div>
+                
+                <div class="chest" data-index="7">
+                    <div class="insert"></div>
+                    <div class="top" style="background: #D2691E;"></div>
+                    <div class="chest_keyholeBG">
+                        <div class="chest_keyhole"></div>
+                    </div>
+                    <div class="bottom" style="background: #D2691E;"></div>
+                    <div class="treasure-inside">
+                        <div class="treasure-reward"></div>
+                    </div>
+                </div>
+                
+                <div class="chest" data-index="8">
+                    <div class="insert"></div>
+                    <div class="top" style="background: #5D4037;"></div>
+                    <div class="chest_keyholeBG">
+                        <div class="chest_keyhole"></div>
+                    </div>
+                    <div class="bottom" style="background: #5D4037;"></div>
+                    <div class="treasure-inside">
+                        <div class="treasure-reward"></div>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -1390,63 +1514,11 @@
             }, 4000);
         }
         
-        // Haqiqiy sandiqlarni yaratish - YANGI DIZAYN
-        function createTreasureChests() {
-            const grid = document.getElementById('treasureGrid');
-            grid.innerHTML = '';
+        // Sandiqlarni ishlatish
+        function setupChests() {
+            const chests = document.querySelectorAll('.chest');
             
-            // Har xil yog'och ranglari
-            const woodColors = [
-                { base: '#8B4513', light: '#A0522D' }, // Classic oak
-                { base: '#654321', light: '#8B4513' }, // Dark walnut
-                { base: '#D2691E', light: '#CD853F' }, // Light oak
-                { base: '#5D4037', light: '#795548' }, // Dark wood
-                { base: '#A0522D', light: '#D2691E' }, // Redwood
-                { base: '#8B4513', light: '#A0522D' },
-                { base: '#654321', light: '#8B4513' },
-                { base: '#D2691E', light: '#CD853F' },
-                { base: '#5D4037', light: '#795548' }
-            ];
-            
-            for (let i = 0; i < 9; i++) {
-                const chest = document.createElement('div');
-                chest.className = 'treasure-chest';
-                chest.dataset.index = i;
-                
-                const woodColor = woodColors[i];
-                
-                // YANGI MINIMALIST SANDIQ HTML
-                chest.innerHTML = `
-                    <div class="chest-container">
-                        <div class="chest-insert"></div>
-                        <div class="chest-bottom" style="
-                            background: linear-gradient(145deg, 
-                                ${woodColor.base} 0%, 
-                                ${woodColor.light} 25%, 
-                                ${woodColor.base} 50%);
-                            border-color: #FFD700;
-                        ">
-                            <div class="chest-band top"></div>
-                            <div class="chest-band middle"></div>
-                            <div class="chest-band bottom"></div>
-                        </div>
-                        <div class="chest-top" style="
-                            background: linear-gradient(145deg, 
-                                ${woodColor.base} 0%, 
-                                ${woodColor.light} 30%, 
-                                ${woodColor.base} 70%);
-                            border-color: #FFD700;
-                        ">
-                            <div class="chest-keyholeBG">
-                                <div class="chest-keyhole"></div>
-                            </div>
-                        </div>
-                        <div class="treasure-inside">
-                            <div class="treasure-reward"></div>
-                        </div>
-                    </div>
-                `;
-                
+            chests.forEach((chest, i) => {
                 // Touch events for mobile
                 chest.addEventListener('touchstart', (e) => {
                     e.preventDefault();
@@ -1466,9 +1538,7 @@
                         selectChest(i, chest);
                     }
                 });
-                
-                grid.appendChild(chest);
-            }
+            });
         }
         
         // Haqiqiy tanga animatsiyasi
@@ -1686,7 +1756,7 @@
         }
         
         function revealOtherChests(coinsWon, selectedIndex) {
-            const chests = document.querySelectorAll('.treasure-chest');
+            const chests = document.querySelectorAll('.chest');
             
             chests.forEach((chest, i) => {
                 if (i !== selectedIndex) {
@@ -1784,7 +1854,19 @@
             gameState.selectedChest = null;
             gameState.currentRewards = generateRewards();
             
-            createTreasureChests();
+            // Reset sandiqlar
+            const chests = document.querySelectorAll('.chest');
+            chests.forEach(chest => {
+                chest.classList.remove('chest-opened', 'selected');
+                const treasureInside = chest.querySelector('.treasure-inside');
+                const treasureReward = chest.querySelector('.treasure-reward');
+                treasureInside.classList.remove('show');
+                treasureReward.classList.remove('show');
+                treasureReward.textContent = '';
+                treasureReward.style.opacity = '';
+                treasureReward.style.color = '';
+                treasureReward.style.textShadow = '';
+            });
             
             const playButton = document.getElementById('playButton');
             playButton.disabled = true;
@@ -1830,7 +1912,7 @@
             }
             
             updateBalanceDisplay();
-            createTreasureChests();
+            setupChests();
             
             document.getElementById('playButton').addEventListener('click', startGame);
             
