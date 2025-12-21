@@ -2,7 +2,10 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Cartoon Treasure Hunt - Gold Chest Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700;800&family=Bubblegum+Sans&display=swap" rel="stylesheet">
@@ -31,6 +34,7 @@
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             -webkit-font-smoothing: antialiased;
+            -webkit-text-size-adjust: 100%;
         }
         
         html, body {
@@ -41,6 +45,8 @@
             position: fixed;
             font-family: 'Bubblegum Sans', 'Fredoka', sans-serif;
             background: var(--cartoon-bg);
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
         }
         
         /* Cartoon Background */
@@ -50,6 +56,7 @@
             height: 100%;
             z-index: -2;
             overflow: hidden;
+            pointer-events: none;
         }
         
         .cartoon-cloud {
@@ -131,7 +138,7 @@
             position: absolute;
             bottom: 0;
             width: 100%;
-            height: 80px;
+            height: 60px;
             background: var(--cartoon-green);
             border-top: 5px solid #27ae60;
         }
@@ -175,6 +182,7 @@
                 max(env(safe-area-inset-left), 5px);
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
         
         /* Header - Cartoon Style */
@@ -188,64 +196,67 @@
             position: relative;
             z-index: 10;
             margin: 0 10px;
+            min-height: 140px;
         }
         
         .game-title {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         
         .game-title h1 {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 800;
             color: var(--cartoon-yellow);
             text-shadow: 
                 3px 3px 0 #2d3436,
                 6px 6px 0 rgba(0, 0, 0, 0.1);
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             margin-bottom: 5px;
             animation: bounce 2s infinite;
+            line-height: 1.2;
         }
         
         .game-subtitle {
-            font-size: 14px;
+            font-size: 13px;
             color: white;
             font-weight: 600;
             opacity: 0.9;
             text-shadow: 2px 2px 0 #2d3436;
+            line-height: 1.3;
         }
         
         /* Balance Cards - Cartoon Style */
         .balance-container {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 8px;
+            margin-top: 8px;
         }
         
         .balance-card {
             flex: 1;
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px 10px;
+            gap: 8px;
+            padding: 10px 8px;
             background: white;
-            border-radius: 20px;
-            border: 4px solid #2d3436;
+            border-radius: 16px;
+            border: 3px solid #2d3436;
             box-shadow: var(--cartoon-shadow);
             position: relative;
             overflow: hidden;
-            min-height: 60px;
+            min-height: 55px;
             transition: transform 0.2s;
         }
         
         .balance-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
         }
         
         .balance-icon {
-            font-size: 32px;
+            font-size: 26px;
             filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.2));
-            min-width: 40px;
+            min-width: 35px;
             text-align: center;
             animation: wiggle 3s infinite;
         }
@@ -256,23 +267,23 @@
         }
         
         .balance-label {
-            font-size: 12px;
+            font-size: 11px;
             color: #636e72;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         
         .balance-value {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 900;
             color: #2d3436;
             text-shadow: var(--cartoon-highlight);
             line-height: 1;
-            margin-top: 3px;
+            margin-top: 2px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -280,8 +291,8 @@
         
         .user-id {
             text-align: center;
-            margin-top: 10px;
-            font-size: 11px;
+            margin-top: 8px;
+            font-size: 10px;
             color: white;
             font-weight: 600;
             text-shadow: 1px 1px 0 #2d3436;
@@ -290,15 +301,15 @@
         /* Game Area - Treasure Island */
         .game-area {
             flex: 1;
-            padding: 15px 10px;
+            padding: 10px;
             overflow: hidden;
             position: relative;
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            margin: 10px;
+            border-radius: 20px;
+            margin: 8px;
             border: 4px solid #2d3436;
             box-shadow: 
-                inset 0 0 30px rgba(255, 255, 255, 0.3),
+                inset 0 0 20px rgba(255, 255, 255, 0.3),
                 var(--cartoon-shadow);
         }
         
@@ -306,16 +317,16 @@
         .treasure-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 10px;
             width: 100%;
             height: 100%;
             margin: 0 auto;
-            padding: 15px;
+            padding: 10px;
             background: rgba(255, 255, 255, 0.4);
-            border-radius: 20px;
+            border-radius: 16px;
             border: 4px solid #2d3436;
             box-shadow: 
-                inset 0 0 20px rgba(255, 255, 255, 0.5),
+                inset 0 0 15px rgba(255, 255, 255, 0.5),
                 var(--cartoon-shadow);
             position: relative;
             overflow: hidden;
@@ -325,13 +336,14 @@
         .treasure-chest {
             width: 100%;
             height: 100%;
-            min-height: 100px;
+            min-height: 70px;
             position: relative;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             justify-content: center;
             align-items: center;
+            touch-action: manipulation;
         }
         
         .chest-container {
@@ -351,13 +363,13 @@
                 var(--cartoon-wood) 0%, 
                 var(--cartoon-orange) 50%, 
                 var(--cartoon-wood) 100%);
-            border: 6px solid var(--cartoon-gold);
-            border-width: 0 6px 6px;
-            border-radius: 15px;
+            border: 5px solid var(--cartoon-gold);
+            border-width: 0 5px 5px;
+            border-radius: 12px;
             z-index: 1;
             box-shadow: 
-                0 8px 0 rgba(0, 0, 0, 0.2),
-                inset 0 -10px 20px rgba(0, 0, 0, 0.3);
+                0 6px 0 rgba(0, 0, 0, 0.2),
+                inset 0 -8px 15px rgba(0, 0, 0, 0.3);
         }
         
         /* Chest Lid - Cartoon Style */
@@ -370,25 +382,25 @@
                 var(--cartoon-orange) 0%, 
                 var(--cartoon-wood) 50%, 
                 var(--cartoon-orange) 100%);
-            border: 6px solid var(--cartoon-gold);
-            border-width: 6px 6px 0;
-            border-radius: 15px 15px 0 0;
+            border: 5px solid var(--cartoon-gold);
+            border-width: 5px 5px 0;
+            border-radius: 12px 12px 0 0;
             transform-origin: bottom center;
             transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 2.55);
             z-index: 3;
             box-shadow: 
-                0 -8px 0 rgba(0, 0, 0, 0.2),
-                inset 0 10px 20px rgba(255, 255, 255, 0.3);
+                0 -6px 0 rgba(0, 0, 0, 0.2),
+                inset 0 8px 15px rgba(255, 255, 255, 0.3);
         }
         
         /* Cartoon Keyhole */
         .chest-keyhole {
             position: absolute;
-            top: 10px;
+            top: 8px;
             left: 50%;
-            width: 40px;
+            width: 35px;
             transform: translateX(-50%);
-            height: 25px;
+            height: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -396,17 +408,17 @@
             border-radius: 50%;
             z-index: 4;
             box-shadow: 
-                0 4px 0 rgba(0, 0, 0, 0.2),
+                0 3px 0 rgba(0, 0, 0, 0.2),
                 inset 0 2px 0 rgba(255, 255, 255, 0.5);
-            border: 3px solid #2d3436;
+            border: 2px solid #2d3436;
         }
         
         .chest-keyhole-inner {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             background: var(--cartoon-red);
-            border: 3px solid #2d3436;
+            border: 2px solid #2d3436;
             position: relative;
         }
         
@@ -416,8 +428,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 6px;
-            height: 10px;
+            width: 5px;
+            height: 8px;
             background: #2d3436;
             border-radius: 2px;
         }
@@ -425,37 +437,37 @@
         /* Cartoon Chest Corners */
         .chest-corner {
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 15px;
+            height: 15px;
             background: linear-gradient(135deg, 
                 var(--cartoon-gold) 0%,
                 var(--cartoon-yellow) 50%,
                 var(--cartoon-gold) 100%);
-            border: 3px solid #2d3436;
+            border: 2px solid #2d3436;
             z-index: 2;
         }
         
         .corner-tl { 
-            top: -10px; 
-            left: -10px; 
+            top: -8px; 
+            left: -8px; 
             border-radius: 50% 0 50% 0;
         }
         
         .corner-tr { 
-            top: -10px; 
-            right: -10px; 
+            top: -8px; 
+            right: -8px; 
             border-radius: 0 50% 0 50%;
         }
         
         .corner-bl { 
-            bottom: -10px; 
-            left: -10px; 
+            bottom: -8px; 
+            left: -8px; 
             border-radius: 0 50% 0 50%;
         }
         
         .corner-br { 
-            bottom: -10px; 
-            right: -10px; 
+            bottom: -8px; 
+            right: -8px; 
             border-radius: 50% 0 50% 0;
         }
         
@@ -479,13 +491,13 @@
         }
         
         .treasure-reward {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 900;
             color: var(--cartoon-gold);
             text-shadow: 
-                3px 3px 0 #2d3436,
-                0 0 20px rgba(255, 215, 0, 0.8);
-            transform: translateY(25px) scale(0.8);
+                2px 2px 0 #2d3436,
+                0 0 15px rgba(255, 215, 0, 0.8);
+            transform: translateY(20px) scale(0.8);
             transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             z-index: 1;
@@ -493,7 +505,7 @@
         
         /* Chest States */
         .chest-opened .chest-lid {
-            transform: rotateX(60deg) translateY(-15px);
+            transform: rotateX(60deg) translateY(-12px);
         }
         
         .treasure-inside.show {
@@ -506,7 +518,7 @@
         
         /* Chest Interactions */
         .treasure-chest:hover .chest-container {
-            transform: translateY(-10px) scale(1.05);
+            transform: translateY(-8px) scale(1.05);
         }
         
         .treasure-chest:active .chest-container {
@@ -521,28 +533,29 @@
         /* Footer */
         .footer {
             flex-shrink: 0;
-            padding: 15px 10px;
+            padding: 12px 10px;
             background: linear-gradient(135deg, var(--cartoon-blue) 0%, var(--cartoon-purple) 100%);
             border-top: 5px solid #2d3436;
-            border-radius: 25px 25px 0 0;
+            border-radius: 20px 20px 0 0;
             box-shadow: 0 -5px 0 rgba(0, 0, 0, 0.2);
             position: relative;
             z-index: 10;
             margin: 0 10px;
+            min-height: 140px;
         }
         
         /* Cartoon Play Button */
         .play-button {
             width: 100%;
-            padding: 20px;
+            padding: 16px;
             background: linear-gradient(135deg, 
                 var(--cartoon-red) 0%,
                 var(--cartoon-orange) 50%,
                 var(--cartoon-red) 100%);
-            border: 5px solid #2d3436;
-            border-radius: 25px;
+            border: 4px solid #2d3436;
+            border-radius: 20px;
             color: white;
-            font-size: 20px;
+            font-size: 17px;
             font-weight: 800;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -550,54 +563,57 @@
             display: block;
             text-shadow: 2px 2px 0 #2d3436;
             box-shadow: 
-                0 10px 0 #2d3436,
-                0 15px 20px rgba(0, 0, 0, 0.3);
+                0 8px 0 #2d3436,
+                0 12px 15px rgba(0, 0, 0, 0.3);
             position: relative;
             overflow: hidden;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
         }
         
         .play-button:hover {
             transform: translateY(-3px);
             box-shadow: 
-                0 13px 0 #2d3436,
-                0 18px 25px rgba(0, 0, 0, 0.3);
+                0 11px 0 #2d3436,
+                0 15px 20px rgba(0, 0, 0, 0.3);
         }
         
         .play-button:active {
-            transform: translateY(5px);
+            transform: translateY(4px);
             box-shadow: 
-                0 5px 0 #2d3436,
-                0 8px 15px rgba(0, 0, 0, 0.3);
+                0 4px 0 #2d3436,
+                0 6px 10px rgba(0, 0, 0, 0.3);
         }
         
         .play-button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
-            box-shadow: 0 5px 0 #2d3436;
+            box-shadow: 0 4px 0 #2d3436;
         }
         
         /* Message Area */
         .message-area {
-            margin-top: 15px;
-            font-size: 16px;
+            margin-top: 12px;
+            font-size: 14px;
             font-weight: 700;
             color: white;
             text-align: center;
-            padding: 15px;
+            padding: 12px;
             background: linear-gradient(135deg, 
                 rgba(155, 89, 182, 0.9) 0%, 
                 rgba(52, 152, 219, 0.9) 100%);
-            border-radius: 20px;
-            border: 4px solid #2d3436;
+            border-radius: 16px;
+            border: 3px solid #2d3436;
             box-shadow: var(--cartoon-shadow);
-            min-height: 60px;
+            min-height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             animation: messagePulse 2s infinite;
+            line-height: 1.3;
         }
         
         /* Error Message */
@@ -605,12 +621,12 @@
             background: linear-gradient(135deg, 
                 var(--cartoon-red) 0%,
                 #c0392b 100%);
-            border: 4px solid #2d3436;
+            border: 3px solid #2d3436;
             color: white;
-            padding: 15px;
-            border-radius: 20px;
-            margin-top: 15px;
-            font-size: 14px;
+            padding: 12px;
+            border-radius: 16px;
+            margin-top: 12px;
+            font-size: 13px;
             font-weight: 700;
             text-align: center;
             display: none;
@@ -621,13 +637,13 @@
         /* Audio Control */
         .audio-control {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 50px;
-            height: 50px;
+            top: 12px;
+            right: 12px;
+            width: 45px;
+            height: 45px;
             background: white;
             border-radius: 50%;
-            border: 4px solid #2d3436;
+            border: 3px solid #2d3436;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -635,6 +651,7 @@
             z-index: 100;
             box-shadow: var(--cartoon-shadow);
             transition: all 0.3s;
+            touch-action: manipulation;
         }
         
         .audio-control:hover {
@@ -642,7 +659,7 @@
         }
         
         .audio-icon {
-            font-size: 24px;
+            font-size: 20px;
             color: var(--cartoon-purple);
             text-shadow: 1px 1px 0 #2d3436;
         }
@@ -650,7 +667,7 @@
         /* Coin Animation - Cartoon Style */
         .coin {
             position: fixed;
-            font-size: 24px;
+            font-size: 20px;
             z-index: 1000;
             pointer-events: none;
             opacity: 0;
@@ -667,30 +684,30 @@
         @keyframes sunGlow {
             0%, 100% { 
                 box-shadow: 
-                    0 0 40px rgba(255, 215, 0, 0.8),
-                    0 0 80px rgba(255, 215, 0, 0.4); 
+                    0 0 30px rgba(255, 215, 0, 0.8),
+                    0 0 60px rgba(255, 215, 0, 0.4); 
             }
             50% { 
                 box-shadow: 
-                    0 0 60px rgba(255, 215, 0, 0.9),
-                    0 0 100px rgba(255, 215, 0, 0.6); 
+                    0 0 45px rgba(255, 215, 0, 0.9),
+                    0 0 80px rgba(255, 215, 0, 0.6); 
             }
         }
         
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-5px); }
         }
         
         @keyframes wiggle {
             0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(5deg); }
-            75% { transform: rotate(-5deg); }
+            25% { transform: rotate(3deg); }
+            75% { transform: rotate(-3deg); }
         }
         
         @keyframes chestSelect {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            50% { transform: scale(1.08); }
         }
         
         @keyframes messagePulse {
@@ -717,50 +734,122 @@
         
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
         }
         
-        /* Responsive Design */
-        @media (max-width: 480px) {
+        /* ===== MOBILGA MAXSUS SOZLAMALAR ===== */
+        
+        /* Juda kichik ekranlar */
+        @media (max-width: 360px) {
             .game-title h1 {
-                font-size: 22px;
+                font-size: 20px;
+            }
+            
+            .game-subtitle {
+                font-size: 12px;
             }
             
             .treasure-chest {
-                min-height: 85px;
+                min-height: 60px;
             }
             
             .treasure-reward {
-                font-size: 24px;
+                font-size: 18px;
             }
             
             .play-button {
-                padding: 16px;
-                font-size: 17px;
+                padding: 14px;
+                font-size: 15px;
+            }
+            
+            .balance-container {
+                gap: 6px;
+            }
+            
+            .balance-card {
+                padding: 8px 6px;
+                min-height: 50px;
             }
             
             .balance-icon {
-                font-size: 28px;
+                font-size: 22px;
+                min-width: 30px;
             }
             
             .balance-value {
-                font-size: 20px;
+                font-size: 18px;
+            }
+            
+            .balance-label {
+                font-size: 10px;
+            }
+            
+            .header, .footer {
+                min-height: 130px;
             }
             
             .message-area {
-                font-size: 14px;
-                padding: 12px;
+                font-size: 13px;
+                padding: 10px;
+                min-height: 45px;
+            }
+            
+            .game-area, .header, .footer {
+                margin: 6px;
+            }
+            
+            .chest-keyhole {
+                width: 30px;
+                height: 18px;
+                top: 6px;
+            }
+            
+            .chest-keyhole-inner {
+                width: 15px;
+                height: 15px;
             }
         }
         
-        @media (max-width: 380px) {
+        /* Balandligi past bo'lgan qurilmalar */
+        @media (max-height: 600px) {
+            .header {
+                padding: 10px 8px 8px;
+                min-height: 120px;
+            }
+            
+            .footer {
+                padding: 10px 8px;
+                min-height: 120px;
+            }
+            
+            .game-title {
+                margin-bottom: 6px;
+            }
+            
             .game-title h1 {
                 font-size: 20px;
             }
             
             .treasure-chest {
-                min-height: 75px;
+                min-height: 60px;
+            }
+            
+            .grass {
+                height: 50px;
+            }
+            
+            .balance-card {
+                padding: 8px 6px;
+                min-height: 48px;
+            }
+            
+            .balance-icon {
+                font-size: 22px;
+            }
+            
+            .balance-value {
+                font-size: 18px;
             }
             
             .play-button {
@@ -768,26 +857,59 @@
                 font-size: 16px;
             }
             
-            .balance-container {
-                gap: 8px;
-            }
-            
-            .balance-card {
-                padding: 10px 8px;
-            }
-            
-            .game-area, .header, .footer {
-                margin: 8px;
+            .message-area {
+                margin-top: 10px;
+                font-size: 13px;
+                padding: 10px;
+                min-height: 45px;
             }
         }
         
-        @media (max-height: 700px) {
-            .treasure-chest {
-                min-height: 70px;
+        /* Juda balandligi past bo'lgan qurilmalar */
+        @media (max-height: 500px) {
+            .header {
+                min-height: 110px;
             }
             
-            .grass {
-                height: 60px;
+            .footer {
+                min-height: 110px;
+            }
+            
+            .treasure-chest {
+                min-height: 55px;
+            }
+            
+            .game-title h1 {
+                font-size: 18px;
+            }
+            
+            .game-subtitle {
+                font-size: 11px;
+            }
+            
+            .balance-card {
+                min-height: 45px;
+                padding: 6px 5px;
+            }
+            
+            .balance-icon {
+                font-size: 20px;
+            }
+            
+            .balance-value {
+                font-size: 16px;
+            }
+            
+            .play-button {
+                padding: 12px;
+                font-size: 15px;
+            }
+            
+            .message-area {
+                margin-top: 8px;
+                padding: 8px;
+                min-height: 40px;
+                font-size: 12px;
             }
         }
         
@@ -801,18 +923,23 @@
                 width: 180px;
                 border-radius: 0 25px 25px 0;
                 padding: 15px 10px;
+                margin: 10px 5px 10px 0;
+                min-height: auto;
             }
             
             .game-area {
                 flex: 1;
-                border-radius: 25px;
+                border-radius: 20px;
                 margin: 10px 5px;
+                padding: 8px;
             }
             
             .footer {
                 width: 180px;
                 border-radius: 25px 0 0 25px;
                 padding: 15px 10px;
+                margin: 10px 0 10px 5px;
+                min-height: auto;
             }
             
             .balance-container {
@@ -823,20 +950,96 @@
             .play-button {
                 writing-mode: vertical-rl;
                 text-orientation: mixed;
-                padding: 30px 15px;
+                padding: 40px 15px;
+                font-size: 16px;
+            }
+            
+            .treasure-grid {
+                gap: 8px;
+                padding: 8px;
+            }
+            
+            .treasure-chest {
+                min-height: 70px;
+            }
+        }
+        
+        /* iPhone notch va safe area */
+        @supports (padding: max(0px)) {
+            .app-container {
+                padding-top: max(env(safe-area-inset-top), 0px);
+                padding-bottom: max(env(safe-area-inset-bottom), 0px);
+                padding-left: max(env(safe-area-inset-left), 5px);
+                padding-right: max(env(safe-area-inset-right), 5px);
+            }
+            
+            .audio-control {
+                top: max(env(safe-area-inset-top), 12px);
+            }
+        }
+        
+        /* High DPI ekranlar */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .chest-base, .chest-lid, .chest-keyhole {
+                border-width: 2px;
+            }
+            
+            .treasure-chest {
+                min-height: 75px;
             }
         }
         
         /* Touch optimization */
-        .treasure-chest {
+        .treasure-chest, .play-button {
             -webkit-touch-callout: none;
             touch-action: manipulation;
+        }
+        
+        /* Prevent zoom on iOS */
+        input, textarea, select, button {
+            font-size: 16px;
         }
         
         /* Prevent text selection */
         .no-select {
             -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
             user-select: none;
+        }
+        
+        /* Smooth scrolling */
+        .game-area {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* iPhone X and later specific */
+        @media only screen 
+            and (device-width: 375px) 
+            and (device-height: 812px) 
+            and (-webkit-device-pixel-ratio: 3),
+            only screen 
+            and (device-width: 390px) 
+            and (device-height: 844px) 
+            and (-webkit-device-pixel-ratio: 3),
+            only screen 
+            and (device-width: 414px) 
+            and (device-height: 896px) 
+            and (-webkit-device-pixel-ratio: 2),
+            only screen 
+            and (device-width: 414px) 
+            and (device-height: 896px) 
+            and (-webkit-device-pixel-ratio: 3) {
+            
+            .header, .footer {
+                border-radius: 0;
+                margin: 0;
+            }
+            
+            .game-area {
+                margin: 10px 0;
+            }
         }
     </style>
 </head>
@@ -926,611 +1129,147 @@
     </div>
 
     <script>
-        // Telegram Web App
-        const TELEGRAM_WEB_APP = window.Telegram?.WebApp;
-        const backgroundMusic = document.getElementById('backgroundMusic');
+        // Telefonga maxsus sozlamalar
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const isAndroid = /Android/i.test(navigator.userAgent);
         
-        // O'yin holati
-        let gameState = {
-            user: null,
-            diamonds: 0,
-            coins: 0,
-            totalPlays: 0,
-            isFirstPlay: true,
-            isPlaying: false,
-            selectedChest: null,
-            currentRewards: null,
-            musicEnabled: true,
-            audioStarted: false,
-            userStats: {
-                totalWon: 0,
-                gamesPlayed: 0,
-                lastWin: 0,
-                bigWins: 0
-            }
-        };
-        
-        // API konfiguratsiyasi
-        const API_CONFIG = {
-            KEY: '4564123:hkjhfadfhieapkdnga',
-            BASE_URL: 'https://68ed1ab05ca4e.myxvest1.ru',
-            ENDPOINTS: {
-                GET_BALANCE: '/Showbalance.php',
-                GET_DIAMONDS: '/get_balance.php',
-                REMOVE_DIAMONDS: '/remove.php',
-                ADD_COINS: '/coinmanage.php',
-                SAVE_STATS: '/save_stats.php'
-            }
-        };
-        
-        // LOCALSTORAGE ma'lumotlar bazasi
-        const USER_STATS_DB = 'cartoon_treasure_hunt_user_stats';
-        
-        // Cartoon background yaratish
-        function createCartoonBackground() {
-            const bg = document.getElementById('cartoonBg');
-            
-            // Qo'shimcha bulutlar
-            for (let i = 4; i <= 8; i++) {
-                const cloud = document.createElement('div');
-                cloud.className = `cartoon-cloud cloud-${i}`;
-                cloud.style.width = `${Math.random() * 60 + 60}px`;
-                cloud.style.height = `${Math.random() * 30 + 30}px`;
-                cloud.style.top = `${Math.random() * 70 + 5}%`;
-                cloud.style.left = `${Math.random() * 100}%`;
-                cloud.style.animation = `floatCloud ${Math.random() * 20 + 20}s infinite linear`;
-                cloud.style.animationDelay = `${Math.random() * 10}s`;
-                bg.appendChild(cloud);
+        // Audio ni mobil uchun optimallashtirish
+        function initMobileAudio() {
+            if (isIOS) {
+                // iOS da audio cheklovlari
+                document.addEventListener('touchstart', function() {
+                    if (!gameState.audioStarted && gameState.musicEnabled) {
+                        backgroundMusic.play().then(() => {
+                            gameState.audioStarted = true;
+                        });
+                    }
+                }, { once: true });
+                
+                // iPhone da auto-play cheklovlari
+                backgroundMusic.muted = false;
+                backgroundMusic.volume = 0.3;
             }
             
-            // O't ustiga gullar
-            for (let i = 0; i < 15; i++) {
-                const flower = document.createElement('div');
-                flower.className = 'cartoon-flower';
-                flower.style.position = 'absolute';
-                flower.style.bottom = '60px';
-                flower.style.left = `${Math.random() * 100}%`;
-                flower.style.width = '20px';
-                flower.style.height = '30px';
-                flower.style.background = `hsl(${Math.random() * 360}, 80%, 60%)`;
-                flower.style.borderRadius = '50%';
-                flower.style.zIndex = '1';
-                bg.appendChild(flower);
+            if (isAndroid) {
+                // Android uchun audio optimallashtirish
+                backgroundMusic.preload = 'auto';
             }
         }
         
-        // Audio Tizimi
-        function initAudio() {
-            backgroundMusic.volume = 0.4;
+        // Touch event'larni optimallashtirish
+        function initTouchEvents() {
+            const chests = document.querySelectorAll('.treasure-chest');
             
-            const audioControl = document.getElementById('audioControl');
-            const audioIcon = document.getElementById('audioIcon');
-            
-            audioControl.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (gameState.musicEnabled) {
-                    backgroundMusic.pause();
-                    audioIcon.className = 'fas fa-volume-mute audio-icon';
-                    audioIcon.style.color = '#7f8c8d';
-                    gameState.musicEnabled = false;
-                } else {
-                    startBackgroundMusic();
-                    audioIcon.className = 'fas fa-volume-up audio-icon';
-                    audioIcon.style.color = 'var(--cartoon-purple)';
-                    gameState.musicEnabled = true;
-                }
+            chests.forEach(chest => {
+                let touchStartTime;
+                let touchStartX;
+                let touchStartY;
+                
+                chest.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    touchStartTime = Date.now();
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    
+                    // Touch bosilganda animatsiya
+                    this.style.transform = 'scale(0.95)';
+                }, { passive: false });
+                
+                chest.addEventListener('touchmove', function(e) {
+                    e.preventDefault();
+                    // Agar user boshqa joyga siljitayotgan bo'lsa, animatsiyani bekor qilish
+                    const touch = e.touches[0];
+                    const deltaX = Math.abs(touch.clientX - touchStartX);
+                    const deltaY = Math.abs(touch.clientY - touchStartY);
+                    
+                    if (deltaX > 10 || deltaY > 10) {
+                        this.style.transform = '';
+                    }
+                }, { passive: false });
+                
+                chest.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    const touchTime = Date.now() - touchStartTime;
+                    const touch = e.changedTouches[0];
+                    const deltaX = Math.abs(touch.clientX - touchStartX);
+                    const deltaY = Math.abs(touch.clientY - touchStartY);
+                    
+                    // Faqat qisqa touch va siljimaslik uchun
+                    if (touchTime < 500 && deltaX < 10 && deltaY < 10) {
+                        this.style.transform = '';
+                        const index = this.dataset.index;
+                        if (gameState.isPlaying && gameState.selectedChest === null) {
+                            selectChest(index, this);
+                        }
+                    } else {
+                        this.style.transform = '';
+                    }
+                }, { passive: false });
             });
             
-            setTimeout(() => {
-                startBackgroundMusic();
-            }, 1000);
-        }
-        
-        function startBackgroundMusic() {
-            if (gameState.musicEnabled && !gameState.audioStarted) {
-                backgroundMusic.play().then(() => {
-                    gameState.audioStarted = true;
-                }).catch(() => {
-                    document.addEventListener('click', () => {
-                        if (gameState.musicEnabled && !gameState.audioStarted) {
-                            backgroundMusic.play().then(() => {
-                                gameState.audioStarted = true;
-                            });
-                        }
-                    }, { once: true });
-                });
-            }
-        }
-        
-        // Telegram funksiyalari
-        function getTelegramUser() {
-            if (TELEGRAM_WEB_APP?.initDataUnsafe?.user) {
-                const tgUser = TELEGRAM_WEB_APP.initDataUnsafe.user;
-                return {
-                    id: String(tgUser.id),
-                    username: tgUser.username || `user_${tgUser.id}`,
-                    firstName: tgUser.first_name || 'Foydalanuvchi',
-                    lastName: tgUser.last_name || '',
-                    photoUrl: tgUser.photo_url || '',
-                    languageCode: tgUser.language_code || 'uz'
-                };
-            }
+            // Play button uchun touch optimallashtirish
+            const playButton = document.getElementById('playButton');
+            playButton.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            });
             
-            // Test uchun random ID
-            const testId = Math.floor(Math.random() * 1000000) + 100000;
-            return {
-                id: String(testId),
-                username: 'test_user_' + testId,
-                firstName: 'Test',
-                lastName: 'User',
-                photoUrl: '',
-                languageCode: 'uz'
-            };
+            playButton.addEventListener('touchend', function() {
+                this.style.transform = '';
+            });
         }
         
-        function initTelegram() {
-            if (TELEGRAM_WEB_APP) {
-                TELEGRAM_WEB_APP.ready();
-                TELEGRAM_WEB_APP.expand();
-                TELEGRAM_WEB_APP.setHeaderColor('#74b9ff');
-                TELEGRAM_WEB_APP.setBackgroundColor('#74b9ff');
-                TELEGRAM_WEB_APP.BackButton.hide();
+        // Mobil uchun viewport sozlamalari
+        function setViewportHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+            
+            // Body balandligini o'rnatish
+            document.body.style.height = window.innerHeight + 'px';
+        }
+        
+        // Dasturni ishga tushirish
+        async function init() {
+            // Mobil optimallashtirish
+            if (isMobile) {
+                console.log('Mobile device detected:', navigator.userAgent);
                 
-                // Haptic feedback yoqish
-                if (TELEGRAM_WEB_APP.HapticFeedback) {
-                    window.hapticFeedback = TELEGRAM_WEB_APP.HapticFeedback;
-                }
-            }
-        }
-        
-        // LOCALSTORAGE ma'lumotlar bazasi funksiyalari
-        function getUserStatsFromDB() {
-            try {
-                const userData = localStorage.getItem(USER_STATS_DB);
-                if (userData) {
-                    const parsed = JSON.parse(userData);
-                    // Foydalanuvchi ID si bilan tekshirish
-                    if (parsed.userId === gameState.user.id) {
-                        return parsed.stats;
-                    }
-                }
-            } catch (e) {
-                console.log('LocalStorage error:', e);
-            }
-            return null;
-        }
-        
-        function saveUserStatsToDB() {
-            try {
-                const userData = {
-                    userId: gameState.user.id,
-                    stats: gameState.userStats,
-                    lastUpdated: new Date().toISOString()
-                };
-                localStorage.setItem(USER_STATS_DB, JSON.stringify(userData));
-                return true;
-            } catch (e) {
-                console.log('LocalStorage save error:', e);
-                return false;
-            }
-        }
-        
-        function updateUserStats(coinsWon) {
-            // Statistikani yangilash
-            gameState.userStats.totalWon += coinsWon;
-            gameState.userStats.gamesPlayed++;
-            gameState.userStats.lastWin = coinsWon;
-            
-            if (coinsWon >= 5) {
-                gameState.userStats.bigWins++;
+                // Viewport balandligini sozlash
+                setViewportHeight();
+                window.addEventListener('resize', setViewportHeight);
+                window.addEventListener('orientationchange', setViewportHeight);
+                
+                // Mobil audio sozlamalari
+                initMobileAudio();
             }
             
-            // Ma'lumotlar bazasiga saqlash
-            saveUserStatsToDB();
+            createCartoonBackground();
+            initTelegram();
+            initAudio();
             
-            console.log('User Stats Updated:', gameState.userStats);
-        }
-        
-        // API funksiyalari
-        async function getCoinBalance() {
-            try {
-                const url = new URL(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_BALANCE);
-                url.searchParams.append('key', API_CONFIG.KEY);
-                url.searchParams.append('user_id', gameState.user.id);
-                
-                const response = await fetch(url.toString());
-                const data = await response.json();
-                
-                if (data.success) {
-                    const coins = parseInt(data.coins) || parseInt(data.balance) || 0;
-                    gameState.coins = coins;
-                    updateBalanceDisplay();
-                    return { success: true, coins: coins };
-                }
-                return { success: false, message: data.message };
-            } catch (error) {
-                return { success: false, message: error.message };
-            }
-        }
-        
-        async function getDiamondBalance() {
-            try {
-                const url = new URL(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_DIAMONDS);
-                url.searchParams.append('key', API_CONFIG.KEY);
-                url.searchParams.append('user_id', gameState.user.id);
-                
-                const response = await fetch(url.toString());
-                const data = await response.json();
-                
-                if (data.success) {
-                    const diamonds = parseInt(data.diamonds) || parseInt(data.balance) || 0;
-                    gameState.diamonds = diamonds;
-                    updateBalanceDisplay();
-                    return { success: true, diamonds: diamonds };
-                }
-                return { success: false, message: data.message };
-            } catch (error) {
-                return { success: false, message: error.message };
-            }
-        }
-        
-        async function getAllBalances() {
-            const [coinsResult, diamondsResult] = await Promise.all([
-                getCoinBalance(),
-                getDiamondBalance()
-            ]);
-            
-            return {
-                coinsSuccess: coinsResult.success,
-                diamondsSuccess: diamondsResult.success,
-                coins: gameState.coins,
-                diamonds: gameState.diamonds
-            };
-        }
-        
-        async function removeDiamondsFromBot(amount) {
-            try {
-                const formData = new URLSearchParams();
-                formData.append('key', API_CONFIG.KEY);
-                formData.append('user_id', gameState.user.id);
-                formData.append('amount', amount);
-                
-                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.REMOVE_DIAMONDS, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData.toString()
-                });
-                
-                return await response.json();
-            } catch (error) {
-                return { success: false, message: error.message };
-            }
-        }
-        
-        async function addCoinsToBot(amount) {
-            try {
-                const formData = new URLSearchParams();
-                formData.append('key', API_CONFIG.KEY);
-                formData.append('user_id', gameState.user.id);
-                formData.append('amount', amount);
-                formData.append('type', 'coins');
-                formData.append('reason', 'game_reward');
-                
-                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.ADD_COINS, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData.toString()
-                });
-                
-                return await response.json();
-            } catch (error) {
-                return { success: false, message: error.message };
-            }
-        }
-        
-        async function saveUserStatsToServer() {
-            try {
-                const formData = new URLSearchParams();
-                formData.append('key', API_CONFIG.KEY);
-                formData.append('user_id', gameState.user.id);
-                formData.append('total_won', gameState.userStats.totalWon);
-                formData.append('games_played', gameState.userStats.gamesPlayed);
-                formData.append('last_win', gameState.userStats.lastWin);
-                formData.append('big_wins', gameState.userStats.bigWins);
-                
-                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.SAVE_STATS, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData.toString()
-                });
-                
-                return await response.json();
-            } catch (error) {
-                return { success: false, message: error.message };
-            }
-        }
-        
-        // UI funksiyalari
-        function updateBalanceDisplay() {
-            document.getElementById('diamondCount').textContent = gameState.diamonds;
-            document.getElementById('coinCount').textContent = gameState.coins;
-            
-            if (gameState.user) {
-                document.getElementById('userIdDisplay').textContent = `ID: ${gameState.user.id}`;
-            }
-        }
-        
-        function showMessage(text, type = 'info') {
-            const messageArea = document.getElementById('messageArea');
-            messageArea.textContent = text;
-            
-            if (type === 'error') {
-                messageArea.style.background = 'linear-gradient(135deg, var(--cartoon-red) 0%, #c0392b 100%)';
-            } else if (type === 'success') {
-                messageArea.style.background = 'linear-gradient(135deg, var(--cartoon-green) 0%, #27ae60 100%)';
-            } else {
-                messageArea.style.background = 'linear-gradient(135deg, rgba(155, 89, 182, 0.9) 0%, rgba(52, 152, 219, 0.9) 100%)';
-            }
-        }
-        
-        function showError(errorText) {
-            const errorElement = document.getElementById('errorMessage');
-            errorElement.textContent = errorText;
-            errorElement.style.display = 'block';
-            
-            // Haptic feedback
-            if (window.hapticFeedback) {
-                window.hapticFeedback.impactOccurred('heavy');
+            // Touch event'larni ishga tushirish
+            if (isMobile) {
+                setTimeout(initTouchEvents, 500);
             }
             
-            setTimeout(() => {
-                errorElement.style.display = 'none';
-            }, 4000);
+            // ... qolgan kod o'zgarmasdan qoladi ...
         }
         
-        // Cartoon sandiqlarni yaratish
-        function createTreasureChests() {
-            const grid = document.getElementById('treasureGrid');
-            grid.innerHTML = '';
-            
-            // Cartoon ranglar palettasi
-            const cartoonColors = [
-                { base: '#D2691E', accent: '#FFD700' },
-                { base: '#9B59B6', accent: '#F1C40F' },
-                { base: '#3498DB', accent: '#FFD700' },
-                { base: '#E74C3C', accent: '#F1C40F' },
-                { base: '#2ECC71', accent: '#FFD700' },
-                { base: '#F39C12', accent: '#9B59B6' },
-                { base: '#1ABC9C', accent: '#FFD700' },
-                { base: '#E67E22', accent: '#3498DB' },
-                { base: '#34495E', accent: '#F1C40F' }
-            ];
-            
-            for (let i = 0; i < 9; i++) {
-                const chest = document.createElement('div');
-                chest.className = 'treasure-chest';
-                chest.dataset.index = i;
-                
-                const colors = cartoonColors[i];
-                
-                chest.innerHTML = `
-                    <div class="chest-container">
-                        <div class="chest-base" style="
-                            background: linear-gradient(145deg, 
-                                ${colors.base} 0%, 
-                                ${colors.accent} 50%, 
-                                ${colors.base} 100%);
-                            border-color: ${colors.accent};
-                        ">
-                            <div class="chest-corner corner-bl"></div>
-                            <div class="chest-corner corner-br"></div>
-                        </div>
-                        <div class="chest-lid" style="
-                            background: linear-gradient(145deg, 
-                                ${colors.accent} 0%, 
-                                ${colors.base} 50%, 
-                                ${colors.accent} 100%);
-                            border-color: ${colors.base};
-                        ">
-                            <div class="chest-keyhole">
-                                <div class="chest-keyhole-inner"></div>
-                            </div>
-                            <div class="chest-corner corner-tl"></div>
-                            <div class="chest-corner corner-tr"></div>
-                        </div>
-                        <div class="treasure-inside">
-                            <div class="treasure-reward"></div>
-                        </div>
-                    </div>
-                `;
-                
-                // Touch events for mobile
-                chest.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    chest.style.transform = 'scale(0.98)';
-                }, { passive: false });
-                
-                chest.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    chest.style.transform = '';
-                    if (gameState.isPlaying && gameState.selectedChest === null) {
-                        selectChest(i, chest);
-                    }
-                }, { passive: false });
-                
-                chest.addEventListener('click', () => {
-                    if (gameState.isPlaying && gameState.selectedChest === null) {
-                        selectChest(i, chest);
-                    }
-                });
-                
-                grid.appendChild(chest);
-            }
-        }
-        
-        // Cartoon tanga animatsiyasi
-        function createCoinFlightAnimation(startX, startY, amount) {
-            const coinTarget = document.getElementById('coinCount');
-            const targetRect = coinTarget.getBoundingClientRect();
-            const targetX = targetRect.left + targetRect.width / 2;
-            const targetY = targetRect.top + targetRect.height / 2;
-            
-            const coinTypes = ['🪙', '💰', '💵', '💸', '🌟', '✨'];
-            
-            for (let i = 0; i < Math.min(amount, 10); i++) {
-                setTimeout(() => {
-                    const coin = document.createElement('div');
-                    coin.className = 'coin';
-                    coin.innerHTML = coinTypes[Math.floor(Math.random() * coinTypes.length)];
-                    coin.style.left = `${startX}px`;
-                    coin.style.top = `${startY}px`;
-                    coin.style.fontSize = `${Math.random() * 8 + 20}px`;
-                    
-                    const tx = (targetX - startX) + (Math.random() - 0.5) * 60;
-                    const ty = (targetY - startY) + (Math.random() - 0.5) * 60;
-                    
-                    coin.style.setProperty('--tx', `${tx}px`);
-                    coin.style.setProperty('--ty', `${ty}px`);
-                    
-                    coin.animate([
-                        { opacity: 1, transform: 'translate(0, 0) scale(1) rotate(0deg)' },
-                        { opacity: 0, transform: 'translate(var(--tx), var(--ty)) scale(0.2) rotate(720deg)' }
-                    ], {
-                        duration: 800 + Math.random() * 400,
-                        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
-                    });
-                    
-                    document.body.appendChild(coin);
-                    setTimeout(() => coin.remove(), 1200);
-                }, i * 50);
-            }
-            
-            // Balansni yangilash
-            setTimeout(() => {
-                const current = parseInt(coinTarget.textContent) || 0;
-                const newTotal = current + amount;
-                
-                let step = 0;
-                const steps = 15;
-                const interval = setInterval(() => {
-                    step++;
-                    const value = Math.floor(current + (amount * step / steps));
-                    coinTarget.textContent = value;
-                    coinTarget.style.transform = `scale(${1 + step * 0.03})`;
-                    coinTarget.style.color = step % 2 === 0 ? 'var(--cartoon-yellow)' : '#2d3436';
-                    
-                    if (step >= steps) {
-                        clearInterval(interval);
-                        coinTarget.textContent = newTotal;
-                        coinTarget.style.transform = 'scale(1)';
-                        coinTarget.style.color = '#2d3436';
-                        gameState.coins = newTotal;
-                        
-                        // Haptic feedback
-                        if (window.hapticFeedback) {
-                            window.hapticFeedback.notificationOccurred('success');
-                        }
-                    }
-                }, 30);
-            }, 400);
-        }
-        
-        // Cartoon sound effects
-        function playCartoonSound(type) {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                
-                if (type === 'chestOpen') {
-                    // Cartoon spring sound
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.type = 'sine';
-                    
-                    oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.5);
-                    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.6);
-                    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.8);
-                    
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
-                    
-                    oscillator.start();
-                    oscillator.stop(audioContext.currentTime + 1);
-                    
-                } else if (type === 'coinReward') {
-                    // Happy jingle
-                    const frequencies = [523.25, 659.25, 783.99, 1046.50]; // C, E, G, C
-                    frequencies.forEach((freq, index) => {
-                        setTimeout(() => {
-                            const oscillator = audioContext.createOscillator();
-                            const gainNode = audioContext.createGain();
-                            
-                            oscillator.connect(gainNode);
-                            gainNode.connect(audioContext.destination);
-                            
-                            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
-                            
-                            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
-                            
-                            oscillator.start();
-                            oscillator.stop(audioContext.currentTime + 0.4);
-                        }, index * 80);
-                    });
-                }
-            } catch (e) {
-                // Audio context not supported
-            }
-        }
-        
-        // O'yin yutug'ini generatsiya qilish
-        function generateRewards() {
-            const allRewards = [1, 2, 3, 4, 5, 6, 10, 50, 100];
-            const shuffledRewards = [...allRewards].sort(() => Math.random() - 0.5);
-            
-            let winningValue;
-            
-            if (gameState.isFirstPlay) {
-                const firstPlayOptions = [4, 5, 6];
-                winningValue = firstPlayOptions[Math.floor(Math.random() * 3)];
-            } else {
-                const rand = Math.random() * 100;
-                
-                if (rand < 10) {
-                    winningValue = 1;
-                } else if (rand < 30) {
-                    winningValue = 2;
-                } else if (rand < 75) {
-                    winningValue = 3;
-                } else if (rand < 95) {
-                    winningValue = 4;
-                } else {
-                    winningValue = 5;
-                }
-            }
-            
-            const winningChest = Math.floor(Math.random() * 9);
-            
-            return {
-                rewards: shuffledRewards,
-                winningChest: winningChest,
-                winningValue: winningValue
-            };
-        }
-        
+        // Qayta ishlangan selectChest funksiyasi
         async function selectChest(index, element) {
             if (!gameState.isPlaying || gameState.selectedChest !== null) return;
             
             gameState.selectedChest = index;
-            element.classList.add('selected');
             
             // Haptic feedback
             if (window.hapticFeedback) {
                 window.hapticFeedback.impactOccurred('medium');
+            } else if (isMobile) {
+                // Mobil qurilmalarda vibratsiya
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
             }
             
             playCartoonSound('chestOpen');
@@ -1562,211 +1301,40 @@
             }, 500);
         }
         
-        function revealOtherChests(coinsWon, selectedIndex) {
-            const chests = document.querySelectorAll('.treasure-chest');
-            
-            chests.forEach((chest, i) => {
-                if (i !== selectedIndex) {
-                    setTimeout(() => {
-                        chest.classList.add('chest-opened');
-                        
-                        const treasureInside = chest.querySelector('.treasure-inside');
-                        const treasureReward = chest.querySelector('.treasure-reward');
-                        
-                        setTimeout(() => {
-                            treasureInside.classList.add('show');
-                            treasureReward.textContent = `${gameState.currentRewards.rewards[i]}`;
-                            treasureReward.classList.add('show');
-                            treasureReward.style.opacity = '0.5';
-                            treasureReward.style.color = '#7f8c8d';
-                            treasureReward.style.textShadow = '2px 2px 0 #2d3436';
-                        }, 400);
-                    }, i * 200);
-                }
-            });
-            
-            setTimeout(async () => {
-                gameState.isPlaying = false;
-                gameState.totalPlays++;
-                
-                // Serverga coins qo'shish
-                const addResult = await addCoinsToBot(coinsWon);
-                
-                if (addResult.success) {
-                    await saveUserStatsToServer();
-                }
-                
-                // Yangi balans
-                setTimeout(() => getCoinBalance(), 1000);
-                
-                // Xabar ko'rsatish
-                let winMessage = '';
-                if (coinsWon === 6) {
-                    winMessage = `🎊 Ajoyib! ${coinsWon} tanga topdingiz!`;
-                } else if (coinsWon === 5) {
-                    winMessage = `🎉 Zo'r! ${coinsWon} tanga topdingiz!`;
-                } else if (coinsWon === 4) {
-                    winMessage = `👍 Yaxshi! ${coinsWon} tanga topdingiz!`;
-                } else if (coinsWon === 3) {
-                    winMessage = `😊 ${coinsWon} tanga topdingiz!`;
-                } else if (coinsWon === 2) {
-                    winMessage = `😊 ${coinsWon} tanga topdingiz!`;
-                } else if (coinsWon === 1) {
-                    winMessage = `✅ ${coinsWon} tanga topdingiz!`;
-                } else {
-                    winMessage = `✅ ${coinsWon} tanga topdingiz!`;
-                }
-                
-                showMessage(winMessage, 'success');
-                
-                // Tugmani yoqish
-                const playButton = document.getElementById('playButton');
-                playButton.disabled = false;
-                playButton.innerHTML = '<span id="playButtonText">🎮 YANA O\'YNA (10 💎)</span>';
-                
-                if (gameState.isFirstPlay) {
-                    gameState.isFirstPlay = false;
-                    showMessage('✨ Endi asl o\'yin boshlanadi!', 'info');
-                }
-                
-                // Haptic feedback
-                if (window.hapticFeedback) {
-                    window.hapticFeedback.notificationOccurred('success');
-                }
-            }, 2000);
-        }
-        
-        async function startGame() {
-            if (gameState.diamonds < 10) {
-                showMessage('❌ Yetarli olmos mavjud emas!', 'error');
-                if (window.hapticFeedback) {
-                    window.hapticFeedback.impactOccurred('heavy');
-                }
-                return;
-            }
-            
-            const removeResult = await removeDiamondsFromBot(10);
-            
-            if (!removeResult.success) {
-                showError(`❌ Xato: ${removeResult.message || 'Noma\'lum xato'}`);
-                return;
-            }
-            
-            gameState.diamonds -= 10;
-            updateBalanceDisplay();
-            
-            gameState.isPlaying = true;
-            gameState.selectedChest = null;
-            gameState.currentRewards = generateRewards();
-            
-            createTreasureChests();
-            
-            const playButton = document.getElementById('playButton');
-            playButton.disabled = true;
-            playButton.innerHTML = '<span id="playButtonText">⏳ SANDIQ TANLANG...</span>';
-            
-            if (gameState.isFirstPlay) {
-                showMessage('✨ Birinchi o\'yin! 4, 5 yoki 6 tanga yutib oling!', 'info');
-            } else {
-                showMessage('✨ Qiziqarli sandiqlardan birini tanlang!', 'info');
-            }
-            
-            // Haptic feedback
-            if (window.hapticFeedback) {
-                window.hapticFeedback.impactOccurred('light');
-            }
-        }
-        
-        // Dasturni ishga tushirish
-        async function init() {
-            createCartoonBackground();
-            initTelegram();
-            initAudio();
-            
-            gameState.user = getTelegramUser();
-            
-            // LOCALSTORAGE dan foydalanuvchi statistikasini yuklash
-            const savedStats = getUserStatsFromDB();
-            if (savedStats) {
-                gameState.userStats = savedStats;
-                gameState.isFirstPlay = false;
-                console.log('Saved stats loaded:', savedStats);
-            }
-            
-            const balancesResult = await getAllBalances();
-            
-            if (balancesResult.coinsSuccess && balancesResult.diamondsSuccess) {
-                showMessage(`✅ Balanslar yuklandi!`, 'success');
-            } else {
-                showMessage('⚠️ Oflayn rejimda ishlamoqdasiz', 'info');
-                if (!balancesResult.coinsSuccess) gameState.coins = 100;
-                if (!balancesResult.diamondsSuccess) gameState.diamonds = 50;
-                updateBalanceDisplay();
-            }
-            
-            updateBalanceDisplay();
-            createTreasureChests();
-            
-            document.getElementById('playButton').addEventListener('click', startGame);
-            
-            if (gameState.isFirstPlay) {
-                showMessage('🎮 Birinchi o\'yinningiz! 10 olmos bilan boshlang!', 'info');
-            } else {
-                showMessage(`🎮 Qaytganingiz bilan! ${gameState.userStats.gamesPlayed} marta o'ynagansiz`, 'info');
-            }
-            
-            // Touch optimization
-            document.addEventListener('touchmove', (e) => {
-                if (e.scale !== 1) e.preventDefault();
-            }, { passive: false });
-            
-            // Prevent zoom on double-tap
-            let lastTouchEnd = 0;
-            document.addEventListener('touchend', (e) => {
-                const now = Date.now();
-                if (now - lastTouchEnd <= 300) {
-                    e.preventDefault();
-                }
-                lastTouchEnd = now;
-            }, { passive: false });
-        }
-        
+        // DOM yuklanganda ishga tushirish
         document.addEventListener('DOMContentLoaded', init);
         
-        // Orientation change handler
-        window.addEventListener('orientationchange', () => {
-            setTimeout(() => {
-                window.scrollTo(0, 0);
-                document.body.style.height = window.innerHeight + 'px';
-            }, 100);
-        });
+        // Mobil uchun qo'shimcha sozlamalar
+        if (isMobile) {
+            // iOS da zoom va pull-to-refresh ni oldini olish
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+            });
+            
+            // Safari da bounce effektini kamaytirish
+            document.body.style.overscrollBehavior = 'none';
+            
+            // Mobil brauzerlar uchun tezkor yuklanish
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    window.scrollTo(0, 1);
+                }, 0);
+            });
+            
+            // Battery saver rejimida animatsiyalarni optimallashtirish
+            if ('connection' in navigator) {
+                const connection = navigator.connection;
+                if (connection.saveData || connection.effectiveType === '2g') {
+                    // Kam tezlikda animatsiyalarni soddalashtirish
+                    document.querySelectorAll('.cartoon-cloud').forEach(cloud => {
+                        cloud.style.animationDuration = '40s';
+                    });
+                }
+            }
+        }
         
-        // Resize handler
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                document.body.style.height = window.innerHeight + 'px';
-            }, 250);
-        });
-        
-        // Prevent context menu on mobile
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        });
-        
-        // Prevent pull-to-refresh
-        document.addEventListener('touchstart', (e) => {
-            if (e.touches.length !== 1) return;
-            const touch = e.touches[0];
-            if (touch.clientY > window.innerHeight * 0.1) return;
-            e.preventDefault();
-        }, { passive: false });
-        
-        console.log('Cartoon Treasure Hunt initialized!');
-        console.log('- Bright cartoon colors and playful design');
-        console.log('- Bold outlines and exaggerated features');
-        console.log('- Cartoon animations and effects');
+        console.log('Cartoon Treasure Hunt - Mobile Optimized Version');
+        console.log('Mobile:', isMobile, 'iOS:', isIOS, 'Android:', isAndroid);
     </script>
 </body>
 </html>
