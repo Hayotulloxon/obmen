@@ -15,8 +15,11 @@
             --real-red: linear-gradient(135deg, #8B0000 0%, #B22222 50%, #8B0000 100%);
             --shadow-heavy: 0 15px 35px rgba(0, 0, 0, 0.5);
             --shadow-light: 0 8px 20px rgba(0, 0, 0, 0.3);
-            --page-dark: #1a1a2e;
-            --page-darker: #0f0f1a;
+            --chest-gold: #FFD700;
+            --chest-beige: #f4e2c8;
+            --chest-black: #101010;
+            --chest-blackLight: #707696;
+            --chest-blackAlpha: rgba(0, 0, 0, 0.2);
         }
         
         * {
@@ -35,7 +38,7 @@
             touch-action: manipulation;
             position: fixed;
             font-family: 'Fredoka', sans-serif;
-            background: var(--page-dark);
+            background: #1a1a2e;
         }
         
         /* Realistic background */
@@ -266,18 +269,33 @@
             z-index: 1;
         }
         
-        /* Realistic Treasure Chest */
+        /* YANGI MINIMALIST SANDIQ DIZAYNI */
         .treasure-chest {
+            --gold: #FFD700;
+            --beige: #f4e2c8;
+            --black: #101010;
+            --blackLight: #707696;
+            --blackAlpha: rgba(0, 0, 0, 0.2);
+
+            position: relative;
             width: 100%;
             height: 100%;
             min-height: 85px;
-            position: relative;
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            background: var(--blackLight);
+            justify-content: center;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
             cursor: pointer;
             perspective: 1000px;
-            transition: all 0.3s ease;
             transform-style: preserve-3d;
+            overflow: hidden;
         }
-        
+
         .chest-container {
             width: 100%;
             height: 100%;
@@ -285,239 +303,92 @@
             transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        
-        /* Chest Base - Ultra Realistic */
-        .chest-base {
+
+        .chest-insert {
             position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
             width: 100%;
-            height: 65%;
-            bottom: 0;
-            background: 
-                /* Wood texture */
-                repeating-linear-gradient(
-                    90deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(139, 69, 19, 0.3) 2px,
-                    rgba(139, 69, 19, 0.3) 4px
-                ),
-                repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(139, 69, 19, 0.2) 2px,
-                    rgba(139, 69, 19, 0.2) 4px
-                ),
-                /* Gold overlay */
-                radial-gradient(
-                    ellipse at 30% 70%,
-                    rgba(255, 215, 0, 0.4) 0%,
-                    rgba(255, 215, 0, 0.1) 30%,
-                    transparent 60%
-                ),
-                radial-gradient(
-                    ellipse at 70% 30%,
-                    rgba(255, 215, 0, 0.3) 0%,
-                    rgba(255, 215, 0, 0.05) 25%,
-                    transparent 50%
-                ),
-                /* Main gradient */
-                linear-gradient(
-                    145deg,
-                    #8B4513 0%,
-                    #A0522D 25%,
-                    #8B4513 50%,
-                    #A0522D 75%,
-                    #8B4513 100%
-                );
-            border-radius: 10px 10px 12px 12px;
-            border: 3px solid #5D4037;
-            box-shadow: 
-                inset 0 -8px 20px rgba(0, 0, 0, 0.8),
-                inset 0 8px 20px rgba(255, 255, 255, 0.1),
-                0 8px 20px rgba(0, 0, 0, 0.9),
-                0 0 0 2px rgba(255, 215, 0, 0.05);
+            border: 10px solid rgba(254, 178, 47, 0.25);
+            border-radius: 50px;
             z-index: 1;
-            transform-style: preserve-3d;
         }
-        
-        /* Chest Lid - Moon (oycha) shaped lid */
-        .chest-lid {
+
+        .chest-top {
             position: absolute;
+            top: 0;
             width: 100%;
             height: 35%;
-            top: 0;
-            /* Give the lid a rounded top (semi-circle look) */
-            border-radius: 50% 50% 10px 10px;
-            background: 
-                /* Wood grain */
-                repeating-linear-gradient(
-                    45deg,
-                    transparent,
-                    transparent 3px,
-                    rgba(139, 69, 19, 0.4) 3px,
-                    rgba(139, 69, 19, 0.4) 6px
-                ),
-                /* Gold highlights */
-                radial-gradient(
-                    ellipse at 50% 20%,
-                    rgba(255, 215, 0, 0.6) 0%,
-                    rgba(255, 215, 0, 0.2) 20%,
-                    transparent 40%
-                ),
-                /* Main lid gradient */
-                linear-gradient(
-                    145deg,
-                    #8B4513 0%,
-                    #A0522D 30%,
-                    #8B4513 60%,
-                    #A0522D 90%,
-                    #8B4513 100%
-                );
-            border: 3px solid #5D4037;
-            border-bottom: none;
-            box-shadow: 
-                inset 0 8px 20px rgba(255, 255, 255, 0.15),
-                inset 0 -8px 20px rgba(0, 0, 0, 0.6),
-                0 -8px 20px rgba(0, 0, 0, 0.9),
-                0 0 0 2px rgba(255, 215, 0, 0.05);
-            transform-origin: bottom center;
+            background: linear-gradient(145deg, #8B4513 0%, #A0522D 30%, #8B4513 70%);
+            border: solid var(--gold);
+            border-width: 0 12px 6px;
+            border-radius: 8px 8px 0 0;
+            transform: rotateX(0);
             transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 2.55);
+            transform-origin: bottom center;
             z-index: 3;
-            transform-style: preserve-3d;
-            overflow: visible; /* allow moon mask to show */
         }
 
-        /* Create crescent (oycha) effect by masking with a dark circular pseudo-element.
-           The dark circle sits over the lid creating a crescent silhouette. */
-        .chest-lid::before {
-            content: '';
+        .chest-bottom {
             position: absolute;
-            /* place the circle slightly to the right to form a crescent on the left */
-            top: -30%;
-            right: -6%;
-            width: 120%;
-            height: 160%;
-            background: var(--page-dark); /* matches page background to mask the lid */
-            border-radius: 50%;
-            transform: rotate(8deg);
-            z-index: 5;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-            pointer-events: none;
+            bottom: 0;
+            width: 100%;
+            height: 65%;
+            background: linear-gradient(145deg, #8B4513 0%, #A0522D 25%, #8B4513 50%);
+            border: solid var(--gold);
+            border-width: 6px 12px 0;
+            border-radius: 0 0 8px 8px;
+            z-index: 2;
         }
 
-        /* Add a subtle highlight on the crescent edge to make it look like a glowing moon rim */
-        .chest-lid::after {
-            content: '';
-            position: absolute;
-            top: -15%;
-            left: 6%;
-            width: 44%;
-            height: 90%;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,215,150,0.25), rgba(255,215,150,0.06) 35%, transparent 60%);
-            mix-blend-mode: screen;
-            z-index: 6;
-            pointer-events: none;
-        }
-        
-        /* Realistic Metal Handle */
-        .chest-handle {
-            position: absolute;
-            top: 55%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 12px;
-            background: 
-                radial-gradient(ellipse at center, 
-                    #FFD700 0%,
-                    #DAA520 30%,
-                    #B8860B 70%,
-                    #8B4513 100%);
-            border-radius: 6px;
-            border: 2px solid #5D4037;
-            box-shadow: 
-                0 4px 12px rgba(0, 0, 0, 0.8),
-                inset 0 1px 3px rgba(255, 255, 255, 0.3),
-                0 0 5px rgba(255, 215, 0, 0.5);
-            z-index: 7;
-        }
-        
-        .chest-handle::before {
-            content: '';
-            position: absolute;
-            top: -6px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 5px;
-            background: #5D4037;
-            border-radius: 3px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
-        }
-        
-        /* Realistic Lock */
-        .chest-lock {
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 28px;
-            height: 16px;
-            background: linear-gradient(135deg, 
-                #C0C0C0 0%,
-                #808080 30%,
-                #606060 70%,
-                #404040 100%);
-            border-radius: 8px;
-            border: 2px solid #404040;
+        .chest-keyholeBG {
             z-index: 4;
-            box-shadow: 
-                0 4px 10px rgba(0, 0, 0, 0.7),
-                inset 0 1px 3px rgba(255, 255, 255, 0.2);
-        }
-        
-        .chest-lock::after {
-            content: '';
             position: absolute;
-            top: 50%;
+            top: 0;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 6px;
-            height: 6px;
-            background: #8B0000;
+            width: 40px;
+            transform: translateX(-50%);
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--gold);
+            border-radius: 0 0 50% 50% / 0 0 100% 100%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        .chest-keyhole {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chest-keyhole::before {
+            content: "";
+            display: block;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            box-shadow: 0 0 8px #8B0000;
+            background-color: var(--black);
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
         }
-        
-        /* Metal Reinforcements */
-        .chest-corner {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            background: linear-gradient(135deg, 
-                #C0C0C0 0%,
-                #808080 50%,
-                #606060 100%);
-            border-radius: 4px;
-            border: 2px solid #404040;
-            box-shadow: 
-                0 2px 6px rgba(0, 0, 0, 0.7),
-                inset 0 1px 3px rgba(255, 255, 255, 0.2);
-            transform: rotate(45deg);
+
+        .chest-keyhole::after {
+            content: "";
+            display: block;
+            width: 3px;
+            height: 10px;
+            margin-top: -2px;
+            background-color: var(--black);
+            border-radius: 1px;
         }
-        
-        .corner-tl { top: 4px; left: 4px; }
-        .corner-tr { top: 4px; right: 4px; }
-        .corner-bl { bottom: 4px; left: 4px; }
-        .corner-br { bottom: 4px; right: 4px; }
-        
-        /* Metal Bands */
+
+        /* Metal bands */
         .chest-band {
             position: absolute;
             width: 86%;
-            height: 8px;
+            height: 6px;
             left: 7%;
             background: linear-gradient(to right, 
                 transparent 5%,
@@ -525,17 +396,27 @@
                 #808080 50%,
                 #C0C0C0 95%,
                 transparent 95%);
-            border-radius: 4px;
+            border-radius: 3px;
             border: 1px solid #404040;
             box-shadow: 
                 inset 0 1px 3px rgba(0, 0, 0, 0.8),
                 0 1px 3px rgba(255, 255, 255, 0.1);
+            z-index: 2;
         }
-        
-        .band-1 { top: 20%; }
-        .band-2 { top: 45%; }
-        .band-3 { top: 70%; }
-        
+
+        .chest-band.top {
+            top: 25%;
+        }
+
+        .chest-band.middle {
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .chest-band.bottom {
+            bottom: 25%;
+        }
+
         /* Treasure Inside */
         .treasure-inside {
             position: absolute;
@@ -546,7 +427,7 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            z-index: 2;
+            z-index: 1;
             opacity: 0;
             transition: opacity 0.6s ease;
             background: radial-gradient(circle at center, 
@@ -570,8 +451,8 @@
         }
         
         /* Chest States */
-        .chest-opened .chest-lid {
-            transform: rotateX(-115deg);
+        .chest-opened .chest-top {
+            transform: rotateX(-115deg) translateY(-20px);
         }
         
         .treasure-inside.show {
@@ -590,6 +471,10 @@
         
         .treasure-chest.selected {
             filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7));
+        }
+        
+        .treasure-chest:hover {
+            background-color: rgba(254, 178, 47, 0.2);
         }
         
         /* Footer */
@@ -807,16 +692,6 @@
                 min-height: 75px;
             }
             
-            .chest-handle {
-                width: 35px;
-                height: 10px;
-            }
-            
-            .chest-lock {
-                width: 25px;
-                height: 14px;
-            }
-            
             .treasure-reward {
                 font-size: 20px;
             }
@@ -860,25 +735,19 @@
                 min-height: 65px;
             }
             
-            .chest-handle {
-                width: 30px;
-                height: 9px;
+            .chest-keyholeBG {
+                width: 35px;
+                height: 18px;
             }
             
-            .chest-handle::before {
-                width: 18px;
-                height: 4px;
-                top: -5px;
+            .chest-keyhole::before {
+                width: 7px;
+                height: 7px;
             }
             
-            .chest-lock {
-                width: 22px;
-                height: 12px;
-            }
-            
-            .chest-corner {
-                width: 12px;
-                height: 12px;
+            .chest-keyhole::after {
+                width: 2px;
+                height: 8px;
             }
             
             .treasure-reward {
@@ -1521,7 +1390,7 @@
             }, 4000);
         }
         
-        // Haqiqiy sandiqlarni yaratish
+        // Haqiqiy sandiqlarni yaratish - YANGI DIZAYN
         function createTreasureChests() {
             const grid = document.getElementById('treasureGrid');
             grid.innerHTML = '';
@@ -1546,36 +1415,31 @@
                 
                 const woodColor = woodColors[i];
                 
+                // YANGI MINIMALIST SANDIQ HTML
                 chest.innerHTML = `
                     <div class="chest-container">
-                        <div class="chest-base" style="
-                            background: 
-                                repeating-linear-gradient(90deg, transparent, transparent 2px, ${woodColor.base}99 2px, ${woodColor.base}99 4px),
-                                repeating-linear-gradient(0deg, transparent, transparent 2px, ${woodColor.base}66 2px, ${woodColor.base}66 4px),
-                                radial-gradient(ellipse at 30% 70%, #FFD70066 0%, #FFD70022 30%, transparent 60%),
-                                radial-gradient(ellipse at 70% 30%, #FFD70044 0%, #FFD70011 25%, transparent 50%),
-                                linear-gradient(145deg, ${woodColor.base} 0%, ${woodColor.light} 25%, ${woodColor.base} 50%, ${woodColor.light} 75%, ${woodColor.base} 100%);
-                            border-color: ${woodColor.base};
+                        <div class="chest-insert"></div>
+                        <div class="chest-bottom" style="
+                            background: linear-gradient(145deg, 
+                                ${woodColor.base} 0%, 
+                                ${woodColor.light} 25%, 
+                                ${woodColor.base} 50%);
+                            border-color: #FFD700;
                         ">
-                            <div class="chest-corner corner-tl"></div>
-                            <div class="chest-corner corner-tr"></div>
-                            <div class="chest-corner corner-bl"></div>
-                            <div class="chest-corner corner-br"></div>
-                            <div class="chest-band band-1"></div>
-                            <div class="chest-band band-2"></div>
-                            <div class="chest-band band-3"></div>
-                            <div class="chest-lock"></div>
+                            <div class="chest-band top"></div>
+                            <div class="chest-band middle"></div>
+                            <div class="chest-band bottom"></div>
                         </div>
-                        <div class="chest-lid" style="
-                            background: 
-                                repeating-linear-gradient(45deg, transparent, transparent 3px, ${woodColor.base}66 3px, ${woodColor.base}66 6px),
-                                radial-gradient(ellipse at 50% 20%, #FFD70088 0%, #FFD70033 20%, transparent 40%),
-                                linear-gradient(145deg, ${woodColor.base} 0%, ${woodColor.light} 30%, ${woodColor.base} 60%, ${woodColor.light} 90%, ${woodColor.base} 100%);
-                            border-color: ${woodColor.base};
+                        <div class="chest-top" style="
+                            background: linear-gradient(145deg, 
+                                ${woodColor.base} 0%, 
+                                ${woodColor.light} 30%, 
+                                ${woodColor.base} 70%);
+                            border-color: #FFD700;
                         ">
-                            <div class="chest-handle"></div>
-                            <div class="chest-corner corner-tl"></div>
-                            <div class="chest-corner corner-tr"></div>
+                            <div class="chest-keyholeBG">
+                                <div class="chest-keyhole"></div>
+                            </div>
                         </div>
                         <div class="treasure-inside">
                             <div class="treasure-reward"></div>
