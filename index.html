@@ -1134,10 +1134,94 @@
         const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
         const isAndroid = /Android/i.test(navigator.userAgent);
         
+        // Telegram Web App
+        const TELEGRAM_WEB_APP = window.Telegram?.WebApp;
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        
+        // O'yin holati
+        let gameState = {
+            user: null,
+            diamonds: 0,
+            coins: 0,
+            totalPlays: 0,
+            isFirstPlay: true,
+            isPlaying: false,
+            selectedChest: null,
+            currentRewards: null,
+            musicEnabled: true,
+            audioStarted: false,
+            userStats: {
+                totalWon: 0,
+                gamesPlayed: 0,
+                lastWin: 0,
+                bigWins: 0
+            }
+        };
+        
+        // API konfiguratsiyasi
+        const API_CONFIG = {
+            KEY: '4564123:hkjhfadfhieapkdnga',
+            BASE_URL: 'https://68ed1ab05ca4e.myxvest1.ru',
+            ENDPOINTS: {
+                GET_BALANCE: '/Showbalance.php',
+                GET_DIAMONDS: '/get_balance.php',
+                REMOVE_DIAMONDS: '/remove.php',
+                ADD_COINS: '/coinmanage.php',
+                SAVE_STATS: '/save_stats.php'
+            }
+        };
+        
+        // LOCALSTORAGE ma'lumotlar bazasi
+        const USER_STATS_DB = 'cartoon_treasure_hunt_user_stats';
+        
+        // ========== FUNCTIONS ==========
+        
+        // Audio Tizimi
+        function initAudio() {
+            backgroundMusic.volume = 0.4;
+            
+            const audioControl = document.getElementById('audioControl');
+            const audioIcon = document.getElementById('audioIcon');
+            
+            audioControl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (gameState.musicEnabled) {
+                    backgroundMusic.pause();
+                    audioIcon.className = 'fas fa-volume-mute audio-icon';
+                    audioIcon.style.color = '#7f8c8d';
+                    gameState.musicEnabled = false;
+                } else {
+                    startBackgroundMusic();
+                    audioIcon.className = 'fas fa-volume-up audio-icon';
+                    audioIcon.style.color = 'var(--cartoon-purple)';
+                    gameState.musicEnabled = true;
+                }
+            });
+            
+            setTimeout(() => {
+                startBackgroundMusic();
+            }, 1000);
+        }
+        
+        function startBackgroundMusic() {
+            if (gameState.musicEnabled && !gameState.audioStarted) {
+                backgroundMusic.play().then(() => {
+                    gameState.audioStarted = true;
+                }).catch(() => {
+                    document.addEventListener('click', () => {
+                        if (gameState.musicEnabled && !gameState.audioStarted) {
+                            backgroundMusic.play().then(() => {
+                                gameState.audioStarted = true;
+                            });
+                        }
+                    }, { once: true });
+                });
+            }
+        }
+        
         // Audio ni mobil uchun optimallashtirish
         function initMobileAudio() {
             if (isIOS) {
-                // iOS da audio cheklovlari
                 document.addEventListener('touchstart', function() {
                     if (!gameState.audioStarted && gameState.musicEnabled) {
                         backgroundMusic.play().then(() => {
@@ -1146,15 +1230,666 @@
                     }
                 }, { once: true });
                 
-                // iPhone da auto-play cheklovlari
                 backgroundMusic.muted = false;
                 backgroundMusic.volume = 0.3;
             }
             
             if (isAndroid) {
-                // Android uchun audio optimallashtirish
                 backgroundMusic.preload = 'auto';
             }
+        }
+        
+        // Telegram funksiyalari
+        function getTelegramUser() {
+            if (TELEGRAM_WEB_APP?.initDataUnsafe?.user) {
+                const tgUser = TELEGRAM_WEB_APP.initDataUnsafe.user;
+                return {
+                    id: String(tgUser.id),
+                    username: tgUser.username || `user_${tgUser.id}`,
+                    firstName: tgUser.first_name || 'Foydalanuvchi',
+                    lastName: tgUser.last_name || '',
+                    photoUrl: tgUser.photo_url || '',
+                    languageCode: tgUser.language_code || 'uz'
+                };
+            }
+            
+            const testId = Math.floor(Math.random() * 1000000) + 100000;
+            return {
+                id: String(testId),
+                username: 'test_user_' + testId,
+                firstName: 'Test',
+                lastName: 'User',
+                photoUrl: '',
+                languageCode: 'uz'
+            };
+        }
+        
+        function initTelegram() {
+            if (TELEGRAM_WEB_APP) {
+                TELEGRAM_WEB_APP.ready();
+                TELEGRAM_WEB_APP.expand();
+                TELEGRAM_WEB_APP.setHeaderColor('#74b9ff');
+                TELEGRAM_WEB_APP.setBackgroundColor('#74b9ff');
+                TELEGRAM_WEB_APP.BackButton.hide();
+                
+                if (TELEGRAM_WEB_APP.HapticFeedback) {
+                    window.hapticFeedback = TELEGRAM_WEB_APP.HapticFeedback;
+                }
+            }
+        }
+        
+        // LOCALSTORAGE ma'lumotlar bazasi funksiyalari
+        function getUserStatsFromDB() {
+            try {
+                const userData = localStorage.getItem(USER_STATS_DB);
+                if (userData) {
+                    const parsed = JSON.parse(userData);
+                    if (parsed.userId === gameState.user?.id) {
+                        return parsed.stats;
+                    }
+                }
+            } catch (e) {
+                console.log('LocalStorage error:', e);
+            }
+            return null;
+        }
+        
+        function saveUserStatsToDB() {
+            try {
+                const userData = {
+                    userId: gameState.user.id,
+                    stats: gameState.userStats,
+                    lastUpdated: new Date().toISOString()
+                };
+                localStorage.setItem(USER_STATS_DB, JSON.stringify(userData));
+                return true;
+            } catch (e) {
+                console.log('LocalStorage save error:', e);
+                return false;
+            }
+        }
+        
+        function updateUserStats(coinsWon) {
+            gameState.userStats.totalWon += coinsWon;
+            gameState.userStats.gamesPlayed++;
+            gameState.userStats.lastWin = coinsWon;
+            
+            if (coinsWon >= 5) {
+                gameState.userStats.bigWins++;
+            }
+            
+            saveUserStatsToDB();
+            console.log('User Stats Updated:', gameState.userStats);
+        }
+        
+        // API funksiyalari
+        async function getCoinBalance() {
+            try {
+                const url = new URL(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_BALANCE);
+                url.searchParams.append('key', API_CONFIG.KEY);
+                url.searchParams.append('user_id', gameState.user.id);
+                
+                const response = await fetch(url.toString());
+                const data = await response.json();
+                
+                if (data.success) {
+                    const coins = parseInt(data.coins) || parseInt(data.balance) || 0;
+                    gameState.coins = coins;
+                    updateBalanceDisplay();
+                    return { success: true, coins: coins };
+                }
+                return { success: false, message: data.message };
+            } catch (error) {
+                return { success: false, message: error.message };
+            }
+        }
+        
+        async function getDiamondBalance() {
+            try {
+                const url = new URL(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_DIAMONDS);
+                url.searchParams.append('key', API_CONFIG.KEY);
+                url.searchParams.append('user_id', gameState.user.id);
+                
+                const response = await fetch(url.toString());
+                const data = await response.json();
+                
+                if (data.success) {
+                    const diamonds = parseInt(data.diamonds) || parseInt(data.balance) || 0;
+                    gameState.diamonds = diamonds;
+                    updateBalanceDisplay();
+                    return { success: true, diamonds: diamonds };
+                }
+                return { success: false, message: data.message };
+            } catch (error) {
+                return { success: false, message: error.message };
+            }
+        }
+        
+        async function getAllBalances() {
+            const [coinsResult, diamondsResult] = await Promise.all([
+                getCoinBalance(),
+                getDiamondBalance()
+            ]);
+            
+            return {
+                coinsSuccess: coinsResult.success,
+                diamondsSuccess: diamondsResult.success,
+                coins: gameState.coins,
+                diamonds: gameState.diamonds
+            };
+        }
+        
+        async function removeDiamondsFromBot(amount) {
+            try {
+                const formData = new URLSearchParams();
+                formData.append('key', API_CONFIG.KEY);
+                formData.append('user_id', gameState.user.id);
+                formData.append('amount', amount);
+                
+                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.REMOVE_DIAMONDS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
+                });
+                
+                return await response.json();
+            } catch (error) {
+                return { success: false, message: error.message };
+            }
+        }
+        
+        async function addCoinsToBot(amount) {
+            try {
+                const formData = new URLSearchParams();
+                formData.append('key', API_CONFIG.KEY);
+                formData.append('user_id', gameState.user.id);
+                formData.append('amount', amount);
+                formData.append('type', 'coins');
+                formData.append('reason', 'game_reward');
+                
+                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.ADD_COINS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
+                });
+                
+                return await response.json();
+            } catch (error) {
+                return { success: false, message: error.message };
+            }
+        }
+        
+        async function saveUserStatsToServer() {
+            try {
+                const formData = new URLSearchParams();
+                formData.append('key', API_CONFIG.KEY);
+                formData.append('user_id', gameState.user.id);
+                formData.append('total_won', gameState.userStats.totalWon);
+                formData.append('games_played', gameState.userStats.gamesPlayed);
+                formData.append('last_win', gameState.userStats.lastWin);
+                formData.append('big_wins', gameState.userStats.bigWins);
+                
+                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.SAVE_STATS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
+                });
+                
+                return await response.json();
+            } catch (error) {
+                return { success: false, message: error.message };
+            }
+        }
+        
+        // UI funksiyalari
+        function updateBalanceDisplay() {
+            document.getElementById('diamondCount').textContent = gameState.diamonds;
+            document.getElementById('coinCount').textContent = gameState.coins;
+            
+            if (gameState.user) {
+                document.getElementById('userIdDisplay').textContent = `ID: ${gameState.user.id}`;
+            }
+        }
+        
+        function showMessage(text, type = 'info') {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.textContent = text;
+            
+            if (type === 'error') {
+                messageArea.style.background = 'linear-gradient(135deg, var(--cartoon-red) 0%, #c0392b 100%)';
+            } else if (type === 'success') {
+                messageArea.style.background = 'linear-gradient(135deg, var(--cartoon-green) 0%, #27ae60 100%)';
+            } else {
+                messageArea.style.background = 'linear-gradient(135deg, rgba(155, 89, 182, 0.9) 0%, rgba(52, 152, 219, 0.9) 100%)';
+            }
+        }
+        
+        function showError(errorText) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = errorText;
+            errorElement.style.display = 'block';
+            
+            if (window.hapticFeedback) {
+                window.hapticFeedback.impactOccurred('heavy');
+            }
+            
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 4000);
+        }
+        
+        // Cartoon sandiqlarni yaratish - BOSHLANG'ICH HOLATDA HAM
+        function createTreasureChests(initial = true) {
+            const grid = document.getElementById('treasureGrid');
+            grid.innerHTML = '';
+            
+            const cartoonColors = [
+                { base: '#D2691E', accent: '#FFD700' },
+                { base: '#9B59B6', accent: '#F1C40F' },
+                { base: '#3498DB', accent: '#FFD700' },
+                { base: '#E74C3C', accent: '#F1C40F' },
+                { base: '#2ECC71', accent: '#FFD700' },
+                { base: '#F39C12', accent: '#9B59B6' },
+                { base: '#1ABC9C', accent: '#FFD700' },
+                { base: '#E67E22', accent: '#3498DB' },
+                { base: '#34495E', accent: '#F1C40F' }
+            ];
+            
+            for (let i = 0; i < 9; i++) {
+                const chest = document.createElement('div');
+                chest.className = 'treasure-chest';
+                chest.dataset.index = i;
+                
+                const colors = cartoonColors[i];
+                
+                chest.innerHTML = `
+                    <div class="chest-container">
+                        <div class="chest-base" style="
+                            background: linear-gradient(145deg, 
+                                ${colors.base} 0%, 
+                                ${colors.accent} 50%, 
+                                ${colors.base} 100%);
+                            border-color: ${colors.accent};
+                        ">
+                            <div class="chest-corner corner-bl"></div>
+                            <div class="chest-corner corner-br"></div>
+                        </div>
+                        <div class="chest-lid" style="
+                            background: linear-gradient(145deg, 
+                                ${colors.accent} 0%, 
+                                ${colors.base} 50%, 
+                                ${colors.accent} 100%);
+                            border-color: ${colors.base};
+                        ">
+                            <div class="chest-keyhole">
+                                <div class="chest-keyhole-inner"></div>
+                            </div>
+                            <div class="chest-corner corner-tl"></div>
+                            <div class="chest-corner corner-tr"></div>
+                        </div>
+                        <div class="treasure-inside">
+                            <div class="treasure-reward"></div>
+                        </div>
+                    </div>
+                `;
+                
+                // Agar boshlang'ich holat bo'lsa, faqat ko'rinish uchun
+                if (initial) {
+                    chest.style.cursor = 'default';
+                    chest.addEventListener('click', () => {
+                        showMessage('🎮 O\'yinni boshlash uchun pastdagi tugmani bosing!', 'info');
+                    });
+                } else {
+                    // Touch events for mobile
+                    chest.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        if (gameState.isPlaying && gameState.selectedChest === null) {
+                            chest.style.transform = 'scale(0.98)';
+                        }
+                    }, { passive: false });
+                    
+                    chest.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        chest.style.transform = '';
+                        if (gameState.isPlaying && gameState.selectedChest === null) {
+                            selectChest(i, chest);
+                        }
+                    }, { passive: false });
+                    
+                    chest.addEventListener('click', () => {
+                        if (gameState.isPlaying && gameState.selectedChest === null) {
+                            selectChest(i, chest);
+                        }
+                    });
+                }
+                
+                grid.appendChild(chest);
+            }
+        }
+        
+        // Cartoon background yaratish
+        function createCartoonBackground() {
+            const bg = document.getElementById('cartoonBg');
+            
+            // Qo'shimcha bulutlar
+            for (let i = 4; i <= 8; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = `cartoon-cloud cloud-${i}`;
+                cloud.style.width = `${Math.random() * 60 + 60}px`;
+                cloud.style.height = `${Math.random() * 30 + 30}px`;
+                cloud.style.top = `${Math.random() * 70 + 5}%`;
+                cloud.style.left = `${Math.random() * 100}%`;
+                cloud.style.animation = `floatCloud ${Math.random() * 20 + 20}s infinite linear`;
+                cloud.style.animationDelay = `${Math.random() * 10}s`;
+                bg.appendChild(cloud);
+            }
+        }
+        
+        // Cartoon tanga animatsiyasi
+        function createCoinFlightAnimation(startX, startY, amount) {
+            const coinTarget = document.getElementById('coinCount');
+            const targetRect = coinTarget.getBoundingClientRect();
+            const targetX = targetRect.left + targetRect.width / 2;
+            const targetY = targetRect.top + targetRect.height / 2;
+            
+            const coinTypes = ['🪙', '💰', '💵', '💸', '🌟', '✨'];
+            
+            for (let i = 0; i < Math.min(amount, 10); i++) {
+                setTimeout(() => {
+                    const coin = document.createElement('div');
+                    coin.className = 'coin';
+                    coin.innerHTML = coinTypes[Math.floor(Math.random() * coinTypes.length)];
+                    coin.style.left = `${startX}px`;
+                    coin.style.top = `${startY}px`;
+                    coin.style.fontSize = `${Math.random() * 8 + 20}px`;
+                    
+                    const tx = (targetX - startX) + (Math.random() - 0.5) * 60;
+                    const ty = (targetY - startY) + (Math.random() - 0.5) * 60;
+                    
+                    coin.style.setProperty('--tx', `${tx}px`);
+                    coin.style.setProperty('--ty', `${ty}px`);
+                    
+                    coin.animate([
+                        { opacity: 1, transform: 'translate(0, 0) scale(1) rotate(0deg)' },
+                        { opacity: 0, transform: 'translate(var(--tx), var(--ty)) scale(0.2) rotate(720deg)' }
+                    ], {
+                        duration: 800 + Math.random() * 400,
+                        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+                    });
+                    
+                    document.body.appendChild(coin);
+                    setTimeout(() => coin.remove(), 1200);
+                }, i * 50);
+            }
+            
+            // Balansni yangilash
+            setTimeout(() => {
+                const current = parseInt(coinTarget.textContent) || 0;
+                const newTotal = current + amount;
+                
+                let step = 0;
+                const steps = 15;
+                const interval = setInterval(() => {
+                    step++;
+                    const value = Math.floor(current + (amount * step / steps));
+                    coinTarget.textContent = value;
+                    coinTarget.style.transform = `scale(${1 + step * 0.03})`;
+                    coinTarget.style.color = step % 2 === 0 ? 'var(--cartoon-yellow)' : '#2d3436';
+                    
+                    if (step >= steps) {
+                        clearInterval(interval);
+                        coinTarget.textContent = newTotal;
+                        coinTarget.style.transform = 'scale(1)';
+                        coinTarget.style.color = '#2d3436';
+                        gameState.coins = newTotal;
+                        
+                        if (window.hapticFeedback) {
+                            window.hapticFeedback.notificationOccurred('success');
+                        }
+                    }
+                }, 30);
+            }, 400);
+        }
+        
+        // Cartoon sound effects
+        function playCartoonSound(type) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                if (type === 'chestOpen') {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.type = 'sine';
+                    
+                    oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.5);
+                    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.6);
+                    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.8);
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                    
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 1);
+                    
+                } else if (type === 'coinReward') {
+                    const frequencies = [523.25, 659.25, 783.99, 1046.50];
+                    frequencies.forEach((freq, index) => {
+                        setTimeout(() => {
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+                            
+                            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                            
+                            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                            
+                            oscillator.start();
+                            oscillator.stop(audioContext.currentTime + 0.4);
+                        }, index * 80);
+                    });
+                }
+            } catch (e) {
+                // Audio context not supported
+            }
+        }
+        
+        // O'yin yutug'ini generatsiya qilish
+        function generateRewards() {
+            const allRewards = [1, 2, 3, 4, 5, 6, 10, 50, 100];
+            const shuffledRewards = [...allRewards].sort(() => Math.random() - 0.5);
+            
+            let winningValue;
+            
+            if (gameState.isFirstPlay) {
+                const firstPlayOptions = [4, 5, 6];
+                winningValue = firstPlayOptions[Math.floor(Math.random() * 3)];
+            } else {
+                const rand = Math.random() * 100;
+                
+                if (rand < 10) {
+                    winningValue = 1;
+                } else if (rand < 30) {
+                    winningValue = 2;
+                } else if (rand < 75) {
+                    winningValue = 3;
+                } else if (rand < 95) {
+                    winningValue = 4;
+                } else {
+                    winningValue = 5;
+                }
+            }
+            
+            const winningChest = Math.floor(Math.random() * 9);
+            
+            return {
+                rewards: shuffledRewards,
+                winningChest: winningChest,
+                winningValue: winningValue
+            };
+        }
+        
+        async function selectChest(index, element) {
+            if (!gameState.isPlaying || gameState.selectedChest !== null) return;
+            
+            gameState.selectedChest = index;
+            element.classList.add('selected');
+            
+            // Haptic feedback
+            if (window.hapticFeedback) {
+                window.hapticFeedback.impactOccurred('medium');
+            } else if (isMobile && navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+            
+            playCartoonSound('chestOpen');
+            
+            setTimeout(() => {
+                element.classList.add('chest-opened');
+                
+                const coinsWon = gameState.currentRewards.winningValue;
+                
+                setTimeout(() => {
+                    const treasureInside = element.querySelector('.treasure-inside');
+                    const treasureReward = element.querySelector('.treasure-reward');
+                    
+                    treasureInside.classList.add('show');
+                    treasureReward.textContent = `+${coinsWon}`;
+                    treasureReward.classList.add('show');
+                    
+                    const rect = element.getBoundingClientRect();
+                    createCoinFlightAnimation(rect.left + rect.width/2, rect.top + rect.height/2, coinsWon);
+                    playCartoonSound('coinReward');
+                    
+                    updateUserStats(coinsWon);
+                    
+                    setTimeout(() => revealOtherChests(coinsWon, index), 1200);
+                }, 500);
+            }, 500);
+        }
+        
+        function revealOtherChests(coinsWon, selectedIndex) {
+            const chests = document.querySelectorAll('.treasure-chest');
+            
+            chests.forEach((chest, i) => {
+                if (i !== selectedIndex) {
+                    setTimeout(() => {
+                        chest.classList.add('chest-opened');
+                        
+                        const treasureInside = chest.querySelector('.treasure-inside');
+                        const treasureReward = chest.querySelector('.treasure-reward');
+                        
+                        setTimeout(() => {
+                            treasureInside.classList.add('show');
+                            treasureReward.textContent = `${gameState.currentRewards.rewards[i]}`;
+                            treasureReward.classList.add('show');
+                            treasureReward.style.opacity = '0.5';
+                            treasureReward.style.color = '#7f8c8d';
+                            treasureReward.style.textShadow = '2px 2px 0 #2d3436';
+                        }, 400);
+                    }, i * 200);
+                }
+            });
+            
+            setTimeout(async () => {
+                gameState.isPlaying = false;
+                gameState.totalPlays++;
+                
+                const addResult = await addCoinsToBot(coinsWon);
+                
+                if (addResult.success) {
+                    await saveUserStatsToServer();
+                }
+                
+                setTimeout(() => getCoinBalance(), 1000);
+                
+                let winMessage = '';
+                if (coinsWon === 6) {
+                    winMessage = `🎊 Ajoyib! ${coinsWon} tanga topdingiz!`;
+                } else if (coinsWon === 5) {
+                    winMessage = `🎉 Zo'r! ${coinsWon} tanga topdingiz!`;
+                } else if (coinsWon === 4) {
+                    winMessage = `👍 Yaxshi! ${coinsWon} tanga topdingiz!`;
+                } else if (coinsWon === 3) {
+                    winMessage = `😊 ${coinsWon} tanga topdingiz!`;
+                } else if (coinsWon === 2) {
+                    winMessage = `😊 ${coinsWon} tanga topdingiz!`;
+                } else if (coinsWon === 1) {
+                    winMessage = `✅ ${coinsWon} tanga topdingiz!`;
+                } else {
+                    winMessage = `✅ ${coinsWon} tanga topdingiz!`;
+                }
+                
+                showMessage(winMessage, 'success');
+                
+                const playButton = document.getElementById('playButton');
+                playButton.disabled = false;
+                playButton.innerHTML = '<span id="playButtonText">🎮 YANA O\'YNA (10 💎)</span>';
+                
+                if (gameState.isFirstPlay) {
+                    gameState.isFirstPlay = false;
+                    showMessage('✨ Endi asl o\'yin boshlanadi!', 'info');
+                }
+                
+                if (window.hapticFeedback) {
+                    window.hapticFeedback.notificationOccurred('success');
+                }
+            }, 2000);
+        }
+        
+        async function startGame() {
+            if (gameState.diamonds < 10) {
+                showMessage('❌ Yetarli olmos mavjud emas!', 'error');
+                if (window.hapticFeedback) {
+                    window.hapticFeedback.impactOccurred('heavy');
+                }
+                return;
+            }
+            
+            const removeResult = await removeDiamondsFromBot(10);
+            
+            if (!removeResult.success) {
+                showError(`❌ Xato: ${removeResult.message || 'Noma\'lum xato'}`);
+                return;
+            }
+            
+            gameState.diamonds -= 10;
+            updateBalanceDisplay();
+            
+            gameState.isPlaying = true;
+            gameState.selectedChest = null;
+            gameState.currentRewards = generateRewards();
+            
+            // Yangi sandiqlarni yaratish (faol o'yin rejimi)
+            createTreasureChests(false);
+            
+            const playButton = document.getElementById('playButton');
+            playButton.disabled = true;
+            playButton.innerHTML = '<span id="playButtonText">⏳ SANDIQ TANLANG...</span>';
+            
+            if (gameState.isFirstPlay) {
+                showMessage('✨ Birinchi o\'yin! 4, 5 yoki 6 tanga yutib oling!', 'info');
+            } else {
+                showMessage('✨ Qiziqarli sandiqlardan birini tanlang!', 'info');
+            }
+            
+            if (window.hapticFeedback) {
+                window.hapticFeedback.impactOccurred('light');
+            }
+        }
+        
+        // Mobil uchun viewport sozlamalari
+        function setViewportHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+            document.body.style.height = window.innerHeight + 'px';
         }
         
         // Touch event'larni optimallashtirish
@@ -1173,13 +1908,13 @@
                     touchStartX = touch.clientX;
                     touchStartY = touch.clientY;
                     
-                    // Touch bosilganda animatsiya
-                    this.style.transform = 'scale(0.95)';
+                    if (gameState.isPlaying && gameState.selectedChest === null) {
+                        this.style.transform = 'scale(0.95)';
+                    }
                 }, { passive: false });
                 
                 chest.addEventListener('touchmove', function(e) {
                     e.preventDefault();
-                    // Agar user boshqa joyga siljitayotgan bo'lsa, animatsiyani bekor qilish
                     const touch = e.touches[0];
                     const deltaX = Math.abs(touch.clientX - touchStartX);
                     const deltaY = Math.abs(touch.clientY - touchStartY);
@@ -1196,7 +1931,6 @@
                     const deltaX = Math.abs(touch.clientX - touchStartX);
                     const deltaY = Math.abs(touch.clientY - touchStartY);
                     
-                    // Faqat qisqa touch va siljimaslik uchun
                     if (touchTime < 500 && deltaX < 10 && deltaY < 10) {
                         this.style.transform = '';
                         const index = this.dataset.index;
@@ -1220,29 +1954,21 @@
             });
         }
         
-        // Mobil uchun viewport sozlamalari
-        function setViewportHeight() {
-            const vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-            
-            // Body balandligini o'rnatish
-            document.body.style.height = window.innerHeight + 'px';
-        }
-        
         // Dasturni ishga tushirish
         async function init() {
+            console.log('Cartoon Treasure Hunt - Mobile Optimized Version');
+            console.log('Mobile:', isMobile, 'iOS:', isIOS, 'Android:', isAndroid);
+            
             // Mobil optimallashtirish
             if (isMobile) {
-                console.log('Mobile device detected:', navigator.userAgent);
-                
-                // Viewport balandligini sozlash
                 setViewportHeight();
                 window.addEventListener('resize', setViewportHeight);
                 window.addEventListener('orientationchange', setViewportHeight);
-                
-                // Mobil audio sozlamalari
                 initMobileAudio();
             }
+            
+            // BOSHLANG'ICH SANDIQLARNI YARATISH
+            createTreasureChests(true);
             
             createCartoonBackground();
             initTelegram();
@@ -1253,52 +1979,51 @@
                 setTimeout(initTouchEvents, 500);
             }
             
-            // ... qolgan kod o'zgarmasdan qoladi ...
-        }
-        
-        // Qayta ishlangan selectChest funksiyasi
-        async function selectChest(index, element) {
-            if (!gameState.isPlaying || gameState.selectedChest !== null) return;
+            gameState.user = getTelegramUser();
             
-            gameState.selectedChest = index;
-            
-            // Haptic feedback
-            if (window.hapticFeedback) {
-                window.hapticFeedback.impactOccurred('medium');
-            } else if (isMobile) {
-                // Mobil qurilmalarda vibratsiya
-                if (navigator.vibrate) {
-                    navigator.vibrate(50);
-                }
+            // LOCALSTORAGE dan foydalanuvchi statistikasini yuklash
+            const savedStats = getUserStatsFromDB();
+            if (savedStats) {
+                gameState.userStats = savedStats;
+                gameState.isFirstPlay = false;
+                console.log('Saved stats loaded:', savedStats);
             }
             
-            playCartoonSound('chestOpen');
+            const balancesResult = await getAllBalances();
             
-            setTimeout(() => {
-                element.classList.add('chest-opened');
-                
-                const coinsWon = gameState.currentRewards.winningValue;
-                
-                setTimeout(() => {
-                    const treasureInside = element.querySelector('.treasure-inside');
-                    const treasureReward = element.querySelector('.treasure-reward');
-                    
-                    treasureInside.classList.add('show');
-                    treasureReward.textContent = `+${coinsWon}`;
-                    treasureReward.classList.add('show');
-                    
-                    // Tanga animatsiyasi
-                    const rect = element.getBoundingClientRect();
-                    createCoinFlightAnimation(rect.left + rect.width/2, rect.top + rect.height/2, coinsWon);
-                    playCartoonSound('coinReward');
-                    
-                    // Statistikani yangilash
-                    updateUserStats(coinsWon);
-                    
-                    // Boshqa sandiqlarni ochish
-                    setTimeout(() => revealOtherChests(coinsWon, index), 1200);
-                }, 500);
-            }, 500);
+            if (balancesResult.coinsSuccess && balancesResult.diamondsSuccess) {
+                showMessage(`✅ Balanslar yuklandi!`, 'success');
+            } else {
+                showMessage('⚠️ Oflayn rejimda ishlamoqdasiz', 'info');
+                if (!balancesResult.coinsSuccess) gameState.coins = 100;
+                if (!balancesResult.diamondsSuccess) gameState.diamonds = 50;
+                updateBalanceDisplay();
+            }
+            
+            updateBalanceDisplay();
+            
+            document.getElementById('playButton').addEventListener('click', startGame);
+            
+            if (gameState.isFirstPlay) {
+                showMessage('🎮 Birinchi o\'yinningiz! 10 olmos bilan boshlang!', 'info');
+            } else {
+                showMessage(`🎮 Qaytganingiz bilan! ${gameState.userStats.gamesPlayed} marta o'ynagansiz`, 'info');
+            }
+            
+            // Touch optimization
+            document.addEventListener('touchmove', (e) => {
+                if (e.scale !== 1) e.preventDefault();
+            }, { passive: false });
+            
+            // Prevent zoom on double-tap
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', (e) => {
+                const now = Date.now();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, { passive: false });
         }
         
         // DOM yuklanganda ishga tushirish
@@ -1306,15 +2031,12 @@
         
         // Mobil uchun qo'shimcha sozlamalar
         if (isMobile) {
-            // iOS da zoom va pull-to-refresh ni oldini olish
             document.addEventListener('gesturestart', function(e) {
                 e.preventDefault();
             });
             
-            // Safari da bounce effektini kamaytirish
             document.body.style.overscrollBehavior = 'none';
             
-            // Mobil brauzerlar uchun tezkor yuklanish
             window.addEventListener('load', function() {
                 setTimeout(function() {
                     window.scrollTo(0, 1);
@@ -1325,7 +2047,6 @@
             if ('connection' in navigator) {
                 const connection = navigator.connection;
                 if (connection.saveData || connection.effectiveType === '2g') {
-                    // Kam tezlikda animatsiyalarni soddalashtirish
                     document.querySelectorAll('.cartoon-cloud').forEach(cloud => {
                         cloud.style.animationDuration = '40s';
                     });
@@ -1333,8 +2054,40 @@
             }
         }
         
-        console.log('Cartoon Treasure Hunt - Mobile Optimized Version');
-        console.log('Mobile:', isMobile, 'iOS:', isIOS, 'Android:', isAndroid);
+        // Orientation change handler
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+                document.body.style.height = window.innerHeight + 'px';
+            }, 100);
+        });
+        
+        // Resize handler
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                document.body.style.height = window.innerHeight + 'px';
+            }, 250);
+        });
+        
+        // Prevent context menu on mobile
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+        
+        // Prevent pull-to-refresh
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length !== 1) return;
+            const touch = e.touches[0];
+            if (touch.clientY > window.innerHeight * 0.1) return;
+            e.preventDefault();
+        }, { passive: false });
+        
+        console.log('Cartoon Treasure Hunt initialized!');
+        console.log('- All 9 chests will be visible from start');
+        console.log('- Mobile optimized touch controls');
+        console.log('- Cartoon animations and effects');
     </script>
 </body>
 </html>
