@@ -316,10 +316,7 @@
             box-shadow: var(--cartoon-shadow);
             transition: all 0.3s;
             touch-action: manipulation;
-        }
-        
-        .admin-stats-button:hover {
-            transform: scale(1.1);
+            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
         }
         
         .admin-stats-button:active {
@@ -377,11 +374,6 @@
             cursor: pointer;
             box-shadow: var(--cartoon-shadow);
             transition: all 0.3s;
-            touch-action: manipulation;
-        }
-        
-        .admin-stats-close:hover {
-            transform: scale(1.1);
         }
         
         .admin-stats-close:active {
@@ -519,12 +511,8 @@
             touch-action: manipulation;
         }
         
-        .admin-export-button:hover {
-            transform: translateY(-3px);
-        }
-        
         .admin-export-button:active {
-            transform: translateY(1px);
+            transform: translateY(2px);
         }
         
         /* Game Area - Treasure Island */
@@ -734,10 +722,6 @@
         }
         
         /* Sandiq interaktsiyalari */
-        .treasure-chest:hover .chest-container {
-            transform: translateY(-8px) scale(1.05);
-        }
-        
         .treasure-chest:active .chest-container {
             transform: scale(0.95);
             transition: transform 0.1s;
@@ -787,13 +771,6 @@
             letter-spacing: 0.3px;
             touch-action: manipulation;
             -webkit-tap-highlight-color: rgba(0,0,0,0.1);
-        }
-        
-        .play-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 
-                0 11px 0 #2d3436,
-                0 15px 20px rgba(0, 0, 0, 0.3);
         }
         
         .play-button:active {
@@ -869,10 +846,7 @@
             box-shadow: var(--cartoon-shadow);
             transition: all 0.3s;
             touch-action: manipulation;
-        }
-        
-        .audio-control:hover {
-            transform: scale(1.1);
+            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
         }
         
         .audio-control:active {
@@ -1043,6 +1017,11 @@
             .admin-stat-value {
                 font-size: 20px;
             }
+            
+            .admin-stats-button, .audio-control {
+                width: 44px;
+                height: 44px;
+            }
         }
         
         /* Balandligi past bo'lgan qurilmalar */
@@ -1196,6 +1175,19 @@
             .treasure-chest {
                 min-height: 70px;
             }
+            
+            .admin-stats-button, .audio-control {
+                position: fixed;
+                top: 15px;
+            }
+            
+            .admin-stats-button {
+                left: 15px;
+            }
+            
+            .audio-control {
+                right: 15px;
+            }
         }
         
         /* iPhone notch va safe area */
@@ -1277,6 +1269,20 @@
             
             .game-area {
                 margin: 10px 0;
+            }
+        }
+        
+        /* Mobile button tap fix */
+        button, .admin-stats-button, .audio-control {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        
+        /* iOS Safari specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            .admin-stats-button, .audio-control {
+                cursor: pointer;
             }
         }
     </style>
@@ -1428,7 +1434,7 @@
             }
         };
         
-        // API konfiguratsiyasi - STATISTIKA UCHUN YANGI ENDPOINT QO'SHILDI
+        // API konfiguratsiyasi
         const API_CONFIG = {
             KEY: '4564123:hkjhfadfhieapkdnga',
             BASE_URL: 'https://68ed1ab05ca4e.myxvest1.ru',
@@ -1438,7 +1444,6 @@
                 REMOVE_DIAMONDS: '/remove.php',
                 ADD_COINS: '/coinmanage.php',
                 SAVE_STATS: '/save_stats.php',
-                // YANGI ENDPOINTLAR
                 GET_ADMIN_STATS: '/get_admin_stats.php',
                 UPDATE_GAME_STATS: '/update_game_stats.php'
             }
@@ -1446,35 +1451,28 @@
         
         // ========== FUNCTIONS ==========
         
-        // Audio Tizimi - MOBILE UCHUN YANGILANGAN
+        // Audio Tizimi - YANGILANDI
         function initAudio() {
             backgroundMusic.volume = 0.4;
             
             const audioControl = document.getElementById('audioControl');
-            const audioIcon = document.getElementById('audioIcon');
             
-            // Mobile uchun touch event
-            audioControl.addEventListener('touchstart', (e) => {
+            // Touch event'lar uchun
+            audioControl.addEventListener('touchstart', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 toggleAudio();
-                
-                // Visual feedback
-                audioControl.style.transform = 'scale(0.9)';
-                setTimeout(() => {
-                    audioControl.style.transform = '';
-                }, 200);
-                
-                // Haptic feedback
-                if (window.hapticFeedback) {
-                    window.hapticFeedback.impactOccurred('light');
-                } else if (navigator.vibrate && isMobile) {
-                    navigator.vibrate(30);
-                }
-            });
+                this.style.transform = 'scale(0.95)';
+            }, { passive: false });
             
-            // Desktop uchun click event
-            audioControl.addEventListener('click', (e) => {
+            audioControl.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                this.style.transform = '';
+            }, { passive: false });
+            
+            // Click event'lar uchun
+            audioControl.addEventListener('click', function(e) {
+                e.preventDefault();
                 e.stopPropagation();
                 toggleAudio();
             });
@@ -1511,26 +1509,6 @@
                         }
                     }, { once: true });
                 });
-            }
-        }
-        
-        // Audio ni mobil uchun optimallashtirish
-        function initMobileAudio() {
-            if (isIOS) {
-                document.addEventListener('touchstart', function() {
-                    if (!gameState.audioStarted && gameState.musicEnabled) {
-                        backgroundMusic.play().then(() => {
-                            gameState.audioStarted = true;
-                        });
-                    }
-                }, { once: true });
-                
-                backgroundMusic.muted = false;
-                backgroundMusic.volume = 0.3;
-            }
-            
-            if (isAndroid) {
-                backgroundMusic.preload = 'auto';
             }
         }
         
@@ -1577,86 +1555,77 @@
             }
         }
         
-        // ADMIN STATISTIKASI FUNKSIYALARI - MOBILE UCHUN YANGILANGAN
+        // ADMIN STATISTIKASI FUNKSIYALARI - YANGILANDI
         function checkIfAdmin() {
             if (gameState.user && gameState.user.username) {
                 gameState.isAdmin = ADMIN_USERS.includes(gameState.user.username);
                 if (gameState.isAdmin) {
-                    document.getElementById('adminStatsButton').style.display = 'flex';
+                    const adminButton = document.getElementById('adminStatsButton');
+                    adminButton.style.display = 'flex';
+                    
+                    // Touch event'lar uchun
+                    adminButton.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openAdminStats();
+                        this.style.transform = 'scale(0.95)';
+                    }, { passive: false });
+                    
+                    adminButton.addEventListener('touchend', function(e) {
+                        e.preventDefault();
+                        this.style.transform = '';
+                    }, { passive: false });
+                    
+                    // Click event'lar uchun
+                    adminButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openAdminStats();
+                    });
+                    
                     console.log(`👑 Admin detected: @${gameState.user.username}`);
                 }
             }
         }
         
+        function openAdminStats() {
+            if (!gameState.isAdmin) return;
+            
+            loadAdminStatsFromServer();
+            const adminStatsPanel = document.getElementById('adminStatsPanel');
+            adminStatsPanel.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
         function initAdminPanel() {
-            const adminStatsButton = document.getElementById('adminStatsButton');
+            if (!gameState.isAdmin) return;
+            
             const adminStatsPanel = document.getElementById('adminStatsPanel');
             const adminStatsClose = document.getElementById('adminStatsClose');
             const adminExportButton = document.getElementById('adminExportButton');
             
-            if (!gameState.isAdmin) return;
-            
-            // Admin button uchun touch event
-            adminStatsButton.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                loadAdminStatsFromServer();
-                adminStatsPanel.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-                
-                // Visual feedback
-                adminStatsButton.style.transform = 'scale(0.9)';
-                setTimeout(() => {
-                    adminStatsButton.style.transform = '';
-                }, 200);
-                
-                // Haptic feedback
-                if (window.hapticFeedback) {
-                    window.hapticFeedback.impactOccurred('light');
-                } else if (navigator.vibrate && isMobile) {
-                    navigator.vibrate(30);
-                }
-            });
-            
-            // Desktop uchun click event
-            adminStatsButton.addEventListener('click', () => {
-                loadAdminStatsFromServer();
-                adminStatsPanel.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            });
-            
-            // Admin panel close button
-            adminStatsClose.addEventListener('touchstart', (e) => {
+            // Close button uchun touch event'lar
+            adminStatsClose.addEventListener('touchstart', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 adminStatsPanel.style.display = 'none';
                 document.body.style.overflow = '';
-                
-                adminStatsClose.style.transform = 'scale(0.9)';
-                setTimeout(() => {
-                    adminStatsClose.style.transform = '';
-                }, 200);
-                
-                if (window.hapticFeedback) {
-                    window.hapticFeedback.impactOccurred('light');
-                }
-            });
+                this.style.transform = 'scale(0.95)';
+            }, { passive: false });
             
-            adminStatsClose.addEventListener('click', () => {
+            adminStatsClose.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                this.style.transform = '';
+            }, { passive: false });
+            
+            adminStatsClose.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 adminStatsPanel.style.display = 'none';
                 document.body.style.overflow = '';
             });
             
-            // Panel background bosilganda yopish
-            adminStatsPanel.addEventListener('touchstart', (e) => {
-                if (e.target === adminStatsPanel) {
-                    e.preventDefault();
-                    adminStatsPanel.style.display = 'none';
-                    document.body.style.overflow = '';
-                }
-            });
-            
+            // Panelni background'ga bosganda yopish
             adminStatsPanel.addEventListener('click', (e) => {
                 if (e.target === adminStatsPanel) {
                     adminStatsPanel.style.display = 'none';
@@ -1664,23 +1633,24 @@
                 }
             });
             
-            // Export button
-            adminExportButton.addEventListener('touchstart', (e) => {
+            // Export button uchun
+            adminExportButton.addEventListener('touchstart', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 exportAdminStats();
-                
-                adminExportButton.style.transform = 'translateY(-1px)';
-                setTimeout(() => {
-                    adminExportButton.style.transform = '';
-                }, 200);
-                
-                if (window.hapticFeedback) {
-                    window.hapticFeedback.impactOccurred('light');
-                }
-            });
+                this.style.transform = 'translateY(2px)';
+            }, { passive: false });
             
-            adminExportButton.addEventListener('click', exportAdminStats);
+            adminExportButton.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                this.style.transform = '';
+            }, { passive: false });
+            
+            adminExportButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                exportAdminStats();
+            });
         }
         
         // SERVERDAN ADMIN STATISTIKASINI OLISH
@@ -1806,33 +1776,6 @@
             }, 1500);
         }
         
-        // O'YIN STATISTIKASINI SERVERGA YUBORISH
-        async function updateGameStatsOnServer(coinsWon, diamondsSpent = 10) {
-            try {
-                const formData = new URLSearchParams();
-                formData.append('key', API_CONFIG.KEY);
-                formData.append('user_id', gameState.user.id);
-                formData.append('username', gameState.user.username || '');
-                formData.append('coins_won', coinsWon);
-                formData.append('diamonds_spent', diamondsSpent);
-                formData.append('game_date', new Date().toISOString());
-                formData.append('is_admin', gameState.user.isAdmin ? '1' : '0');
-                
-                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.UPDATE_GAME_STATS, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData.toString()
-                });
-                
-                const result = await response.json();
-                console.log('Game stats updated on server:', result);
-                return result;
-            } catch (error) {
-                console.error('Error updating game stats:', error);
-                return { success: false, message: error.message };
-            }
-        }
-        
         // API funksiyalari
         async function getCoinBalance() {
             try {
@@ -1930,29 +1873,6 @@
             }
         }
         
-        async function saveUserStatsToServer() {
-            try {
-                const formData = new URLSearchParams();
-                formData.append('key', API_CONFIG.KEY);
-                formData.append('user_id', gameState.user.id);
-                formData.append('total_won', gameState.userStats.totalWon);
-                formData.append('games_played', gameState.userStats.gamesPlayed);
-                formData.append('last_win', gameState.userStats.lastWin);
-                formData.append('big_wins', gameState.userStats.bigWins);
-                formData.append('diamonds_spent', gameState.userStats.diamondsSpent);
-                
-                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.SAVE_STATS, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData.toString()
-                });
-                
-                return await response.json();
-            } catch (error) {
-                return { success: false, message: error.message };
-            }
-        }
-        
         // UI funksiyalari
         function updateBalanceDisplay() {
             document.getElementById('diamondCount').textContent = gameState.diamonds;
@@ -1995,17 +1915,16 @@
             const grid = document.getElementById('treasureGrid');
             grid.innerHTML = '';
             
-            // Oddiy yog'och ranglari
             const woodColors = [
-                { base: '#8B4513', lid: '#A0522D' }, // Classic Brown
-                { base: '#654321', lid: '#8B4513' }, // Dark Brown
-                { base: '#D2691E', lid: '#CD853F' }, // Chocolate
-                { base: '#A0522D', lid: '#8B4513' }, // Sienna
-                { base: '#8B4513', lid: '#654321' }, // Saddle Brown
-                { base: '#CD853F', lid: '#D2691E' }, // Peru
-                { base: '#A0522D', lid: '#8B4513' }, // Brown
-                { base: '#654321', lid: '#A0522D' }, // Dark Wood
-                { base: '#8B4513', lid: '#D2691E' }  // Mixed Brown
+                { base: '#8B4513', lid: '#A0522D' },
+                { base: '#654321', lid: '#8B4513' },
+                { base: '#D2691E', lid: '#CD853F' },
+                { base: '#A0522D', lid: '#8B4513' },
+                { base: '#8B4513', lid: '#654321' },
+                { base: '#CD853F', lid: '#D2691E' },
+                { base: '#A0522D', lid: '#8B4513' },
+                { base: '#654321', lid: '#A0522D' },
+                { base: '#8B4513', lid: '#D2691E' }
             ];
             
             for (let i = 0; i < 9; i++) {
@@ -2040,47 +1959,80 @@
                     </div>
                 `;
                 
-                // Agar boshlang'ich holat bo'lsa, faqat ko'rinish uchun
                 if (initial) {
                     chest.style.cursor = 'default';
                     chest.addEventListener('click', () => {
                         showMessage('🎮 O\'yinni boshlash uchun pastdagi tugmani bosing!', 'info');
                     });
                 } else {
-                    // Touch events for mobile
-                    chest.addEventListener('touchstart', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (gameState.isPlaying && gameState.selectedChest === null) {
-                            chest.style.transform = 'scale(0.98)';
-                        }
-                    }, { passive: false });
-                    
-                    chest.addEventListener('touchend', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        chest.style.transform = '';
-                        if (gameState.isPlaying && gameState.selectedChest === null) {
-                            selectChest(i, chest);
-                        }
-                    }, { passive: false });
-                    
-                    chest.addEventListener('click', () => {
-                        if (gameState.isPlaying && gameState.selectedChest === null) {
-                            selectChest(i, chest);
-                        }
-                    });
+                    setupChestTouchEvents(chest, i);
                 }
                 
                 grid.appendChild(chest);
             }
         }
         
+        // Sandiq uchun touch event'lar
+        function setupChestTouchEvents(chest, index) {
+            let touchStartTime;
+            let touchStartX;
+            let touchStartY;
+            
+            chest.addEventListener('touchstart', function(e) {
+                if (gameState.isPlaying && gameState.selectedChest === null) {
+                    const touch = e.touches[0];
+                    touchStartTime = Date.now();
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    this.querySelector('.chest-container').style.transform = 'scale(0.95)';
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            chest.addEventListener('touchmove', function(e) {
+                if (touchStartTime) {
+                    const touch = e.touches[0];
+                    const deltaX = Math.abs(touch.clientX - touchStartX);
+                    const deltaY = Math.abs(touch.clientY - touchStartY);
+                    
+                    if (deltaX > 10 || deltaY > 10) {
+                        this.querySelector('.chest-container').style.transform = '';
+                    }
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            chest.addEventListener('touchend', function(e) {
+                if (touchStartTime) {
+                    const touchTime = Date.now() - touchStartTime;
+                    const touch = e.changedTouches[0];
+                    const deltaX = Math.abs(touch.clientX - touchStartX);
+                    const deltaY = Math.abs(touch.clientY - touchStartY);
+                    
+                    this.querySelector('.chest-container').style.transform = '';
+                    
+                    if (touchTime < 500 && deltaX < 10 && deltaY < 10) {
+                        if (gameState.isPlaying && gameState.selectedChest === null) {
+                            selectChest(index, this);
+                        }
+                    }
+                    touchStartTime = null;
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            chest.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (gameState.isPlaying && gameState.selectedChest === null) {
+                    selectChest(index, this);
+                }
+            });
+        }
+        
         // Cartoon background yaratish
         function createCartoonBackground() {
             const bg = document.getElementById('cartoonBg');
             
-            // Qo'shimcha bulutlar
             for (let i = 4; i <= 8; i++) {
                 const cloud = document.createElement('div');
                 cloud.className = `cartoon-cloud cloud-${i}`;
@@ -2091,6 +2043,234 @@
                 cloud.style.animation = `floatCloud ${Math.random() * 20 + 20}s infinite linear`;
                 cloud.style.animationDelay = `${Math.random() * 10}s`;
                 bg.appendChild(cloud);
+            }
+        }
+        
+        // O'yin yutug'ini generatsiya qilish
+        function generateRewards() {
+            const allRewards = [1, 2, 3, 4, 5, 6, 10, 50, 100];
+            const shuffledRewards = [...allRewards].sort(() => Math.random() - 0.5);
+            
+            let winningValue;
+            
+            if (gameState.isFirstPlay) {
+                const firstPlayOptions = [4, 5, 6];
+                winningValue = firstPlayOptions[Math.floor(Math.random() * 3)];
+            } else {
+                const rand = Math.random() * 100;
+                
+                if (rand < 23.75) {
+                    winningValue = 1;
+                } else if (rand < 47.5) {
+                    winningValue = 2;
+                } else if (rand < 71.25) {
+                    winningValue = 3;
+                } else if (rand < 95) {
+                    winningValue = 4;
+                } else {
+                    winningValue = 5;
+                }
+            }
+            
+            const winningChest = Math.floor(Math.random() * 9);
+            
+            return {
+                rewards: shuffledRewards,
+                winningChest: winningChest,
+                winningValue: winningValue
+            };
+        }
+        
+        async function selectChest(index, element) {
+            if (!gameState.isPlaying || gameState.selectedChest !== null) return;
+            
+            gameState.selectedChest = index;
+            element.classList.add('selected');
+            
+            if (window.hapticFeedback) {
+                window.hapticFeedback.impactOccurred('medium');
+            } else if (isMobile && navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+            
+            playCartoonSound('chestOpen');
+            
+            setTimeout(() => {
+                element.classList.add('chest-opened');
+                
+                const coinsWon = gameState.currentRewards.winningValue;
+                
+                setTimeout(() => {
+                    const treasureInside = element.querySelector('.treasure-inside');
+                    const treasureReward = element.querySelector('.treasure-reward');
+                    
+                    treasureInside.classList.add('show');
+                    treasureReward.textContent = `+${coinsWon}`;
+                    treasureReward.classList.add('show');
+                    
+                    const rect = element.getBoundingClientRect();
+                    createCoinFlightAnimation(rect.left + rect.width/2, rect.top + rect.height/2, coinsWon);
+                    playCartoonSound('coinReward');
+                    
+                    setTimeout(() => revealOtherChests(coinsWon, index), 1200);
+                }, 500);
+            }, 500);
+        }
+        
+        function revealOtherChests(coinsWon, selectedIndex) {
+            const chests = document.querySelectorAll('.treasure-chest');
+            
+            chests.forEach((chest, i) => {
+                if (i !== selectedIndex) {
+                    setTimeout(() => {
+                        chest.classList.add('chest-opened');
+                        
+                        const treasureInside = chest.querySelector('.treasure-inside');
+                        const treasureReward = chest.querySelector('.treasure-reward');
+                        
+                        setTimeout(() => {
+                            treasureInside.classList.add('show');
+                            treasureReward.textContent = `${gameState.currentRewards.rewards[i]}`;
+                            treasureReward.classList.add('show');
+                            treasureReward.style.opacity = '0.5';
+                            treasureReward.style.color = '#7f8c8d';
+                            treasureReward.style.textShadow = '2px 2px 0 #2d3436';
+                        }, 400);
+                    }, i * 200);
+                }
+            });
+            
+            setTimeout(async () => {
+                gameState.isPlaying = false;
+                gameState.totalPlays++;
+                
+                const addResult = await addCoinsToBot(coinsWon);
+                
+                if (addResult.success) {
+                    // Stats saqlash
+                }
+                
+                setTimeout(() => getCoinBalance(), 1000);
+                
+                let winMessage = '';
+                if (coinsWon === 5) {
+                    winMessage = `🎉 O'TTA YAXSHI! ${coinsWon} tanga topdingiz! 🎊`;
+                } else if (coinsWon === 4) {
+                    winMessage = `👍 Yaxshi! ${coinsWon} tanga topdingiz!`;
+                } else if (coinsWon === 3) {
+                    winMessage = `😊 ${coinsWon} tanga topdingiz!`;
+                } else if (coinsWon === 2) {
+                    winMessage = `😊 ${coinsWon} tanga topdingiz!`;
+                } else if (coinsWon === 1) {
+                    winMessage = `✅ ${coinsWon} tanga topdingiz!`;
+                } else {
+                    winMessage = `✅ ${coinsWon} tanga topdingiz!`;
+                }
+                
+                showMessage(winMessage, 'success');
+                
+                const playButton = document.getElementById('playButton');
+                playButton.disabled = false;
+                playButton.innerHTML = '<span id="playButtonText">🎮 YANA O\'YNA (10 💎)</span>';
+                
+                if (gameState.isFirstPlay) {
+                    gameState.isFirstPlay = false;
+                    showMessage('✨ Endi asl o\'yin boshlanadi!', 'info');
+                }
+                
+                if (window.hapticFeedback) {
+                    window.hapticFeedback.notificationOccurred('success');
+                }
+            }, 2000);
+        }
+        
+        async function startGame() {
+            if (gameState.diamonds < 10) {
+                showMessage('❌ Yetarli olmos mavjud emas!', 'error');
+                if (window.hapticFeedback) {
+                    window.hapticFeedback.impactOccurred('heavy');
+                }
+                return;
+            }
+            
+            const removeResult = await removeDiamondsFromBot(10);
+            
+            if (!removeResult.success) {
+                showError(`❌ Xato: ${removeResult.message || 'Noma\'lum xato'}`);
+                return;
+            }
+            
+            gameState.diamonds -= 10;
+            updateBalanceDisplay();
+            
+            gameState.isPlaying = true;
+            gameState.selectedChest = null;
+            gameState.currentRewards = generateRewards();
+            
+            createTreasureChests(false);
+            
+            const playButton = document.getElementById('playButton');
+            playButton.disabled = true;
+            playButton.innerHTML = '<span id="playButtonText">⏳ SANDIQ TANLANG...</span>';
+            
+            if (gameState.isFirstPlay) {
+                showMessage('✨ Birinchi o\'yin! 4, 5 yoki 6 tanga yutib oling!', 'info');
+            } else {
+                showMessage('✨ Qiziqarli sandiqlardan birini tanlang!', 'info');
+            }
+            
+            if (window.hapticFeedback) {
+                window.hapticFeedback.impactOccurred('light');
+            }
+        }
+        
+        // Cartoon sound effects
+        function playCartoonSound(type) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                if (type === 'chestOpen') {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.type = 'sine';
+                    
+                    oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.5);
+                    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.6);
+                    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.8);
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                    
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 1);
+                    
+                } else if (type === 'coinReward') {
+                    const frequencies = [523.25, 659.25, 783.99, 1046.50];
+                    frequencies.forEach((freq, index) => {
+                        setTimeout(() => {
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+                            
+                            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                            
+                            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                            
+                            oscillator.start();
+                            oscillator.stop(audioContext.currentTime + 0.4);
+                        }, index * 80);
+                    });
+                }
+            } catch (e) {
+                // Audio context not supported
             }
         }
         
@@ -2160,257 +2340,6 @@
             }, 400);
         }
         
-        // Cartoon sound effects
-        function playCartoonSound(type) {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                
-                if (type === 'chestOpen') {
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.type = 'sine';
-                    
-                    oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.5);
-                    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.6);
-                    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.8);
-                    
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
-                    
-                    oscillator.start();
-                    oscillator.stop(audioContext.currentTime + 1);
-                    
-                } else if (type === 'coinReward') {
-                    const frequencies = [523.25, 659.25, 783.99, 1046.50];
-                    frequencies.forEach((freq, index) => {
-                        setTimeout(() => {
-                            const oscillator = audioContext.createOscillator();
-                            const gainNode = audioContext.createGain();
-                            
-                            oscillator.connect(gainNode);
-                            gainNode.connect(audioContext.destination);
-                            
-                            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
-                            
-                            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
-                            
-                            oscillator.start();
-                            oscillator.stop(audioContext.currentTime + 0.4);
-                        }, index * 80);
-                    });
-                }
-            } catch (e) {
-                // Audio context not supported
-            }
-        }
-        
-        // O'yin yutug'ini generatsiya qilish - 1-4 BIR XIL FOIZDA, 5 JUDA KAM
-        function generateRewards() {
-            const allRewards = [1, 2, 3, 4, 5, 6, 10, 50, 100];
-            const shuffledRewards = [...allRewards].sort(() => Math.random() - 0.5);
-            
-            let winningValue;
-            
-            if (gameState.isFirstPlay) {
-                const firstPlayOptions = [4, 5, 6];
-                winningValue = firstPlayOptions[Math.floor(Math.random() * 3)];
-            } else {
-                // 1, 2, 3, 4 - HAR BIRI 23.75% EHTIMOLLIK (95% ÷ 4)
-                // 5 - FAQAT 5% EHTIMOLLIK
-                const rand = Math.random() * 100;
-                
-                if (rand < 23.75) {          // 0-23.75
-                    winningValue = 1;
-                } else if (rand < 47.5) {    // 23.75-47.5
-                    winningValue = 2;
-                } else if (rand < 71.25) {   // 47.5-71.25
-                    winningValue = 3;
-                } else if (rand < 95) {      // 71.25-95
-                    winningValue = 4;
-                } else {                     // 95-100 (faqat 5%)
-                    winningValue = 5;
-                }
-            }
-            
-            const winningChest = Math.floor(Math.random() * 9);
-            
-            return {
-                rewards: shuffledRewards,
-                winningChest: winningChest,
-                winningValue: winningValue
-            };
-        }
-        
-        async function selectChest(index, element) {
-            if (!gameState.isPlaying || gameState.selectedChest !== null) return;
-            
-            gameState.selectedChest = index;
-            element.classList.add('selected');
-            
-            // Haptic feedback
-            if (window.hapticFeedback) {
-                window.hapticFeedback.impactOccurred('medium');
-            } else if (isMobile && navigator.vibrate) {
-                navigator.vibrate(50);
-            }
-            
-            playCartoonSound('chestOpen');
-            
-            setTimeout(() => {
-                element.classList.add('chest-opened');
-                
-                const coinsWon = gameState.currentRewards.winningValue;
-                
-                setTimeout(() => {
-                    const treasureInside = element.querySelector('.treasure-inside');
-                    const treasureReward = element.querySelector('.treasure-reward');
-                    
-                    treasureInside.classList.add('show');
-                    treasureReward.textContent = `+${coinsWon}`;
-                    treasureReward.classList.add('show');
-                    
-                    const rect = element.getBoundingClientRect();
-                    createCoinFlightAnimation(rect.left + rect.width/2, rect.top + rect.height/2, coinsWon);
-                    playCartoonSound('coinReward');
-                    
-                    // Update stats and send to server
-                    updateUserStats(coinsWon, 10);
-                    updateGameStatsOnServer(coinsWon, 10);
-                    
-                    setTimeout(() => revealOtherChests(coinsWon, index), 1200);
-                }, 500);
-            }, 500);
-        }
-        
-        function revealOtherChests(coinsWon, selectedIndex) {
-            const chests = document.querySelectorAll('.treasure-chest');
-            
-            chests.forEach((chest, i) => {
-                if (i !== selectedIndex) {
-                    setTimeout(() => {
-                        chest.classList.add('chest-opened');
-                        
-                        const treasureInside = chest.querySelector('.treasure-inside');
-                        const treasureReward = chest.querySelector('.treasure-reward');
-                        
-                        setTimeout(() => {
-                            treasureInside.classList.add('show');
-                            treasureReward.textContent = `${gameState.currentRewards.rewards[i]}`;
-                            treasureReward.classList.add('show');
-                            treasureReward.style.opacity = '0.5';
-                            treasureReward.style.color = '#7f8c8d';
-                            treasureReward.style.textShadow = '2px 2px 0 #2d3436';
-                        }, 400);
-                    }, i * 200);
-                }
-            });
-            
-            setTimeout(async () => {
-                gameState.isPlaying = false;
-                gameState.totalPlays++;
-                
-                const addResult = await addCoinsToBot(coinsWon);
-                
-                if (addResult.success) {
-                    await saveUserStatsToServer();
-                }
-                
-                setTimeout(() => getCoinBalance(), 1000);
-                
-                let winMessage = '';
-                if (coinsWon === 5) {
-                    winMessage = `🎉 O'TTA YAXSHI! ${coinsWon} tanga topdingiz! 🎊`;
-                } else if (coinsWon === 4) {
-                    winMessage = `👍 Yaxshi! ${coinsWon} tanga topdingiz!`;
-                } else if (coinsWon === 3) {
-                    winMessage = `😊 ${coinsWon} tanga topdingiz!`;
-                } else if (coinsWon === 2) {
-                    winMessage = `😊 ${coinsWon} tanga topdingiz!`;
-                } else if (coinsWon === 1) {
-                    winMessage = `✅ ${coinsWon} tanga topdingiz!`;
-                } else {
-                    winMessage = `✅ ${coinsWon} tanga topdingiz!`;
-                }
-                
-                showMessage(winMessage, 'success');
-                
-                const playButton = document.getElementById('playButton');
-                playButton.disabled = false;
-                playButton.innerHTML = '<span id="playButtonText">🎮 YANA O\'YNA (10 💎)</span>';
-                
-                if (gameState.isFirstPlay) {
-                    gameState.isFirstPlay = false;
-                    showMessage('✨ Endi asl o\'yin boshlanadi!', 'info');
-                }
-                
-                if (window.hapticFeedback) {
-                    window.hapticFeedback.notificationOccurred('success');
-                }
-            }, 2000);
-        }
-        
-        async function startGame() {
-            if (gameState.diamonds < 10) {
-                showMessage('❌ Yetarli olmos mavjud emas!', 'error');
-                if (window.hapticFeedback) {
-                    window.hapticFeedback.impactOccurred('heavy');
-                }
-                return;
-            }
-            
-            const removeResult = await removeDiamondsFromBot(10);
-            
-            if (!removeResult.success) {
-                showError(`❌ Xato: ${removeResult.message || 'Noma\'lum xato'}`);
-                return;
-            }
-            
-            gameState.diamonds -= 10;
-            updateBalanceDisplay();
-            
-            gameState.isPlaying = true;
-            gameState.selectedChest = null;
-            gameState.currentRewards = generateRewards();
-            
-            // Yangi sandiqlarni yaratish (faol o'yin rejimi)
-            createTreasureChests(false);
-            
-            const playButton = document.getElementById('playButton');
-            playButton.disabled = true;
-            playButton.innerHTML = '<span id="playButtonText">⏳ SANDIQ TANLANG...</span>';
-            
-            if (gameState.isFirstPlay) {
-                showMessage('✨ Birinchi o\'yin! 4, 5 yoki 6 tanga yutib oling!', 'info');
-            } else {
-                showMessage('✨ Qiziqarli sandiqlardan birini tanlang!', 'info');
-            }
-            
-            if (window.hapticFeedback) {
-                window.hapticFeedback.impactOccurred('light');
-            }
-        }
-        
-        // USER STATISTIKASINI YANGILASH
-        function updateUserStats(coinsWon, diamondsSpent = 10) {
-            gameState.userStats.totalWon += coinsWon;
-            gameState.userStats.gamesPlayed++;
-            gameState.userStats.lastWin = coinsWon;
-            gameState.userStats.diamondsSpent += diamondsSpent;
-            gameState.userStats.lastPlayDate = new Date().toISOString();
-            
-            if (coinsWon >= 5) {
-                gameState.userStats.bigWins++;
-            }
-            
-            console.log('User Stats Updated:', gameState.userStats);
-        }
-        
         // Mobil uchun viewport sozlamalari
         function setViewportHeight() {
             const vh = window.innerHeight * 0.01;
@@ -2418,99 +2347,21 @@
             document.body.style.height = window.innerHeight + 'px';
         }
         
-        // Touch event'larni optimallashtirish
-        function initTouchEvents() {
-            const chests = document.querySelectorAll('.treasure-chest');
-            
-            chests.forEach(chest => {
-                let touchStartTime;
-                let touchStartX;
-                let touchStartY;
-                
-                chest.addEventListener('touchstart', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const touch = e.touches[0];
-                    touchStartTime = Date.now();
-                    touchStartX = touch.clientX;
-                    touchStartY = touch.clientY;
-                    
-                    if (gameState.isPlaying && gameState.selectedChest === null) {
-                        this.style.transform = 'scale(0.95)';
-                    }
-                }, { passive: false });
-                
-                chest.addEventListener('touchmove', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const touch = e.touches[0];
-                    const deltaX = Math.abs(touch.clientX - touchStartX);
-                    const deltaY = Math.abs(touch.clientY - touchStartY);
-                    
-                    if (deltaX > 10 || deltaY > 10) {
-                        this.style.transform = '';
-                    }
-                }, { passive: false });
-                
-                chest.addEventListener('touchend', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const touchTime = Date.now() - touchStartTime;
-                    const touch = e.changedTouches[0];
-                    const deltaX = Math.abs(touch.clientX - touchStartX);
-                    const deltaY = Math.abs(touch.clientY - touchStartY);
-                    
-                    if (touchTime < 500 && deltaX < 10 && deltaY < 10) {
-                        this.style.transform = '';
-                        const index = this.dataset.index;
-                        if (gameState.isPlaying && gameState.selectedChest === null) {
-                            selectChest(index, this);
-                        }
-                    } else {
-                        this.style.transform = '';
-                    }
-                }, { passive: false });
-            });
-            
-            // Play button uchun touch optimallashtirish
-            const playButton = document.getElementById('playButton');
-            playButton.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                this.style.transform = 'scale(0.98)';
-            }, { passive: false });
-            
-            playButton.addEventListener('touchend', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                this.style.transform = '';
-            }, { passive: false });
-        }
-        
         // Dasturni ishga tushirish
         async function init() {
             console.log('Cartoon Treasure Hunt - Mobile Optimized Version');
             console.log('Mobile:', isMobile, 'iOS:', isIOS, 'Android:', isAndroid);
             
-            // Mobil optimallashtirish
             if (isMobile) {
                 setViewportHeight();
                 window.addEventListener('resize', setViewportHeight);
                 window.addEventListener('orientationchange', setViewportHeight);
-                initMobileAudio();
             }
             
-            // BOSHLANG'ICH SANDIQLARNI YARATISH
             createTreasureChests(true);
-            
             createCartoonBackground();
             initTelegram();
             initAudio();
-            
-            // Touch event'larni ishga tushirish
-            if (isMobile) {
-                setTimeout(initTouchEvents, 500);
-            }
             
             gameState.user = getTelegramUser();
             checkIfAdmin();
@@ -2528,38 +2379,36 @@
             
             updateBalanceDisplay();
             
-            // Play button uchun event listener
+            // Play button uchun touch event'lar
             const playButton = document.getElementById('playButton');
-            playButton.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Visual feedback
-                playButton.style.transform = 'scale(0.98)';
-                
-                // Haptic feedback
-                if (window.hapticFeedback) {
-                    window.hapticFeedback.impactOccurred('light');
+            
+            playButton.addEventListener('touchstart', function() {
+                if (!this.disabled) {
+                    this.style.transform = 'translateY(4px)';
+                    this.style.boxShadow = '0 4px 0 #2d3436, 0 6px 10px rgba(0, 0, 0, 0.3)';
                 }
-            }, { passive: false });
+            });
             
-            playButton.addEventListener('touchend', (e) => {
+            playButton.addEventListener('touchend', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '0 8px 0 #2d3436, 0 12px 15px rgba(0, 0, 0, 0.3)';
+            });
+            
+            playButton.addEventListener('click', function(e) {
                 e.preventDefault();
-                e.stopPropagation();
-                playButton.style.transform = '';
-                startGame();
-            }, { passive: false });
+                if (!this.disabled) {
+                    startGame();
+                }
+            });
             
-            playButton.addEventListener('click', startGame);
+            // Admin panelni ishga tushirish
+            initAdminPanel();
             
             if (gameState.isFirstPlay) {
                 showMessage('🎮 Birinchi o\'yinningiz! 10 olmos bilan boshlang!', 'info');
             } else {
                 showMessage(`🎮 O'yinga xush kelibsiz!`, 'info');
             }
-            
-            // Admin panelni ishga tushirish
-            initAdminPanel();
             
             // Touch optimization
             document.addEventListener('touchmove', (e) => {
@@ -2575,6 +2424,11 @@
                 }
                 lastTouchEnd = now;
             }, { passive: false });
+            
+            // Prevent context menu
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+            });
         }
         
         // DOM yuklanganda ishga tushirish
@@ -2586,23 +2440,11 @@
                 e.preventDefault();
             });
             
-            document.body.style.overscrollBehavior = 'none';
-            
             window.addEventListener('load', function() {
                 setTimeout(function() {
                     window.scrollTo(0, 1);
                 }, 0);
             });
-            
-            // Battery saver rejimida animatsiyalarni optimallashtirish
-            if ('connection' in navigator) {
-                const connection = navigator.connection;
-                if (connection.saveData || connection.effectiveType === '2g') {
-                    document.querySelectorAll('.cartoon-cloud').forEach(cloud => {
-                        cloud.style.animationDuration = '40s';
-                    });
-                }
-            }
         }
         
         // Orientation change handler
@@ -2613,35 +2455,7 @@
             }, 100);
         });
         
-        // Resize handler
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                document.body.style.height = window.innerHeight + 'px';
-            }, 250);
-        });
-        
-        // Prevent context menu on mobile
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        });
-        
-        // Prevent pull-to-refresh
-        document.addEventListener('touchstart', (e) => {
-            if (e.touches.length !== 1) return;
-            const touch = e.touches[0];
-            if (touch.clientY > window.innerHeight * 0.1) return;
-            e.preventDefault();
-        }, { passive: false });
-        
         console.log('Cartoon Treasure Hunt initialized!');
-        console.log('- All 9 chests will be visible from start');
-        console.log('- Simple rectangular chest design');
-        console.log('- Reward probabilities: 1-4: 23.75% each, 5: 5% only');
-        console.log('- First play guaranteed: 4, 5 or 6 coins');
-        console.log('- Admin system for @behruz_aura and @H08_09');
-        console.log('- Statistics saved to server');
     </script>
 </body>
 </html>
