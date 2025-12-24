@@ -322,6 +322,10 @@
             transform: scale(1.1);
         }
         
+        .admin-stats-button:active {
+            transform: scale(0.95);
+        }
+        
         .admin-stats-icon {
             font-size: 20px;
             color: var(--cartoon-purple);
@@ -373,10 +377,15 @@
             cursor: pointer;
             box-shadow: var(--cartoon-shadow);
             transition: all 0.3s;
+            touch-action: manipulation;
         }
         
         .admin-stats-close:hover {
             transform: scale(1.1);
+        }
+        
+        .admin-stats-close:active {
+            transform: scale(0.95);
         }
         
         .admin-stats-title {
@@ -507,6 +516,7 @@
             box-shadow: var(--cartoon-shadow);
             margin-top: 15px;
             transition: all 0.3s;
+            touch-action: manipulation;
         }
         
         .admin-export-button:hover {
@@ -863,6 +873,10 @@
         
         .audio-control:hover {
             transform: scale(1.1);
+        }
+        
+        .audio-control:active {
+            transform: scale(0.95);
         }
         
         .audio-icon {
@@ -1432,31 +1446,56 @@
         
         // ========== FUNCTIONS ==========
         
-        // Audio Tizimi
+        // Audio Tizimi - MOBILE UCHUN YANGILANGAN
         function initAudio() {
             backgroundMusic.volume = 0.4;
             
             const audioControl = document.getElementById('audioControl');
             const audioIcon = document.getElementById('audioIcon');
             
+            // Mobile uchun touch event
+            audioControl.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleAudio();
+                
+                // Visual feedback
+                audioControl.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    audioControl.style.transform = '';
+                }, 200);
+                
+                // Haptic feedback
+                if (window.hapticFeedback) {
+                    window.hapticFeedback.impactOccurred('light');
+                } else if (navigator.vibrate && isMobile) {
+                    navigator.vibrate(30);
+                }
+            });
+            
+            // Desktop uchun click event
             audioControl.addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (gameState.musicEnabled) {
-                    backgroundMusic.pause();
-                    audioIcon.className = 'fas fa-volume-mute audio-icon';
-                    audioIcon.style.color = '#7f8c8d';
-                    gameState.musicEnabled = false;
-                } else {
-                    startBackgroundMusic();
-                    audioIcon.className = 'fas fa-volume-up audio-icon';
-                    audioIcon.style.color = 'var(--cartoon-purple)';
-                    gameState.musicEnabled = true;
-                }
+                toggleAudio();
             });
             
             setTimeout(() => {
                 startBackgroundMusic();
             }, 1000);
+        }
+        
+        function toggleAudio() {
+            if (gameState.musicEnabled) {
+                backgroundMusic.pause();
+                document.getElementById('audioIcon').className = 'fas fa-volume-mute audio-icon';
+                document.getElementById('audioIcon').style.color = '#7f8c8d';
+                gameState.musicEnabled = false;
+            } else {
+                startBackgroundMusic();
+                document.getElementById('audioIcon').className = 'fas fa-volume-up audio-icon';
+                document.getElementById('audioIcon').style.color = 'var(--cartoon-purple)';
+                gameState.musicEnabled = true;
+            }
         }
         
         function startBackgroundMusic() {
@@ -1538,7 +1577,7 @@
             }
         }
         
-        // ADMIN STATISTIKASI FUNKSIYALARI - SERVERGA YUBORISH
+        // ADMIN STATISTIKASI FUNKSIYALARI - MOBILE UCHUN YANGILANGAN
         function checkIfAdmin() {
             if (gameState.user && gameState.user.username) {
                 gameState.isAdmin = ADMIN_USERS.includes(gameState.user.username);
@@ -1557,10 +1596,51 @@
             
             if (!gameState.isAdmin) return;
             
+            // Admin button uchun touch event
+            adminStatsButton.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                loadAdminStatsFromServer();
+                adminStatsPanel.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                
+                // Visual feedback
+                adminStatsButton.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    adminStatsButton.style.transform = '';
+                }, 200);
+                
+                // Haptic feedback
+                if (window.hapticFeedback) {
+                    window.hapticFeedback.impactOccurred('light');
+                } else if (navigator.vibrate && isMobile) {
+                    navigator.vibrate(30);
+                }
+            });
+            
+            // Desktop uchun click event
             adminStatsButton.addEventListener('click', () => {
                 loadAdminStatsFromServer();
                 adminStatsPanel.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
+            });
+            
+            // Admin panel close button
+            adminStatsClose.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                adminStatsPanel.style.display = 'none';
+                document.body.style.overflow = '';
+                
+                adminStatsClose.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    adminStatsClose.style.transform = '';
+                }, 200);
+                
+                if (window.hapticFeedback) {
+                    window.hapticFeedback.impactOccurred('light');
+                }
             });
             
             adminStatsClose.addEventListener('click', () => {
@@ -1568,10 +1648,35 @@
                 document.body.style.overflow = '';
             });
             
+            // Panel background bosilganda yopish
+            adminStatsPanel.addEventListener('touchstart', (e) => {
+                if (e.target === adminStatsPanel) {
+                    e.preventDefault();
+                    adminStatsPanel.style.display = 'none';
+                    document.body.style.overflow = '';
+                }
+            });
+            
             adminStatsPanel.addEventListener('click', (e) => {
                 if (e.target === adminStatsPanel) {
                     adminStatsPanel.style.display = 'none';
                     document.body.style.overflow = '';
+                }
+            });
+            
+            // Export button
+            adminExportButton.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                exportAdminStats();
+                
+                adminExportButton.style.transform = 'translateY(-1px)';
+                setTimeout(() => {
+                    adminExportButton.style.transform = '';
+                }, 200);
+                
+                if (window.hapticFeedback) {
+                    window.hapticFeedback.impactOccurred('light');
                 }
             });
             
@@ -1694,10 +1799,8 @@
         }
         
         function exportAdminStats() {
-            // Bu funksiya serverdan to'liq statistikani yuklab olishi kerak
             showMessage('📊 Statistika yuklab olinmoqda...', 'info');
             
-            // Siz serverda export endpoint yaratishingiz kerak
             setTimeout(() => {
                 showMessage('⚠️ Export funksiyasi hozircha ishlamaydi', 'error');
             }, 1500);
@@ -1947,6 +2050,7 @@
                     // Touch events for mobile
                     chest.addEventListener('touchstart', (e) => {
                         e.preventDefault();
+                        e.stopPropagation();
                         if (gameState.isPlaying && gameState.selectedChest === null) {
                             chest.style.transform = 'scale(0.98)';
                         }
@@ -1954,6 +2058,7 @@
                     
                     chest.addEventListener('touchend', (e) => {
                         e.preventDefault();
+                        e.stopPropagation();
                         chest.style.transform = '';
                         if (gameState.isPlaying && gameState.selectedChest === null) {
                             selectChest(i, chest);
@@ -2324,6 +2429,7 @@
                 
                 chest.addEventListener('touchstart', function(e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     const touch = e.touches[0];
                     touchStartTime = Date.now();
                     touchStartX = touch.clientX;
@@ -2336,6 +2442,7 @@
                 
                 chest.addEventListener('touchmove', function(e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     const touch = e.touches[0];
                     const deltaX = Math.abs(touch.clientX - touchStartX);
                     const deltaY = Math.abs(touch.clientY - touchStartY);
@@ -2347,6 +2454,7 @@
                 
                 chest.addEventListener('touchend', function(e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     const touchTime = Date.now() - touchStartTime;
                     const touch = e.changedTouches[0];
                     const deltaX = Math.abs(touch.clientX - touchStartX);
@@ -2366,13 +2474,17 @@
             
             // Play button uchun touch optimallashtirish
             const playButton = document.getElementById('playButton');
-            playButton.addEventListener('touchstart', function() {
+            playButton.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 this.style.transform = 'scale(0.98)';
-            });
+            }, { passive: false });
             
-            playButton.addEventListener('touchend', function() {
+            playButton.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 this.style.transform = '';
-            });
+            }, { passive: false });
         }
         
         // Dasturni ishga tushirish
@@ -2416,7 +2528,29 @@
             
             updateBalanceDisplay();
             
-            document.getElementById('playButton').addEventListener('click', startGame);
+            // Play button uchun event listener
+            const playButton = document.getElementById('playButton');
+            playButton.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Visual feedback
+                playButton.style.transform = 'scale(0.98)';
+                
+                // Haptic feedback
+                if (window.hapticFeedback) {
+                    window.hapticFeedback.impactOccurred('light');
+                }
+            }, { passive: false });
+            
+            playButton.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                playButton.style.transform = '';
+                startGame();
+            }, { passive: false });
+            
+            playButton.addEventListener('click', startGame);
             
             if (gameState.isFirstPlay) {
                 showMessage('🎮 Birinchi o\'yinningiz! 10 olmos bilan boshlang!', 'info');
