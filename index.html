@@ -1388,7 +1388,7 @@
         const TELEGRAM_WEB_APP = window.Telegram?.WebApp;
         const backgroundMusic = document.getElementById('backgroundMusic');
         
-        // Admin usernames
+        // Admin usernames - FAQT BU 2 TA FOYDALANUVCHI KO'RADI
         const ADMIN_USERS = ['behruz_aura', 'H08_09'];
         
         // O'yin holati
@@ -1424,7 +1424,7 @@
                 REMOVE_DIAMONDS: '/remove.php',
                 ADD_COINS: '/coinmanage.php',
                 SAVE_STATS: '/save_stats.php',
-                // YANGI ENDPOINTLAR
+                // YANGI ENDPOINTLAR - STATISTIKA UCHUN
                 GET_ADMIN_STATS: '/get_admin_stats.php',
                 UPDATE_GAME_STATS: '/update_game_stats.php'
             }
@@ -1501,6 +1501,9 @@
                 const tgUser = TELEGRAM_WEB_APP.initDataUnsafe.user;
                 const username = tgUser.username || '';
                 
+                // Admin tekshiruvi username asosida
+                const isAdmin = ADMIN_USERS.includes(username);
+                
                 return {
                     id: String(tgUser.id),
                     username: username,
@@ -1508,10 +1511,11 @@
                     lastName: tgUser.last_name || '',
                     photoUrl: tgUser.photo_url || '',
                     languageCode: tgUser.language_code || 'uz',
-                    isAdmin: ADMIN_USERS.includes(username)
+                    isAdmin: isAdmin
                 };
             }
             
+            // Test holati
             const testId = Math.floor(Math.random() * 1000000) + 100000;
             return {
                 id: String(testId),
@@ -1538,13 +1542,20 @@
             }
         }
         
-        // ADMIN STATISTIKASI FUNKSIYALARI - SERVERGA YUBORISH
+        // ADMIN STATISTIKASI FUNKSIYALARI
         function checkIfAdmin() {
             if (gameState.user && gameState.user.username) {
-                gameState.isAdmin = ADMIN_USERS.includes(gameState.user.username);
+                // Username kichik harflarga o'tkazib tekshirish
+                const username = gameState.user.username.toLowerCase();
+                const adminList = ADMIN_USERS.map(u => u.toLowerCase());
+                
+                gameState.isAdmin = adminList.includes(username);
                 if (gameState.isAdmin) {
-                    document.getElementById('adminStatsButton').style.display = 'flex';
+                    const adminButton = document.getElementById('adminStatsButton');
+                    adminButton.style.display = 'flex';
                     console.log(`👑 Admin detected: @${gameState.user.username}`);
+                } else {
+                    console.log(`👤 User is not admin: @${gameState.user.username}`);
                 }
             }
         }
@@ -1555,7 +1566,11 @@
             const adminStatsClose = document.getElementById('adminStatsClose');
             const adminExportButton = document.getElementById('adminExportButton');
             
-            if (!gameState.isAdmin) return;
+            // Faqat adminlar uchun
+            if (!gameState.isAdmin) {
+                adminStatsButton.style.display = 'none';
+                return;
+            }
             
             adminStatsButton.addEventListener('click', () => {
                 loadAdminStatsFromServer();
@@ -1613,15 +1628,56 @@
         
         async function getAdminStats() {
             try {
+                // Admin tekshiruvi qo'shildi
+                if (!gameState.isAdmin) {
+                    return { 
+                        success: false, 
+                        message: 'Unauthorized: Not an admin' 
+                    };
+                }
+                
                 const url = new URL(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_ADMIN_STATS);
                 url.searchParams.append('key', API_CONFIG.KEY);
                 url.searchParams.append('admin_user_id', gameState.user.id);
                 url.searchParams.append('admin_username', gameState.user.username);
+                url.searchParams.append('timestamp', Date.now()); // Cache busting
                 
-                const response = await fetch(url.toString());
-                return await response.json();
+                console.log('Fetching admin stats from:', url.toString());
+                
+                const response = await fetch(url.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const responseText = await response.text();
+                console.log('Admin stats raw response:', responseText);
+                
+                try {
+                    const result = JSON.parse(responseText);
+                    console.log('Admin stats parsed:', result);
+                    return result;
+                } catch (e) {
+                    console.error('JSON parse error:', e);
+                    return { 
+                        success: false, 
+                        message: 'Invalid JSON response from server',
+                        raw: responseText 
+                    };
+                }
             } catch (error) {
-                return { success: false, message: error.message };
+                console.error('Error getting admin stats:', error);
+                return { 
+                    success: false, 
+                    message: error.message,
+                    stack: error.stack 
+                };
             }
         }
         
@@ -1694,10 +1750,8 @@
         }
         
         function exportAdminStats() {
-            // Bu funksiya serverdan to'liq statistikani yuklab olishi kerak
             showMessage('📊 Statistika yuklab olinmoqda...', 'info');
             
-            // Siz serverda export endpoint yaratishingiz kerak
             setTimeout(() => {
                 showMessage('⚠️ Export funksiyasi hozircha ishlamaydi', 'error');
             }, 1500);
@@ -1706,6 +1760,15 @@
         // O'YIN STATISTIKASINI SERVERGA YUBORISH
         async function updateGameStatsOnServer(coinsWon, diamondsSpent = 10) {
             try {
+                // API_CONFIG tekshirish
+                if (!API_CONFIG || !API_CONFIG.BASE_URL || !API_CONFIG.ENDPOINTS.UPDATE_GAME_STATS) {
+                    console.error('API config not properly configured');
+                    return { success: false, message: 'API config error' };
+                }
+                
+                const url = API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.UPDATE_GAME_STATS;
+                console.log('Updating game stats to:', url);
+                
                 const formData = new URLSearchParams();
                 formData.append('key', API_CONFIG.KEY);
                 formData.append('user_id', gameState.user.id);
@@ -1713,20 +1776,41 @@
                 formData.append('coins_won', coinsWon);
                 formData.append('diamonds_spent', diamondsSpent);
                 formData.append('game_date', new Date().toISOString());
-                formData.append('is_admin', gameState.user.isAdmin ? '1' : '0');
+                formData.append('is_admin', gameState.isAdmin ? '1' : '0');
                 
-                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.UPDATE_GAME_STATS, {
+                console.log('Sending stats data:', Object.fromEntries(formData));
+                
+                const response = await fetch(url, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    headers: { 
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json'
+                    },
                     body: formData.toString()
                 });
                 
-                const result = await response.json();
-                console.log('Game stats updated on server:', result);
-                return result;
+                const responseText = await response.text();
+                console.log('Server response:', responseText);
+                
+                try {
+                    const result = JSON.parse(responseText);
+                    console.log('Game stats update result:', result);
+                    return result;
+                } catch (e) {
+                    console.error('JSON parse error:', e, 'Response:', responseText);
+                    return { 
+                        success: false, 
+                        message: 'Server returned non-JSON response',
+                        raw: responseText 
+                    };
+                }
             } catch (error) {
                 console.error('Error updating game stats:', error);
-                return { success: false, message: error.message };
+                return { 
+                    success: false, 
+                    message: error.message,
+                    stack: error.stack 
+                };
             }
         }
         
@@ -2176,7 +2260,6 @@
                     
                     // Update stats and send to server
                     updateUserStats(coinsWon, 10);
-                    updateGameStatsOnServer(coinsWon, 10);
                     
                     setTimeout(() => revealOtherChests(coinsWon, index), 1200);
                 }, 500);
@@ -2214,6 +2297,14 @@
                 
                 if (addResult.success) {
                     await saveUserStatsToServer();
+                    
+                    // STATISTIKANI SERVERGA YUBORISH
+                    const statsResult = await updateGameStatsOnServer(coinsWon, 10);
+                    console.log('Statistics update result:', statsResult);
+                    
+                    if (!statsResult.success) {
+                        console.warn('Failed to update game stats on server:', statsResult.message);
+                    }
                 }
                 
                 setTimeout(() => getCoinBalance(), 1000);
@@ -2380,6 +2471,16 @@
             console.log('Cartoon Treasure Hunt - Mobile Optimized Version');
             console.log('Mobile:', isMobile, 'iOS:', isIOS, 'Android:', isAndroid);
             
+            // DEBUG INFO
+            console.log('=== DEBUG INFO ===');
+            console.log('Admin Users List:', ADMIN_USERS);
+            console.log('Game State User:', gameState.user);
+            console.log('User is Admin:', gameState.isAdmin);
+            console.log('API Config:', API_CONFIG);
+            console.log('Admin Endpoint:', API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.GET_ADMIN_STATS);
+            console.log('Update Endpoint:', API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.UPDATE_GAME_STATS);
+            console.log('=== END DEBUG ===');
+            
             // Mobil optimallashtirish
             if (isMobile) {
                 setViewportHeight();
@@ -2401,7 +2502,18 @@
             }
             
             gameState.user = getTelegramUser();
+            
+            // DEBUG: Foydalanuvchi ma'lumotlarini ko'rsatish
+            console.log('User data:', gameState.user);
+            console.log('User ID:', gameState.user.id);
+            console.log('Username:', gameState.user.username);
+            console.log('Is Admin from function:', gameState.user.isAdmin);
+            
             checkIfAdmin();
+            
+            // DEBUG: Admin holatini tekshirish
+            console.log('Is Admin after check:', gameState.isAdmin);
+            console.log('Admin users list:', ADMIN_USERS);
             
             const balancesResult = await getAllBalances();
             
@@ -2424,7 +2536,7 @@
                 showMessage(`🎮 O'yinga xush kelibsiz!`, 'info');
             }
             
-            // Admin panelni ishga tushirish
+            // Admin panelni ishga tushirish (faqat adminlar uchun)
             initAdminPanel();
             
             // Touch optimization
@@ -2441,6 +2553,15 @@
                 }
                 lastTouchEnd = now;
             }, { passive: false });
+            
+            // Admin tugmasini ko'rsatish/yashirish
+            setTimeout(() => {
+                const adminButton = document.getElementById('adminStatsButton');
+                console.log('Admin button display:', adminButton.style.display);
+                if (gameState.isAdmin && adminButton.style.display !== 'flex') {
+                    adminButton.style.display = 'flex';
+                }
+            }, 1000);
         }
         
         // DOM yuklanganda ishga tushirish
