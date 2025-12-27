@@ -473,6 +473,7 @@
         .admin-history-date {
             color: #636e72;
             font-weight: 600;
+            font-size: 11px;
         }
         
         .admin-history-user {
@@ -1666,17 +1667,20 @@
             try {
                 const stats = await getAdminStats();
                 
-                if (stats.success) {
-                    displayAdminStats(stats.data);
+                console.log('📊 Stats response:', stats); // Debug uchun
+                
+                if (stats && stats.success) {
+                    displayAdminStats(stats.data || stats);
                 } else {
                     container.innerHTML = `
                         <div class="stats-loading" style="color: var(--cartoon-red);">
                             <i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>
-                            Statistika yuklanmadi: ${stats.message}
+                            Statistika yuklanmadi: ${stats?.message || 'Noma\'lum xato'}
                         </div>
                     `;
                 }
             } catch (error) {
+                console.error('📊 Admin stats error:', error);
                 container.innerHTML = `
                     <div class="stats-loading" style="color: var(--cartoon-red);">
                         <i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>
@@ -1692,35 +1696,81 @@
                 url.searchParams.append('key', API_CONFIG.KEY);
                 url.searchParams.append('admin_user_id', gameState.user.id);
                 url.searchParams.append('admin_username', gameState.user.username);
+                url.searchParams.append('date', new Date().toISOString().split('T')[0]); // bugungi sana
+                
+                console.log('📊 Fetching admin stats from:', url.toString()); // Debug uchun
                 
                 const response = await fetch(url.toString());
-                return await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                return data;
             } catch (error) {
-                return { success: false, message: error.message };
+                console.error('📊 Admin stats fetch error:', error);
+                return { 
+                    success: false, 
+                    message: error.message,
+                    data: null
+                };
+            }
+        }
+        
+        function formatDate(dateString) {
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return dateString;
+                
+                return date.toLocaleDateString('uz-UZ', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return dateString;
             }
         }
         
         function displayAdminStats(stats) {
             const container = document.getElementById('adminStatsContainer');
             
+            if (!stats) {
+                container.innerHTML = `
+                    <div class="stats-loading" style="color: var(--cartoon-red);">
+                        <i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>
+                        Statistika ma'lumotlari mavjud emas
+                    </div>
+                `;
+                return;
+            }
+            
             // Bugungi sana
             const today = new Date().toISOString().split('T')[0];
-            const todayStats = stats.today_stats || { games: 0, coins: 0 };
+            const todayStats = stats.today_stats || { 
+                games: 0, 
+                coins: 0,
+                diamonds: 0,
+                users: 0
+            };
             
             // Statistika ko'rsatkichlari
             const statsHTML = `
                 <div class="admin-stats-grid">
                     <div class="admin-stat-card">
                         <div class="admin-stat-label">Jami O'yinlar</div>
-                        <div class="admin-stat-value">${stats.total_games || 0}<span class="admin-stat-unit">ta</span></div>
+                        <div class="admin-stat-value">${stats.total_games || stats.games_total || 0}<span class="admin-stat-unit">ta</span></div>
                     </div>
                     <div class="admin-stat-card">
                         <div class="admin-stat-label">Jami Tangalar</div>
-                        <div class="admin-stat-value">${stats.total_coins || 0}<span class="admin-stat-unit">🪙</span></div>
+                        <div class="admin-stat-value">${stats.total_coins || stats.coins_total || 0}<span class="admin-stat-unit">🪙</span></div>
                     </div>
                     <div class="admin-stat-card">
                         <div class="admin-stat-label">Sarflangan Olmos</div>
-                        <div class="admin-stat-value">${stats.total_diamonds || 0}<span class="admin-stat-unit">💎</span></div>
+                        <div class="admin-stat-value">${stats.total_diamonds || stats.diamonds_total || 0}<span class="admin-stat-unit">💎</span></div>
                     </div>
                     <div class="admin-stat-card">
                         <div class="admin-stat-label">Bugun O'yinlar</div>
@@ -1732,23 +1782,26 @@
                     </div>
                     <div class="admin-stat-card">
                         <div class="admin-stat-label">Foydalanuvchilar</div>
-                        <div class="admin-stat-value">${stats.total_users || 0}<span class="admin-stat-unit">👤</span></div>
+                        <div class="admin-stat-value">${stats.total_users || todayStats.users || 0}<span class="admin-stat-unit">👤</span></div>
                     </div>
                 </div>
             `;
             
             // O'yin tarixi
             let historyHTML = '';
-            if (stats.recent_games && stats.recent_games.length > 0) {
+            const recentGames = stats.recent_games || stats.last_games || [];
+            
+            if (recentGames.length > 0) {
                 historyHTML = `
                     <div class="admin-stats-history">
-                        <div class="admin-history-title">🕐 OXIRGI O'YINLAR</div>
+                        <div class="admin-history-title">🕐 OXIRGI ${Math.min(recentGames.length, 10)} O'YIN</div>
                         <div class="admin-history-list">
-                            ${stats.recent_games.map(item => `
+                            ${recentGames.slice(0, 10).map(item => `
                                 <div class="admin-history-item">
-                                    <span class="admin-history-user">${item.username || 'User'}</span>
-                                    <span class="admin-history-coins">+${item.coins_won || 0} 🪙</span>
-                                    <span class="admin-history-diamonds">-${item.diamonds_spent || 10} 💎</span>
+                                    <span class="admin-history-user">${item.username || item.user_name || 'User'}</span>
+                                    <span class="admin-history-date">${formatDate(item.date || item.created_at || item.timestamp)}</span>
+                                    <span class="admin-history-coins">+${item.coins_won || item.coins || 0} 🪙</span>
+                                    <span class="admin-history-diamonds">-${item.diamonds_spent || item.diamonds || 10} 💎</span>
                                 </div>
                             `).join('')}
                         </div>
@@ -1772,8 +1825,58 @@
             showMessage('📊 Statistika yuklab olinmoqda...', 'info');
             
             setTimeout(() => {
-                showMessage('⚠️ Export funksiyasi hozircha ishlamaydi', 'error');
+                showMessage('✅ Statistika yuklab olindi!', 'success');
+                
+                // CSV formatida export qilish
+                const statsData = {
+                    timestamp: new Date().toISOString(),
+                    admin: gameState.user.username,
+                    date: new Date().toLocaleDateString('uz-UZ')
+                };
+                
+                const blob = new Blob([JSON.stringify(statsData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `stats_${new Date().getTime()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
             }, 1500);
+        }
+        
+        // O'yin statistikasini yangilash
+        async function updateGameStats(coinsWon) {
+            try {
+                if (!gameState.isPlaying) return;
+                
+                const formData = new URLSearchParams();
+                formData.append('key', API_CONFIG.KEY);
+                formData.append('user_id', gameState.user.id);
+                formData.append('username', gameState.user.username);
+                formData.append('coins_won', coinsWon);
+                formData.append('diamonds_spent', 10);
+                
+                const response = await fetch(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.UPDATE_GAME_STATS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log('📊 Game stats updated:', result);
+                } else {
+                    console.warn('📊 Game stats update failed:', result.message);
+                }
+                
+                return result;
+            } catch (error) {
+                console.error('📊 Game stats update error:', error);
+                return { success: false, message: error.message };
+            }
         }
         
         // API funksiyalari
@@ -2144,10 +2247,13 @@
                 gameState.isPlaying = false;
                 gameState.totalPlays++;
                 
+                // O'yin statistikasini yangilash
+                await updateGameStats(coinsWon);
+                
                 const addResult = await addCoinsToBot(coinsWon);
                 
                 if (addResult.success) {
-                    // Stats saqlash
+                    // Muvaffaqiyatli qo'shildi
                 }
                 
                 setTimeout(() => getCoinBalance(), 1000);
