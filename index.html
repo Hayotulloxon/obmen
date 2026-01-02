@@ -1388,7 +1388,7 @@
         
         <div class="footer">
             <button id="playButton" class="play-button">
-                <span id="playButtonText">🎮 O'YINNI BOSHLASH (10 💎)</span>
+                <span id="playButtonText">🎮 O'YINNI BOSHLASH (12 💎)</span>
             </button>
             
             <div id="messageArea" class="message-area">
@@ -1703,7 +1703,7 @@
                                     <span class="admin-history-user">${item.username || 'User'}</span>
                                     <span class="admin-history-date">${item.time_ago || 'hozirgina'}</span>
                                     <span class="admin-history-coins">+${item.coins_won || 0} 🪙</span>
-                                    <span class="admin-history-diamonds">-${item.diamonds_spent || 10} 💎</span>
+                                    <span class="admin-history-diamonds">-${item.diamonds_spent || 12} 💎</span>
                                 </div>
                             `).join('')}
                         </div>
@@ -1739,7 +1739,7 @@
                 params.append('user_id', gameState.user.id);
                 params.append('username', gameState.user.username);
                 params.append('coins_won', coinsWon);
-                params.append('diamonds_spent', 10);
+                params.append('diamonds_spent', 12);
                 params.append('game_date', new Date().toISOString());
                 params.append('is_admin', gameState.isAdmin ? '1' : '0');
                 
@@ -2094,7 +2094,7 @@
                 
                 const playButton = document.getElementById('playButton');
                 playButton.disabled = false;
-                playButton.innerHTML = '<span id="playButtonText">🎮 YANA O\'YNA (10 💎)</span>';
+                playButton.innerHTML = '<span id="playButtonText">🎮 YANA O\'YNA (12 💎)</span>';
                 
                 if (gameState.isFirstPlay) {
                     gameState.isFirstPlay = false;
@@ -2104,19 +2104,19 @@
         }
         
         async function startGame() {
-            if (gameState.diamonds < 10) {
+            if (gameState.diamonds < 12) {
                 showMessage('❌ Yetarli olmos mavjud emas!', 'error');
                 return;
             }
             
-            const removeResult = await removeDiamondsFromBot(10);
+            const removeResult = await removeDiamondsFromBot(12);
             
             if (!removeResult.success) {
                 showError(`❌ Xato: ${removeResult.message || 'Noma\'lum xato'}`);
                 return;
             }
             
-            gameState.diamonds -= 10;
+            gameState.diamonds -= 12;
             updateBalanceDisplay();
             
             gameState.isPlaying = true;
